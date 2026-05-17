@@ -11,52 +11,61 @@ module.exports = async function handler(req, res) {
   try {
     const { images, modelIndex } = req.body;
 
+    // Read model image
     const modelPath = path.join(process.cwd(), `model${(modelIndex || 0) + 1}.jpg`);
     const modelBuffer = fs.readFileSync(modelPath);
-    const modelBase64 = modelBuffer.toString('base64');
+    const modelDataUri = `data:image/jpeg;base64,${modelBuffer.toString('base64')}`;
 
-    const parts = [
-      {
-        text: "Virtual try-on: The first image is a person (the model). The following images show a clothing item. Generate a realistic photo of this exact person wearing exactly that clothing item. Keep the person's face, pose, body, hair, and background completely identical. Only replace the clothing with the exact item shown in the other images."
+    // Use first clothing image
+    const garmentImage = images[0];
+
+    // Submit to fal.ai fashn/tryon
+    const submitRes = await fetch('https://queue.fal.run/fashn/tryon', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Key ${process.env.FAL_API_KEY}`,
+        'Content-Type': 'application/json'
       },
-      { inline_data: { mime_type: 'image/jpeg', data: modelBase64 } }
-    ];
+      body: JSON.stringify({
+        model_image: modelDataUri,
+        garment_image: garmentImage,
+        category: 'tops'
+      })
+    });
 
-    for (const img of images) {
-      const match = img.match(/^data:([^;]+);base64,(.+)$/);
-      if (match) {
-        parts.push({ inline_data: { mime_type: match[1], data: match[2] } });
+    const submitData = await submitRes.json();
+
+    if (submitData.error) {
+      return res.status(500).json({ error: submitData.error });
+    }
+
+    const requestId = submitData.request_id;
+    if (!requestId) {
+      return res.status(500).json({ error: JSON.stringify(submitData).slice(0, 200) });
+    }
+
+    // Poll for result
+    let attempts = 0;
+    while (attempts < 60) {
+      await new Promise(r => setTimeout(r, 2000));
+
+      const statusRes = await fetch(`https://queue.fal.run/fashn/tryon/requests/${requestId}`, {
+        headers: { 'Authorization': `Key ${process.env.FAL_API_KEY}` }
+      });
+      const result = await statusRes.json();
+
+      if (result.images?.[0]?.url) {
+        return res.status(200).json({ image: result.images[0].url });
       }
-    }
 
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${process.env.GOOGLE_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts }],
-          generationConfig: { responseModalities: ['IMAGE', 'TEXT'] }
-        })
+      if (result.status === 'FAILED' || result.error) {
+        return res.status(500).json({ error: result.error || 'fal.ai failed' });
       }
-    );
 
-    const geminiData = await geminiRes.json();
-
-    if (geminiData.error) {
-      return res.status(500).json({ error: `Gemini: ${geminiData.error.message}` });
+      attempts++;
     }
 
-    const responseParts = geminiData.candidates?.[0]?.content?.parts || [];
-    const imagePart = responseParts.find(p => p.inline_data);
-
-    if (!imagePart) {
-      const textPart = responseParts.find(p => p.text);
-      return res.status(500).json({ error: textPart?.text || JSON.stringify(geminiData).slice(0, 300) });
-    }
-
-    const image = `data:${imagePart.inline_data.mime_type};base64,${imagePart.inline_data.data}`;
-    res.status(200).json({ image });
+    res.status(500).json({ error: 'Timeout — bitte nochmal versuchen' });
 
   } catch (e) {
     res.status(500).json({ error: e.message });
