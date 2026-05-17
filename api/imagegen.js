@@ -11,17 +11,21 @@ module.exports = async function handler(req, res) {
   try {
     const { images, modelIndex } = req.body;
 
-    // Describe clothing with Gemini Vision (text only - free)
+    // Read model image as base64 data URI
+    const modelPath = path.join(process.cwd(), `model${(modelIndex || 0) + 1}.jpg`);
+    const modelBuffer = fs.readFileSync(modelPath);
+    const modelDataUri = `data:image/jpeg;base64,${modelBuffer.toString('base64')}`;
+
+    // Use first clothing image
+    const clothingImage = images[0];
+
+    // Describe clothing with Gemini (free text-only)
     const visionParts = [];
     for (const img of images) {
       const match = img.match(/^data:([^;]+);base64,(.+)$/);
-      if (match) {
-        visionParts.push({ inline_data: { mime_type: match[1], data: match[2] } });
-      }
+      if (match) visionParts.push({ inline_data: { mime_type: match[1], data: match[2] } });
     }
-    visionParts.push({
-      text: "Describe this exact clothing item very precisely: exact color(s), brand name and logo details, type of garment, all visible text, patterns, materials, and unique design features. Be extremely detailed."
-    });
+    visionParts.push({ text: "Describe this clothing item briefly: color, brand, type." });
 
     const visionRes = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GOOGLE_API_KEY}`,
@@ -32,49 +36,56 @@ module.exports = async function handler(req, res) {
       }
     );
     const visionData = await visionRes.json();
-    const clothingDesc = visionData.candidates?.[0]?.content?.parts?.[0]?.text || "a stylish clothing item";
+    const clothingDesc = visionData.candidates?.[0]?.content?.parts?.[0]?.text || "a clothing item";
 
-    // Read model image
-    const modelPath = path.join(process.cwd(), `model${(modelIndex || 0) + 1}.jpg`);
-    const modelBuffer = fs.readFileSync(modelPath);
-
-    const prompt = `Virtual try-on photo shoot. Take the person in this photo and dress them in this EXACT clothing item: ${clothingDesc}. The clothing must be reproduced exactly as described with all logos, colors, text and details. Do NOT change the person's face, skin, pose, hair, or background. Only swap the clothing.`;
-
-    const formData = new FormData();
-    formData.append('model', 'gpt-image-1');
-    formData.append('prompt', prompt);
-    formData.append('n', '1');
-    formData.append('size', '1024x1024');
-    formData.append('quality', 'high');
-    formData.append('image[]', new Blob([modelBuffer], { type: 'image/jpeg' }), 'model.jpg');
-
-    for (let i = 0; i < images.length; i++) {
-      const match = images[i].match(/^data:([^;]+);base64,(.+)$/);
-      if (match) {
-        const buf = Buffer.from(match[2], 'base64');
-        formData.append('image[]', new Blob([buf], { type: match[1] }), `clothing${i}.jpg`);
-      }
-    }
-
-    const editRes = await fetch('https://api.openai.com/v1/images/edits', {
+    // Start Replicate prediction (IDM-VTON)
+    const predRes = await fetch('https://api.replicate.com/v1/models/cuuupid/idm-vton/predictions', {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` },
-      body: formData
+      headers: {
+        'Authorization': `Bearer ${process.env.REPLICATE_API_TOKEN}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'wait'
+      },
+      body: JSON.stringify({
+        input: {
+          human_img: modelDataUri,
+          garm_img: clothingImage,
+          garment_des: clothingDesc,
+          is_checked: true,
+          is_checked_crop: false,
+          denoise_steps: 30,
+          seed: 42
+        }
+      })
     });
 
-    const editData = await editRes.json();
+    const predData = await predRes.json();
 
-    if (editData.error) {
-      return res.status(500).json({ error: editData.error.message });
+    if (predData.error) {
+      return res.status(500).json({ error: predData.error });
     }
 
-    const b64 = editData.data?.[0]?.b64_json;
-    const url = editData.data?.[0]?.url;
-    const image = b64 ? `data:image/png;base64,${b64}` : url;
+    // Poll for result if not done yet
+    let result = predData;
+    let attempts = 0;
+    while (result.status !== 'succeeded' && result.status !== 'failed' && attempts < 60) {
+      await new Promise(r => setTimeout(r, 2000));
+      const pollRes = await fetch(`https://api.replicate.com/v1/predictions/${result.id}`, {
+        headers: { 'Authorization': `Bearer ${process.env.REPLICATE_API_TOKEN}` }
+      });
+      result = await pollRes.json();
+      attempts++;
+    }
 
-    if (!image) return res.status(500).json({ error: 'Kein Bild generiert' });
+    if (result.status === 'failed') {
+      return res.status(500).json({ error: result.error || 'Replicate failed' });
+    }
 
-    res.status(200).json({ image });
+    const imageUrl = Array.isArray(result.output) ? result.output[0] : result.output;
+    if (!imageUrl) return res.status(500).json({ error: 'Kein Bild generiert' });
+
+    res.status(200).json({ image: imageUrl });
+
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
