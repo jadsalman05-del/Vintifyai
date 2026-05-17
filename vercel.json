@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/*.js", "use": "@vercel/node" },
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "*.{jpg,png,webp}", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/claude", "dest": "/api/claude.js" },
+    { "src": "/api/market", "dest": "/api/market.js" },
+    { "src": "/api/imagegen", "dest": "/api/imagegen.js" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
