@@ -503,7 +503,6 @@ if (localStorage.getItem('va_session')) {
     <div class="nav-item" onclick="goPage('advisor')"><span class="icon">🎯</span> Buy Advisor</div>
     <div class="nav-item" onclick="goPage('legit')"><span class="icon">🔍</span> Legit Check</div>
     <div class="nav-item" onclick="goPage('market')"><span class="icon">📊</span> Markt-Insights</div>
-    <div class="nav-item" onclick="goPage('imagegen')"><span class="icon">✨</span> Bilder generieren</div>
 
     <div class="sidebar-section">Buchhaltung</div>
     <div class="nav-item" onclick="goPage('inventar')"><span class="icon">📦</span> Inventar</div>
@@ -947,103 +946,6 @@ if (localStorage.getItem('va_session')) {
   </div>
 
   <!-- ── BILDER GENERATOR ── -->
-  <div class="page" id="page-imagegen">
-    <div class="page-title">Bilder <span>generieren</span></div>
-    <div class="page-subtitle">Lade dein Kleidungsstück hoch, wähle ein Model – die KI zieht es an</div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:1000px">
-
-      <!-- LEFT: Upload -->
-      <div class="card">
-        <div class="card-title">📸 Dein Kleidungsstück (max. 5 Bilder)</div>
-        <div id="imgDropZone" onclick="document.getElementById('imgFileInput').click()" style="
-          border:2px dashed var(--border);border-radius:var(--radius);padding:28px;text-align:center;
-          cursor:pointer;transition:border .2s;margin-bottom:12px;
-        " onmouseenter="this.style.borderColor='var(--orange)'" onmouseleave="this.style.borderColor='var(--border)'">
-          <div style="font-size:2rem;margin-bottom:8px">👕</div>
-          <div style="font-size:.85rem;color:var(--muted)">Klicken oder Bilder hierhin ziehen</div>
-          <div style="font-size:.75rem;color:var(--muted);margin-top:4px">JPG, PNG – bis zu 5 Bilder</div>
-        </div>
-        <input type="file" id="imgFileInput" accept="image/*" multiple style="display:none" onchange="handleImgUpload(event)"/>
-        <div id="imgPreviews" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px"></div>
-        <div id="imgCount" style="font-size:.75rem;color:var(--muted)">0 / 5 Bilder</div>
-      </div>
-
-      <!-- RIGHT: Model wählen -->
-      <div class="card">
-        <div class="card-title">👤 Model auswählen</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" id="modelGrid">
-
-          <div class="model-card" onclick="selectModel(0)" id="model-0" style="
-            background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);
-            padding:6px;cursor:pointer;text-align:center;transition:all .2s;overflow:hidden;
-          ">
-            <img src="model1.jpg" style="width:100%;height:160px;object-fit:cover;object-position:top;border-radius:6px;display:block;">
-          </div>
-
-          <div class="model-card" onclick="selectModel(1)" id="model-1" style="
-            background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);
-            padding:6px;cursor:pointer;text-align:center;transition:all .2s;overflow:hidden;
-          ">
-            <img src="model2.jpg" style="width:100%;height:160px;object-fit:cover;object-position:top;border-radius:6px;display:block;">
-          </div>
-
-          <div class="model-card" onclick="selectModel(2)" id="model-2" style="
-            background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);
-            padding:6px;cursor:pointer;text-align:center;transition:all .2s;overflow:hidden;
-          ">
-            <img src="model3.jpg" style="width:100%;height:160px;object-fit:cover;object-position:top;border-radius:6px;display:block;">
-          </div>
-
-          <div class="model-card" onclick="selectModel(3)" id="model-3" style="
-            background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);
-            padding:6px;cursor:pointer;text-align:center;transition:all .2s;overflow:hidden;
-          ">
-            <img src="model4.jpg" style="width:100%;height:160px;object-fit:cover;object-position:top;border-radius:6px;display:block;">
-          </div>
-
-          <div class="model-card" onclick="selectModel(4)" id="model-4" style="
-            background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);
-            padding:6px;cursor:pointer;text-align:center;transition:all .2s;overflow:hidden;
-            grid-column:span 2;
-          ">
-            <img src="model5.jpg" style="width:100%;height:160px;object-fit:cover;object-position:top;border-radius:6px;display:block;">
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- Generate Button -->
-    <div style="max-width:1000px;margin-top:20px">
-      <button id="generateImgBtn" onclick="generateOutfitImage()" class="btn btn-primary" style="width:100%;padding:14px;font-size:1rem">
-        ✨ Bild generieren
-      </button>
-    </div>
-
-    <!-- Result -->
-    <div id="imgResult" style="max-width:1000px;margin-top:20px;display:none">
-      <div class="card">
-        <div class="card-title">🎉 Generiertes Bild</div>
-        <img id="generatedImg" style="width:100%;max-width:500px;border-radius:var(--radius);display:block;margin:0 auto" />
-        <div style="text-align:center;margin-top:12px">
-          <button onclick="downloadGeneratedImg()" class="btn btn-outline">⬇️ Bild herunterladen</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="imgLoading" style="max-width:1000px;margin-top:20px;display:none;text-align:center;padding:40px">
-      <div style="font-size:2rem;margin-bottom:12px">⏳</div>
-      <div style="color:var(--muted)">KI generiert dein Bild… das dauert ca. 15–30 Sekunden</div>
-    </div>
-
-    <div id="imgError" style="max-width:1000px;margin-top:20px;display:none">
-      <div class="card" style="border-color:rgba(239,68,68,.3)">
-        <div style="color:var(--danger);font-size:.9rem" id="imgErrorMsg"></div>
-      </div>
-    </div>
-  </div>
-
   <!-- ── FEEDBACK ── -->
   <div class="page" id="page-feedback">
     <div class="page-title">Dein <span>Feedback</span></div>
