@@ -82,7 +82,7 @@ module.exports = async function handler(req, res) {
     }
 
     const imageUrl = Array.isArray(result.output) ? result.output[0] : result.output;
-    if (!imageUrl) return res.status(500).json({ error: 'Kein Bild generiert' });
+    if (!imageUrl) return res.status(500).json({ error: `Kein Bild. Status: ${result.status}. Output: ${JSON.stringify(result.output)}` });
 
     res.status(200).json({ image: imageUrl });
 
