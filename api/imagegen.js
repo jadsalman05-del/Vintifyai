@@ -11,53 +11,70 @@ module.exports = async function handler(req, res) {
   try {
     const { images, modelIndex } = req.body;
 
-    const modelPath = path.join(process.cwd(), `model${(modelIndex || 0) + 1}.jpg`);
-    const modelBuffer = fs.readFileSync(modelPath);
-    const modelBase64 = modelBuffer.toString('base64');
-
-    const parts = [
-      {
-        text: "Virtual try-on: The first image is a person. The following images show a clothing item. Generate a realistic photo of the person wearing exactly that clothing item. Keep their face, pose, body, hair, and background identical. Only change the clothing."
-      },
-      { inline_data: { mime_type: 'image/jpeg', data: modelBase64 } }
-    ];
-
+    // Describe clothing with Gemini Vision (text only - free)
+    const visionParts = [];
     for (const img of images) {
       const match = img.match(/^data:([^;]+);base64,(.+)$/);
       if (match) {
-        parts.push({ inline_data: { mime_type: match[1], data: match[2] } });
+        visionParts.push({ inline_data: { mime_type: match[1], data: match[2] } });
       }
     }
+    visionParts.push({
+      text: "Describe this exact clothing item very precisely: exact color(s), brand name and logo details, type of garment, all visible text, patterns, materials, and unique design features. Be extremely detailed."
+    });
 
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${process.env.GOOGLE_API_KEY}`,
+    const visionRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GOOGLE_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts }],
-          generationConfig: { responseModalities: ['IMAGE', 'TEXT'] }
-        })
+        body: JSON.stringify({ contents: [{ parts: visionParts }] })
       }
     );
+    const visionData = await visionRes.json();
+    const clothingDesc = visionData.candidates?.[0]?.content?.parts?.[0]?.text || "a stylish clothing item";
 
-    const geminiData = await geminiRes.json();
+    // Read model image
+    const modelPath = path.join(process.cwd(), `model${(modelIndex || 0) + 1}.jpg`);
+    const modelBuffer = fs.readFileSync(modelPath);
 
-    if (geminiData.error) {
-      return res.status(500).json({ error: `Gemini: ${geminiData.error.message}` });
+    const prompt = `Virtual try-on photo shoot. Take the person in this photo and dress them in this EXACT clothing item: ${clothingDesc}. The clothing must be reproduced exactly as described with all logos, colors, text and details. Do NOT change the person's face, skin, pose, hair, or background. Only swap the clothing.`;
+
+    const formData = new FormData();
+    formData.append('model', 'gpt-image-1');
+    formData.append('prompt', prompt);
+    formData.append('n', '1');
+    formData.append('size', '1024x1024');
+    formData.append('quality', 'high');
+    formData.append('image[]', new Blob([modelBuffer], { type: 'image/jpeg' }), 'model.jpg');
+
+    for (let i = 0; i < images.length; i++) {
+      const match = images[i].match(/^data:([^;]+);base64,(.+)$/);
+      if (match) {
+        const buf = Buffer.from(match[2], 'base64');
+        formData.append('image[]', new Blob([buf], { type: match[1] }), `clothing${i}.jpg`);
+      }
     }
 
-    const responseParts = geminiData.candidates?.[0]?.content?.parts || [];
-    const imagePart = responseParts.find(p => p.inline_data);
+    const editRes = await fetch('https://api.openai.com/v1/images/edits', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` },
+      body: formData
+    });
 
-    if (!imagePart) {
-      const textPart = responseParts.find(p => p.text);
-      return res.status(500).json({ error: textPart?.text || JSON.stringify(geminiData).slice(0, 200) });
+    const editData = await editRes.json();
+
+    if (editData.error) {
+      return res.status(500).json({ error: editData.error.message });
     }
 
-    const image = `data:${imagePart.inline_data.mime_type};base64,${imagePart.inline_data.data}`;
+    const b64 = editData.data?.[0]?.b64_json;
+    const url = editData.data?.[0]?.url;
+    const image = b64 ? `data:image/png;base64,${b64}` : url;
+
+    if (!image) return res.status(500).json({ error: 'Kein Bild generiert' });
+
     res.status(200).json({ image });
-
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
