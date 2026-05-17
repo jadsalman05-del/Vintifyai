@@ -991,10 +991,7 @@ if (localStorage.getItem('va_session')) {
 
       <div class="card">
         <div class="card-title">🔔 Discord Webhook</div>
-        <div style="font-size:.78rem;color:var(--muted);margin-bottom:8px">Benachrichtigungen bei neuen Bewerbungen</div>
-        <input class="form-input" id="adminWebhook" placeholder="https://discord.com/api/webhooks/..." style="margin-bottom:8px;font-size:.78rem"/>
-        <input class="form-input" id="adminDiscordInvite" placeholder="Discord Einladungslink (für Kontakt-Button)" style="margin-bottom:8px;font-size:.78rem"/>
-        <button class="btn btn-primary btn-sm" onclick="saveAdminSettings()">Speichern</button>
+        <div style="font-size:.78rem;color:var(--muted)">Webhook und Discord-Link sind fest konfiguriert.</div>
       </div>
     </div>
 
@@ -2762,18 +2759,15 @@ function saveAdminSettings() {
 // DISCORD
 // ═══════════════════════════════════════════
 const DEFAULT_WEBHOOK = 'https://discord.com/api/webhooks/1504647125408026725/TWLcokBucoCfvHlveTTiZkpoJbjHm27Eyo8WMdogVq1zPZTluGc09so84SGob4U6rbJH'
+const DISCORD_INVITE = 'https://discord.gg/rGqXbjAMvh'
 async function sendDiscordWebhook(payload) {
-  const url = localStorage.getItem('vfy_discord_webhook') || DEFAULT_WEBHOOK
-  if (!url) return
   try {
-    await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) })
+    await fetch(DEFAULT_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) })
   } catch(e) { console.warn('Discord webhook error:', e) }
 }
 
 function openDiscordSupport() {
-  const inv = localStorage.getItem('vfy_discord_invite')
-  if (inv) { window.open(inv, '_blank') }
-  else showToast('⚠️ Discord-Link noch nicht konfiguriert (Admin → Webhook-Einstellungen)')
+  window.open(DISCORD_INVITE, '_blank')
 }
 
 // ═══════════════════════════════════════════
