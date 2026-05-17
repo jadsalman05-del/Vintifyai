@@ -20,7 +20,7 @@ module.exports = async function handler(req, res) {
       }
     }
     visionParts.push({
-      text: "Describe this clothing item in detail: color, brand/logo if visible, type, fabric, and key design details. Be specific and concise."
+      text: "Describe this exact clothing item in detail: color, brand/logo if visible, type, fabric, and all design details. Be very specific."
     });
 
     const visionRes = await fetch(
@@ -34,24 +34,35 @@ module.exports = async function handler(req, res) {
     const visionData = await visionRes.json();
     const clothingDesc = visionData.candidates?.[0]?.content?.parts?.[0]?.text || "a stylish clothing item";
 
-    // Read model image from disk
+    // Read model image
     const modelPath = path.join(process.cwd(), `model${(modelIndex || 0) + 1}.jpg`);
     const modelBuffer = fs.readFileSync(modelPath);
-    const modelBase64 = modelBuffer.toString('base64');
 
-    // Use OpenAI image edit to dress the model in the clothing
-    const prompt = `The person in this photo is now wearing: ${clothingDesc}. Keep the person's face, pose, body, and background exactly the same. Only change the clothing to match the description precisely.`;
+    const prompt = `This is a virtual try-on. Dress the person from the FIRST image in this exact clothing item: ${clothingDesc}. The clothing must match the description exactly. Keep the person's face, pose, body, hair, and background identical. Only replace their clothing.`;
 
+    // Send model photo + all clothing photos to OpenAI
     const formData = new FormData();
     formData.append('model', 'gpt-image-1');
     formData.append('prompt', prompt);
     formData.append('n', '1');
     formData.append('size', '1024x1024');
     formData.append(
-      'image',
+      'image[]',
       new Blob([modelBuffer], { type: 'image/jpeg' }),
-      `model${(modelIndex || 0) + 1}.jpg`
+      `model.jpg`
     );
+
+    for (let i = 0; i < images.length; i++) {
+      const match = images[i].match(/^data:([^;]+);base64,(.+)$/);
+      if (match) {
+        const buf = Buffer.from(match[2], 'base64');
+        formData.append(
+          'image[]',
+          new Blob([buf], { type: match[1] }),
+          `clothing${i}.jpg`
+        );
+      }
+    }
 
     const editRes = await fetch('https://api.openai.com/v1/images/edits', {
       method: 'POST',
