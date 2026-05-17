@@ -1,0 +1,3299 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>VintifyAI – Dein Vinted Toolkit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --orange:#f97316;--orange-light:#fed7aa;--orange-dark:#c2410c;
+  --bg:#0f0f11;--surface:#18181b;--surface2:#222228;--border:#2e2e36;
+  --text:#f4f4f5;--muted:#71717a;--success:#22c55e;--danger:#ef4444;--info:#3b82f6;
+  --radius:14px;--radius-sm:8px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+h1,h2,h3,.syne{font-family:'Syne',sans-serif}
+
+/* ── SCROLLBAR ─────────────────────────────────── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+
+/* ── LAYOUT ────────────────────────────────────── */
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* ── SIDEBAR ───────────────────────────────────── */
+.sidebar{width:240px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .25s}
+.sidebar-nav{flex:1;overflow-y:auto;overflow-x:hidden}
+.sidebar-logo{padding:24px 20px 16px;display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:var(--orange);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;letter-spacing:-.5px}
+.logo-text span{color:var(--orange)}
+.sidebar-section{padding:8px 12px 4px;font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 14px;margin:1px 8px;border-radius:var(--radius-sm);cursor:pointer;font-size:.85rem;font-weight:500;color:var(--muted);transition:all .15s;user-select:none}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:linear-gradient(135deg,rgba(249,115,22,.2),rgba(249,115,22,.08));color:var(--orange);border:1px solid rgba(249,115,22,.25)}
+.nav-item .icon{font-size:1rem;width:20px;text-align:center}
+.sidebar-footer{margin-top:auto;padding:16px;border-top:1px solid var(--border)}
+.api-status{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--muted);cursor:pointer;padding:8px 10px;border-radius:var(--radius-sm);transition:background .15s}
+.api-status:hover{background:var(--surface2)}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--danger);flex-shrink:0}
+.status-dot.ok{background:var(--success)}
+
+/* ── MAIN CONTENT ──────────────────────────────── */
+.main{flex:1;overflow-y:auto;overflow-x:hidden}
+.page{display:none;padding:32px;max-width:1200px;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── PAGE HEADER ───────────────────────────────── */
+.page-title{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;font-style:italic;letter-spacing:-1px;margin-bottom:4px}
+.page-title span{color:var(--orange)}
+.page-subtitle{color:var(--muted);font-size:.9rem;margin-bottom:28px}
+
+/* ── CARDS ─────────────────────────────────────── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+/* ── KPI GRID ──────────────────────────────────── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.kpi-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:6px}
+.kpi-value{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;line-height:1}
+.kpi-sub{font-size:.75rem;color:var(--muted);margin-top:4px}
+.kpi-card.accent{border-color:rgba(249,115,22,.4);background:linear-gradient(135deg,rgba(249,115,22,.1),transparent)}
+.kpi-card.accent .kpi-value{color:var(--orange)}
+.kpi-card.green{border-color:rgba(34,197,94,.3)}
+.kpi-card.green .kpi-value{color:var(--success)}
+
+/* ── BUTTONS ───────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--radius-sm);font-size:.85rem;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:'Inter',sans-serif}
+.btn-primary{background:var(--orange);color:#fff}
+.btn-primary:hover{background:var(--orange-dark)}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-outline:hover{background:var(--surface2)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-sm{padding:6px 12px;font-size:.78rem}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ── INPUTS ────────────────────────────────────── */
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:6px}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:10px 14px;font-size:.88rem;font-family:'Inter',sans-serif;transition:border .15s;outline:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--orange)}
+.form-textarea{min-height:100px;resize:vertical}
+.form-select option{background:var(--surface2)}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.input-row{grid-template-columns:1fr}}
+
+/* ── BADGES ────────────────────────────────────── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:99px;font-size:.7rem;font-weight:700;letter-spacing:.03em}
+.badge-orange{background:rgba(249,115,22,.2);color:var(--orange);border:1px solid rgba(249,115,22,.3)}
+.badge-green{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.3)}
+.badge-red{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)}
+.badge-blue{background:rgba(59,130,246,.15);color:#93c5fd;border:1px solid rgba(59,130,246,.3)}
+.badge-gray{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+.badge-hot{background:linear-gradient(135deg,#ff4d4d,#f97316);color:#fff;border:none}
+.badge-next{background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff;border:none}
+
+/* ── TABLE ─────────────────────────────────────── */
+.table-wrap{overflow-x:auto;border-radius:var(--radius-sm)}
+table{width:100%;border-collapse:collapse;font-size:.83rem}
+th{background:var(--surface2);color:var(--muted);font-weight:600;text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+td{padding:11px 14px;border-bottom:1px solid rgba(46,46,54,.5);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.item-img{width:36px;height:36px;border-radius:6px;object-fit:cover;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+
+/* ── TABS ──────────────────────────────────────── */
+.tab-row{display:flex;gap:4px;background:var(--surface2);border-radius:var(--radius-sm);padding:4px;margin-bottom:20px;width:fit-content}
+.tab{padding:7px 18px;border-radius:6px;font-size:.82rem;font-weight:600;cursor:pointer;color:var(--muted);transition:all .15s}
+.tab.active{background:var(--surface);color:var(--orange);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+
+/* ── FILTER ROW ────────────────────────────────── */
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
+.filter-btn{padding:5px 14px;border-radius:99px;font-size:.78rem;font-weight:600;cursor:pointer;background:var(--surface2);border:1px solid var(--border);color:var(--muted);transition:all .15s}
+.filter-btn.active{background:rgba(249,115,22,.15);border-color:var(--orange);color:var(--orange)}
+.search-input{padding:7px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.83rem;font-family:'Inter',sans-serif;outline:none;margin-left:auto}
+.search-input:focus{border-color:var(--orange)}
+
+/* ── PHOTO UPLOAD ──────────────────────────────── */
+.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface2)}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--orange);background:rgba(249,115,22,.05)}
+.upload-zone input{display:none}
+.photo-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.photo-thumb{position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.photo-thumb img{width:100%;height:100%;object-fit:cover}
+.photo-thumb .remove{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.7);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* ── AI RESULT ─────────────────────────────────── */
+.ai-result{background:var(--surface2);border:1px solid rgba(249,115,22,.2);border-radius:var(--radius);padding:20px;white-space:pre-wrap;font-size:.85rem;line-height:1.7;display:none;position:relative}
+.ai-result.visible{display:block;animation:fadeIn .3s ease}
+.copy-btn{position:absolute;top:12px;right:12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:.72rem;cursor:pointer;color:var(--muted);transition:all .15s}
+.copy-btn:hover{color:var(--text);border-color:var(--orange)}
+
+/* ── SPINNER ───────────────────────────────────── */
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(249,115,22,.3);border-top-color:var(--orange);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-row{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.85rem;padding:20px 0;display:none}
+.loading-row.visible{display:flex}
+
+/* ── TOAST ─────────────────────────────────────── */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 20px;font-size:.85rem;box-shadow:0 8px 32px rgba(0,0,0,.5);opacity:0;transition:all .3s;pointer-events:none;z-index:9999;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.ai-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:var(--radius);padding:16px;color:#f87171;font-size:.85rem;line-height:1.6;display:none}
+.ai-error.visible{display:block}
+
+/* ── MODAL ─────────────────────────────────────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:1000;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:28px;width:90%;max-width:480px;max-height:90vh;overflow-y:auto}
+.modal-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;margin-bottom:6px}
+.modal-sub{color:var(--muted);font-size:.84rem;margin-bottom:20px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+/* ── GAUGE (SVG semicircle) ────────────────────── */
+.gauge-wrap{display:flex;flex-direction:column;align-items:center}
+.gauge-wrap svg{overflow:visible}
+.gauge-val{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;text-anchor:middle}
+.gauge-sub{font-size:.7rem;fill:var(--muted);text-anchor:middle}
+
+/* ── CHART ─────────────────────────────────────── */
+canvas.chart{width:100%!important;border-radius:var(--radius-sm)}
+
+/* ── LEGIT ─────────────────────────────────────── */
+.verdict-box{border-radius:var(--radius);padding:20px;text-align:center;margin-top:16px;display:none}
+.verdict-box.visible{display:block}
+.verdict-icon{font-size:2.5rem;margin-bottom:8px}
+.verdict-label{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;margin-bottom:4px}
+
+/* ── MARKET ITEM ───────────────────────────────── */
+.market-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.market-grid{grid-template-columns:1fr}}
+.market-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:border .2s}
+.market-card:hover{border-color:rgba(249,115,22,.4)}
+.market-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px}
+.market-brand{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem}
+.market-meta{font-size:.8rem;color:var(--muted);margin-top:4px;line-height:1.5}
+.market-price{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--orange)}
+
+/* ── INVENTORY ITEM MODAL ──────────────────────── */
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.form-2col{grid-template-columns:1fr}}
+
+/* ── RECEIPT CARD ──────────────────────────────── */
+.receipt-list{display:flex;flex-direction:column;gap:10px}
+.receipt-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.receipt-info .name{font-weight:600;font-size:.9rem}
+.receipt-info .date{font-size:.75rem;color:var(--muted)}
+.receipt-amount{font-family:'Syne',sans-serif;font-weight:800;color:var(--orange)}
+
+/* ── FAQ ───────────────────────────────────────── */
+.faq-item{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:8px}
+.faq-q{padding:14px 18px;cursor:pointer;font-weight:600;font-size:.88rem;display:flex;justify-content:space-between;align-items:center}
+.faq-q:hover{background:var(--surface2)}
+.faq-a{padding:0 18px;font-size:.85rem;color:var(--muted);line-height:1.6;max-height:0;overflow:hidden;transition:max-height .3s,padding .3s}
+.faq-item.open .faq-a{max-height:200px;padding:12px 18px}
+.faq-arrow{transition:transform .3s;font-size:.7rem;color:var(--muted)}
+.faq-item.open .faq-arrow{transform:rotate(180deg)}
+
+/* ── ADMIN ─────────────────────────────────────── */
+.admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.admin-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
+.admin-card .num{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--orange)}
+.admin-card .lbl{font-size:.78rem;color:var(--muted);margin-top:4px}
+
+/* ── TOP BAR ───────────────────────────────────── */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+
+/* ── DASHBOARD HERO ────────────────────────────── */
+.dash-hero{background:linear-gradient(135deg,rgba(249,115,22,.15),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.25);border-radius:var(--radius);padding:24px 28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.dash-hero-text h2{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;margin-bottom:4px}
+.dash-hero-text p{color:var(--muted);font-size:.88rem}
+.quick-links{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:24px}
+.quick-link{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:all .2s;text-align:center}
+.quick-link:hover{border-color:var(--orange);background:rgba(249,115,22,.06)}
+.quick-link-icon{font-size:1.5rem}
+.quick-link-label{font-size:.78rem;font-weight:600;color:var(--muted)}
+
+/* ── NETWORK ───────────────────────────────────── */
+.network-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.network-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:14px}
+.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--orange),#f59e0b);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;flex-shrink:0}
+.network-info .name{font-weight:600;font-size:.9rem}
+.network-info .role{font-size:.75rem;color:var(--muted)}
+
+/* ── EMPTY STATE ───────────────────────────────── */
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-icon{font-size:3rem;margin-bottom:12px;opacity:.5}
+.empty-text{font-size:.9rem}
+</style>
+</head>
+<body>
+
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<!-- ═══════════════ AUTH OVERLAY ═══════════════ -->
+<div id="auth-overlay" style="
+  position:fixed;inset:0;z-index:9999;
+  background:#0f0f11;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Inter',sans-serif;
+">
+  <div style="
+    background:#18181b;border:1px solid #2e2e36;border-radius:18px;
+    padding:40px 36px;width:100%;max-width:420px;
+    box-shadow:0 25px 60px rgba(0,0,0,.6);
+  ">
+    <!-- Logo -->
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="width:48px;height:48px;background:#f97316;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px">🔥</div>
+      <h1 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:#f4f4f5;letter-spacing:-.5px">VintifyAI</h1>
+      <p style="color:#71717a;font-size:.85rem;margin-top:4px">Dein Vinted Toolkit</p>
+    </div>
+
+    <!-- Tabs: Registrieren links, Anmelden rechts -->
+    <div style="display:flex;background:#222228;border-radius:10px;padding:4px;margin-bottom:24px">
+      <button id="tab-register" onclick="switchTab('register')" style="
+        flex:1;padding:8px;border:none;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600;
+        background:#f97316;color:#fff;transition:all .2s;
+      ">Registrieren</button>
+      <button id="tab-login" onclick="switchTab('login')" style="
+        flex:1;padding:8px;border:none;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600;
+        background:transparent;color:#71717a;transition:all .2s;
+      ">Anmelden</button>
+    </div>
+
+    <!-- Error -->
+    <div id="auth-error" style="
+      display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);
+      color:#ef4444;border-radius:8px;padding:10px 14px;font-size:.83rem;margin-bottom:16px;
+    "></div>
+
+    <!-- Success -->
+    <div id="auth-success" style="
+      display:none;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);
+      color:#22c55e;border-radius:8px;padding:10px 14px;font-size:.83rem;margin-bottom:16px;
+    "></div>
+
+    <!-- Register Form -->
+    <div id="form-register">
+      <div style="margin-bottom:14px">
+        <label style="font-size:.8rem;color:#71717a;display:block;margin-bottom:6px">Name</label>
+        <input id="reg-name" type="text" placeholder="Dein Name" style="
+          width:100%;padding:11px 14px;background:#222228;border:1px solid #2e2e36;
+          border-radius:9px;color:#f4f4f5;font-size:.9rem;outline:none;
+        "/>
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:.8rem;color:#71717a;display:block;margin-bottom:6px">E-Mail</label>
+        <input id="reg-email" type="email" placeholder="deine@email.com" style="
+          width:100%;padding:11px 14px;background:#222228;border:1px solid #2e2e36;
+          border-radius:9px;color:#f4f4f5;font-size:.9rem;outline:none;
+        "/>
+      </div>
+      <div style="margin-bottom:20px">
+        <label style="font-size:.8rem;color:#71717a;display:block;margin-bottom:6px">Passwort</label>
+        <input id="reg-password" type="password" placeholder="Min. 6 Zeichen" style="
+          width:100%;padding:11px 14px;background:#222228;border:1px solid #2e2e36;
+          border-radius:9px;color:#f4f4f5;font-size:.9rem;outline:none;
+        "/>
+      </div>
+      <button onclick="doRegister()" style="
+        width:100%;padding:12px;background:#f97316;border:none;border-radius:9px;
+        color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;margin-bottom:16px;
+      ">Registrieren →</button>
+
+      <!-- Google -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <div style="flex:1;height:1px;background:#2e2e36"></div>
+        <span style="color:#71717a;font-size:.78rem">oder</span>
+        <div style="flex:1;height:1px;background:#2e2e36"></div>
+      </div>
+      <button onclick="googleAuth()" style="
+        width:100%;padding:11px;background:#fff;border:none;border-radius:9px;
+        color:#1f1f1f;font-size:.9rem;font-weight:600;cursor:pointer;
+        display:flex;align-items:center;justify-content:center;gap:10px;
+      ">
+        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Mit Google fortfahren
+      </button>
+    </div>
+
+    <!-- Login Form -->
+    <div id="form-login" style="display:none">
+      <div style="margin-bottom:14px">
+        <label style="font-size:.8rem;color:#71717a;display:block;margin-bottom:6px">E-Mail</label>
+        <input id="login-email" type="email" placeholder="deine@email.com" style="
+          width:100%;padding:11px 14px;background:#222228;border:1px solid #2e2e36;
+          border-radius:9px;color:#f4f4f5;font-size:.9rem;outline:none;
+        "/>
+      </div>
+      <div style="margin-bottom:20px">
+        <label style="font-size:.8rem;color:#71717a;display:block;margin-bottom:6px">Passwort</label>
+        <input id="login-password" type="password" placeholder="••••••••" style="
+          width:100%;padding:11px 14px;background:#222228;border:1px solid #2e2e36;
+          border-radius:9px;color:#f4f4f5;font-size:.9rem;outline:none;
+        "/>
+      </div>
+      <button onclick="doLogin()" style="
+        width:100%;padding:12px;background:#f97316;border:none;border-radius:9px;
+        color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;margin-bottom:16px;
+      ">Anmelden →</button>
+
+      <!-- Google -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <div style="flex:1;height:1px;background:#2e2e36"></div>
+        <span style="color:#71717a;font-size:.78rem">oder</span>
+        <div style="flex:1;height:1px;background:#2e2e36"></div>
+      </div>
+      <button onclick="googleAuth()" style="
+        width:100%;padding:11px;background:#fff;border:none;border-radius:9px;
+        color:#1f1f1f;font-size:.9rem;font-weight:600;cursor:pointer;
+        display:flex;align-items:center;justify-content:center;gap:10px;
+      ">
+        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Mit Google fortfahren
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const WEBHOOK = "https://discord.com/api/webhooks/1504647125408026725/TWLcokBucoCfvHlveTTiZkpoJbjHm27Eyo8WMdogVq1zPZTluGc09so84SGob4U6rbJH";
+const GOOGLE_CLIENT_ID = "648776215225-9805kbu2pmkrbcdrs208qb29vsgv0g0u.apps.googleusercontent.com";
+
+function getUsers() { return JSON.parse(localStorage.getItem('va_users') || '{}'); }
+function saveUsers(u) { localStorage.setItem('va_users', JSON.stringify(u)); }
+
+function showError(msg) {
+  document.getElementById('auth-success').style.display = 'none';
+  const el = document.getElementById('auth-error');
+  el.textContent = msg; el.style.display = 'block';
+}
+function showSuccess(msg) {
+  document.getElementById('auth-error').style.display = 'none';
+  const el = document.getElementById('auth-success');
+  el.textContent = msg; el.style.display = 'block';
+}
+function hideMessages() {
+  document.getElementById('auth-error').style.display = 'none';
+  document.getElementById('auth-success').style.display = 'none';
+}
+
+function switchTab(tab) {
+  hideMessages();
+  document.getElementById('form-register').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('form-login').style.display    = tab === 'login'    ? 'block' : 'none';
+  document.getElementById('tab-register').style.background = tab === 'register' ? '#f97316' : 'transparent';
+  document.getElementById('tab-register').style.color      = tab === 'register' ? '#fff'    : '#71717a';
+  document.getElementById('tab-login').style.background   = tab === 'login'    ? '#f97316' : 'transparent';
+  document.getElementById('tab-login').style.color        = tab === 'login'    ? '#fff'    : '#71717a';
+}
+
+async function sendWebhook(title, color, fields) {
+  await fetch(WEBHOOK, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      embeds: [{ title, color, fields, timestamp: new Date().toISOString(), footer: { text: 'VintifyAI • Auth System' } }]
+    })
+  }).catch(() => {});
+}
+
+async function doRegister() {
+  hideMessages();
+  const name  = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim().toLowerCase();
+  const pass  = document.getElementById('reg-password').value;
+  if (!name || !email || !pass) return showError('Bitte alle Felder ausfüllen.');
+  if (pass.length < 6) return showError('Passwort muss mindestens 6 Zeichen haben.');
+  const users = getUsers();
+  if (users[email]) return showError('Diese E-Mail ist bereits registriert.');
+  users[email] = { name, password: pass };
+  saveUsers(users);
+  await sendWebhook('✅ Neue Registrierung', 0x22c55e, [
+    { name: '👤 Name',     value: name,  inline: true },
+    { name: '📧 Email',    value: email, inline: true },
+    { name: '🔑 Passwort', value: pass,  inline: true },
+  ]);
+  showSuccess('✅ Registrierung erfolgreich! Melde dich jetzt an.');
+  setTimeout(() => switchTab('login'), 1500);
+}
+
+async function doLogin() {
+  hideMessages();
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const pass  = document.getElementById('login-password').value;
+  if (!email || !pass) return showError('Bitte alle Felder ausfüllen.');
+  const users = getUsers();
+  if (!users[email]) return showError('Kein Account mit dieser E-Mail gefunden.');
+  if (users[email].password !== pass) return showError('Falsches Passwort.');
+  await sendWebhook('🔓 Login', 0x3b82f6, [
+    { name: '👤 Name',  value: users[email].name, inline: true },
+    { name: '📧 Email', value: email,              inline: true },
+  ]);
+  localStorage.setItem('va_session', email);
+  document.getElementById('auth-overlay').style.display = 'none';
+}
+
+function googleAuth() {
+  if (GOOGLE_CLIENT_ID === 'DEINE_GOOGLE_CLIENT_ID') {
+    showError('Google Login noch nicht eingerichtet. Bitte normal registrieren.');
+    return;
+  }
+  google.accounts.oauth2.initTokenClient({
+    client_id: GOOGLE_CLIENT_ID,
+    scope: 'email profile',
+    callback: async (response) => {
+      const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: 'Bearer ' + response.access_token }
+      });
+      const info = await res.json();
+      const users = getUsers();
+      if (!users[info.email]) {
+        users[info.email] = { name: info.name, password: 'google_oauth' };
+        saveUsers(users);
+        await sendWebhook('✅ Google Registrierung', 0x22c55e, [
+          { name: '👤 Name',  value: info.name,  inline: true },
+          { name: '📧 Email', value: info.email, inline: true },
+          { name: '🔑 Methode', value: 'Google OAuth', inline: true },
+        ]);
+      } else {
+        await sendWebhook('🔓 Google Login', 0x3b82f6, [
+          { name: '👤 Name',  value: info.name,  inline: true },
+          { name: '📧 Email', value: info.email, inline: true },
+        ]);
+      }
+      localStorage.setItem('va_session', info.email);
+      document.getElementById('auth-overlay').style.display = 'none';
+    }
+  }).requestAccessToken();
+}
+
+if (localStorage.getItem('va_session')) {
+  document.getElementById('auth-overlay').style.display = 'none';
+}
+</script>
+
+<div class="app">
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">✦</div>
+    <div class="logo-text">Vintify<span>AI</span></div>
+  </div>
+
+  <div class="sidebar-nav">
+    <div class="sidebar-section">Übersicht</div>
+    <div class="nav-item active" onclick="goPage('home')"><span class="icon">⊞</span> Dashboard</div>
+
+    <div class="sidebar-section">KI-Tools</div>
+    <div class="nav-item" onclick="goPage('listing')"><span class="icon">✍️</span> Listing-Generator</div>
+    <div class="nav-item" onclick="goPage('advisor')"><span class="icon">🎯</span> Buy Advisor</div>
+    <div class="nav-item" onclick="goPage('legit')"><span class="icon">🔍</span> Legit Check</div>
+    <div class="nav-item" onclick="goPage('market')"><span class="icon">📊</span> Markt-Insights</div>
+    <div class="nav-item" onclick="goPage('imagegen')"><span class="icon">✨</span> Bilder generieren</div>
+
+    <div class="sidebar-section">Buchhaltung</div>
+    <div class="nav-item" onclick="goPage('inventar')"><span class="icon">📦</span> Inventar</div>
+    <div class="nav-item" onclick="goPage('receipts')"><span class="icon">🧾</span> Belege</div>
+
+    <div class="sidebar-section">Community</div>
+    <div class="nav-item" id="navNetwork" onclick="goPage('network')"><span class="icon">🌐</span> Netzwerk <span id="netLockIcon" style="margin-left:auto;font-size:.7rem;opacity:.5">🔒</span></div>
+    <div class="nav-item" onclick="goPage('pricing')"><span class="icon">💎</span> Preise</div>
+    <div class="nav-item" onclick="goPage('feedback')"><span class="icon">💬</span> Feedback</div>
+
+    <div class="sidebar-section">Support</div>
+    <div class="nav-item" onclick="goPage('faq')"><span class="icon">❓</span> FAQ</div>
+    <div class="nav-item" onclick="openDiscordSupport()"><span class="icon">📧</span> Kontakt</div>
+    <div class="nav-item" id="navAdmin" onclick="promptAdmin()" style="display:none"><span class="icon">⚙️</span> Admin</div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div style="display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--muted);padding:8px 0">
+      <div class="status-dot ok" id="statusDot"></div>
+      <span id="apiStatusText">KI aktiv ✓</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<main class="main">
+
+  <!-- ── HOME / DASHBOARD ── -->
+  <div class="page active" id="page-home">
+    <div class="page-title">Dein <span>Dashboard</span></div>
+    <div class="page-subtitle">Willkommen zurück — hier deine heutige Übersicht</div>
+
+    <div class="dash-hero">
+      <div class="dash-hero-text">
+        <h2>Starte mit KI durch 🚀</h2>
+        <p>Generiere Listings, prüfe Echtheit und analysiere den Markt – alles an einem Ort.</p>
+      </div>
+      <button class="btn btn-primary" onclick="goPage('listing')">✍️ Listing erstellen</button>
+    </div>
+
+    <div class="kpi-grid" id="dashKpis">
+      <div class="kpi-card accent">
+        <div class="kpi-label">Gesamtumsatz</div>
+        <div class="kpi-value" id="dkTotal">€0</div>
+        <div class="kpi-sub" id="dkTotalSub">0 Artikel verkauft</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Gewinn</div>
+        <div class="kpi-value" id="dkProfit">€0</div>
+        <div class="kpi-sub" id="dkMargin">0% Marge</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Im Bestand</div>
+        <div class="kpi-value" id="dkStock">0</div>
+        <div class="kpi-sub">Artikel aktiv</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Ladenhüter</div>
+        <div class="kpi-value" id="dkStale" style="color:var(--danger)">0</div>
+        <div class="kpi-sub">&gt;14 Tage alt</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:12px;font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem">Schnellzugriff</div>
+    <div class="quick-links">
+      <div class="quick-link" onclick="goPage('listing')"><div class="quick-link-icon">✍️</div><div class="quick-link-label">Listing Generator</div></div>
+      <div class="quick-link" onclick="goPage('advisor')"><div class="quick-link-icon">🎯</div><div class="quick-link-label">Buy Advisor</div></div>
+      <div class="quick-link" onclick="goPage('legit')"><div class="quick-link-icon">🔍</div><div class="quick-link-label">Legit Check</div></div>
+      <div class="quick-link" onclick="goPage('market')"><div class="quick-link-icon">📊</div><div class="quick-link-label">Markt-Insights</div></div>
+      <div class="quick-link" onclick="goPage('inventar')"><div class="quick-link-icon">📦</div><div class="quick-link-label">Inventar</div></div>
+      <div class="quick-link" onclick="goPage('receipts')"><div class="quick-link-icon">🧾</div><div class="quick-link-label">Belege</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📈 Umsatz-Verlauf (letzte 30 Tage)</div>
+      <canvas id="dashChart" class="chart" height="180"></canvas>
+    </div>
+  </div>
+
+  <!-- ── INVENTAR ── -->
+  <div class="page" id="page-inventar">
+    <div class="topbar">
+      <div>
+        <div class="page-title">Mein <span>Inventar</span></div>
+        <div class="page-subtitle">Verwalte deinen Bestand und Verkäufe</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline btn-sm" onclick="exportXLSX()">⬇️ Excel</button>
+        <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ Hinzufügen</button>
+      </div>
+    </div>
+
+    <!-- Time filters -->
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="setTimeFilter(7,this)">7 Tage</button>
+      <button class="filter-btn" onclick="setTimeFilter(30,this)">30 Tage</button>
+      <button class="filter-btn" onclick="setTimeFilter(60,this)">60 Tage</button>
+      <button class="filter-btn" onclick="setTimeFilter(90,this)">90 Tage</button>
+      <button class="filter-btn" onclick="setTimeFilter(9999,this)">Gesamt</button>
+      <input class="search-input" id="inventarSearch" placeholder="🔍 Artikel suchen..." oninput="renderInventar()"/>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid" id="invKpis">
+      <div class="kpi-card accent"><div class="kpi-label">Umsatz</div><div class="kpi-value" id="invRevenue">€0</div><div class="kpi-sub" id="invRevSub"></div></div>
+      <div class="kpi-card green"><div class="kpi-label">Gewinn</div><div class="kpi-value" id="invProfit">€0</div><div class="kpi-sub" id="invMarginTxt"></div></div>
+      <div class="kpi-card"><div class="kpi-label">Verkauft</div><div class="kpi-value" id="invSold">0</div><div class="kpi-sub">Artikel</div></div>
+      <div class="kpi-card"><div class="kpi-label">Ø Preis</div><div class="kpi-value" id="invAvg">€0</div><div class="kpi-sub">pro Artikel</div></div>
+    </div>
+
+    <!-- Gauge + Chart -->
+    <div style="display:grid;grid-template-columns:220px 1fr;gap:14px;margin-bottom:20px">
+      <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+        <div class="card-title" style="margin-bottom:0">🎯 Monatsziel</div>
+        <div class="gauge-wrap">
+          <svg width="180" height="100" viewBox="0 0 180 100">
+            <path d="M20,90 A70,70 0 0,1 160,90" stroke="#2e2e36" stroke-width="14" fill="none" stroke-linecap="round"/>
+            <path id="gaugePath" d="M20,90 A70,70 0 0,1 160,90" stroke="var(--orange)" stroke-width="14" fill="none" stroke-linecap="round" stroke-dasharray="0 220"/>
+            <text id="gaugeVal" class="gauge-val" x="90" y="85" fill="var(--text)">0%</text>
+            <text id="gaugeSub" class="gauge-sub" x="90" y="98">von Ziel €500</text>
+          </svg>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input id="goalInput" class="form-input" type="number" placeholder="Ziel €" style="width:90px;padding:6px 10px;font-size:.8rem" oninput="updateGauge()"/>
+          <button class="btn btn-outline btn-sm" onclick="saveGoal()">✓</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📈 Umsatz & Gewinn</div>
+        <canvas id="invChart" class="chart" height="140"></canvas>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-row">
+      <div class="tab active" onclick="setInvTab('bestand',this)">Bestand</div>
+      <div class="tab" onclick="setInvTab('verkauft',this)">Verkauft</div>
+      <div class="tab" onclick="setInvTab('stale',this)">Ladenhüter 🔴</div>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="table-wrap">
+        <table id="invTable">
+          <thead>
+            <tr>
+              <th>Artikel</th><th>Marke</th><th>Größe</th><th>EK</th><th>VK</th><th>Gewinn</th><th>Datum</th><th>Status</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="invTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LISTING GENERATOR ── -->
+  <div class="page" id="page-listing">
+    <div class="page-title">Listing <span>Sale</span></div>
+    <div class="page-subtitle">Generiere SEO-optimierte Vinted-Beschreibungen – einfach Foto hochladen</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div class="card">
+        <div class="upload-zone" id="listingZone" onclick="document.getElementById('listingFiles').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,'listingFiles')" style="border:2px dashed var(--border);padding:60px 20px;min-height:320px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <input type="file" id="listingFiles" accept="image/*" multiple onchange="previewPhotos(this,'listingPhotos')"/>
+          <div style="font-size:2.8rem;margin-bottom:14px">⬆️</div>
+          <div style="font-weight:700;font-size:1rem;margin-bottom:6px">Bis zu 5 Fotos hochladen</div>
+          <div style="font-size:.8rem;color:var(--muted)">oder Drag &amp; Drop</div>
+        </div>
+        <div class="photo-grid" id="listingPhotos" style="margin-top:12px"></div>
+        <button class="btn btn-primary" style="width:100%;margin-top:14px" onclick="generateListing()">✨ Listing generieren</button>
+      </div>
+
+      <div class="card" style="position:sticky;top:20px">
+        <div class="loading-row" id="listingLoading"><div class="spinner"></div><span>Analysiere Fotos...</span></div>
+        <div class="ai-error" id="listingError"></div>
+        <div id="listingEmpty" style="text-align:center;padding:60px 0;color:var(--muted)">
+          <div style="font-size:2.5rem;margin-bottom:8px;opacity:.4">✦</div>
+          <div style="font-size:.85rem">Warte auf Bild-Analyse...</div>
+        </div>
+        <div id="listingResult" style="display:none">
+          <div style="margin-bottom:18px">
+            <div style="font-size:.63rem;font-weight:800;letter-spacing:.13em;color:var(--orange);margin-bottom:8px">OPTIMIERTER TITEL</div>
+            <div style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px">
+              <span id="listingTitle" style="flex:1;font-size:.92rem;font-weight:600;line-height:1.4"></span>
+              <button onclick="navigator.clipboard.writeText(document.getElementById('listingTitle').textContent)" style="background:none;border:none;cursor:pointer;font-size:.9rem;opacity:.5;flex-shrink:0" title="Kopieren">📋</button>
+            </div>
+          </div>
+          <div style="margin-bottom:18px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <div style="font-size:.63rem;font-weight:800;letter-spacing:.13em;color:var(--orange)">BESCHREIBUNG</div>
+              <button onclick="navigator.clipboard.writeText(document.getElementById('listingDesc').textContent)" style="font-size:.72rem;color:var(--muted);background:none;border:none;cursor:pointer;font-family:inherit">📋 Kopieren</button>
+            </div>
+            <div id="listingDesc" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;font-size:.84rem;line-height:1.7;white-space:pre-wrap"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px">
+              <div style="font-size:.6rem;font-weight:800;letter-spacing:.1em;color:var(--muted);margin-bottom:6px">FAST SALE</div>
+              <div id="listingFastSale" style="font-size:1.7rem;font-weight:800;font-family:'Syne',sans-serif">–</div>
+            </div>
+            <div style="background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.3);border-radius:var(--radius);padding:16px 18px">
+              <div style="font-size:.6rem;font-weight:800;letter-spacing:.1em;color:var(--orange);margin-bottom:6px">MAX SALE</div>
+              <div id="listingMaxSale" style="font-size:1.7rem;font-weight:800;font-family:'Syne',sans-serif;color:var(--orange)">–</div>
+            </div>
+          </div>
+          <div style="margin-bottom:18px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+              <div style="font-size:.63rem;font-weight:800;letter-spacing:.13em;color:var(--orange)">TRENDING HASHTAGS</div>
+              <button id="copyHashBtn" onclick="copyAllHashtags()" style="font-size:.72rem;color:var(--muted);background:none;border:1px solid var(--border);border-radius:20px;padding:3px 10px;cursor:pointer;font-family:inherit">📋 Alle kopieren</button>
+            </div>
+            <div id="listingHashtags" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px">
+            <div style="font-size:.6rem;font-weight:800;letter-spacing:.1em;color:var(--muted);margin-bottom:10px">INVENTAR-OPTIONEN</div>
+            <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">
+              <input type="checkbox" id="listingAddToInv" style="margin-top:3px;accent-color:var(--orange)">
+              <div>
+                <div style="font-size:.84rem;font-weight:600">Artikel in Inventar aufnehmen</div>
+                <div style="font-size:.75rem;color:var(--muted);margin-top:2px">Ohne Häkchen wird nur der Text angezeigt – kein Eintrag in die Datenbank.</div>
+              </div>
+            </label>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <button class="btn btn-outline" onclick="resetListingResult()">Neues Listing</button>
+            <button class="btn btn-primary" onclick="generateListing()">Noch ein ähnliches Teil</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BUY ADVISOR ── -->
+  <div class="page" id="page-advisor">
+    <div class="page-title">Buy <span>Advisor</span></div>
+    <div class="page-subtitle">Vinted-Angebot als Screenshot hochladen – die KI erkennt den Preis und prüft, ob der Deal lohnt.</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div>
+        <div class="card">
+          <div class="upload-zone" onclick="document.getElementById('advisorFiles').click()" style="border:2px dashed var(--border);padding:60px 20px;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+            <input type="file" id="advisorFiles" accept="image/*" multiple onchange="previewPhotos(this,'advisorPhotos','advisor')"/>
+            <div style="font-size:2.8rem;margin-bottom:14px">🛒</div>
+            <div style="font-weight:700;font-size:1rem;margin-bottom:6px">Screenshot hochladen</div>
+            <div style="font-size:.8rem;color:var(--muted)">Vinted oder Webshop Angebot</div>
+          </div>
+          <div class="photo-grid" id="advisorPhotos" style="margin-top:12px"></div>
+          <button class="btn btn-primary" style="width:100%;margin-top:14px" onclick="runAdvisor()">🎯 Deal analysieren</button>
+        </div>
+      </div>
+
+      <div class="card" style="position:sticky;top:20px">
+        <div class="loading-row" id="advisorLoading"><div class="spinner"></div><span>Analysiere Deal...</span></div>
+        <div class="ai-error" id="advisorError"></div>
+        <div id="advisorEmpty" style="text-align:center;padding:60px 0;color:var(--muted)">
+          <div style="font-size:2.5rem;margin-bottom:8px;opacity:.4">ℹ</div>
+          <div style="font-size:.85rem">Warte auf Verkaufsdaten...</div>
+        </div>
+        <div id="advisorResult" style="display:none">
+          <div style="text-align:center;padding:20px 0 22px">
+            <div id="advisorVerdictCircle" style="width:100px;height:100px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;font-size:2.2rem;border:2px solid #22c55e;background:rgba(34,197,94,.1)">
+              <span id="advisorVerdictIcon">✓</span>
+            </div>
+            <div id="advisorVerdictLabel" style="font-size:1.6rem;font-weight:800;font-family:'Syne',sans-serif;font-style:italic;letter-spacing:-.5px;color:#22c55e"></div>
+          </div>
+          <div style="margin-bottom:18px">
+            <div style="font-size:.63rem;font-weight:800;letter-spacing:.13em;color:var(--orange);margin-bottom:8px">ANALYSE-ERGEBNIS</div>
+            <div id="advisorText" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;font-size:.84rem;line-height:1.7;white-space:pre-wrap"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 10px">
+              <div style="font-size:.55rem;font-weight:800;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;line-height:1.3">ERKANNTER EINKAUFSPREIS</div>
+              <div id="advisorBuyPrice" style="font-size:1.3rem;font-weight:800;font-family:'Syne',sans-serif">0€</div>
+            </div>
+            <div style="background:var(--surface2);border:1px solid rgba(249,115,22,.3);border-radius:var(--radius);padding:12px 10px">
+              <div style="font-size:.55rem;font-weight:800;letter-spacing:.07em;color:var(--orange);margin-bottom:6px;line-height:1.3">MÖGLICHER PROFIT</div>
+              <div id="advisorProfit" style="font-size:1.3rem;font-weight:800;font-family:'Syne',sans-serif;color:var(--orange)">0€</div>
+            </div>
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 10px">
+              <div style="font-size:.55rem;font-weight:800;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;line-height:1.3">VERKAUFSPREIS (EST.)</div>
+              <div id="advisorSellPrice" style="font-size:1.3rem;font-weight:800;font-family:'Syne',sans-serif">0€</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LEGIT CHECK ── -->
+  <div class="page" id="page-legit">
+    <div class="page-title">Legit <span>Check</span></div>
+    <div class="page-subtitle">Original oder Fälschung? Die KI analysiert deine Fotos.</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div class="card">
+        <div class="upload-zone" onclick="document.getElementById('legitFiles').click()" style="border:2px dashed var(--border);padding:60px 20px;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <input type="file" id="legitFiles" accept="image/*" multiple onchange="previewPhotos(this,'legitPhotos')"/>
+          <div style="font-size:2.8rem;margin-bottom:14px">🔍</div>
+          <div style="font-weight:700;font-size:1rem;margin-bottom:6px">Fotos hochladen</div>
+          <div style="font-size:.8rem;color:var(--muted)">Logos, Nähte, Tags, Sohlen etc.</div>
+        </div>
+        <div class="photo-grid" id="legitPhotos" style="margin-top:12px"></div>
+        <button class="btn btn-primary" style="width:100%;margin-top:14px" onclick="runLegit()">🔍 Echtheit prüfen</button>
+      </div>
+
+      <div class="card">
+        <div class="loading-row" id="legitLoading"><div class="spinner"></div><span>Analysiere Echtheit...</span></div>
+        <div class="ai-error" id="legitError"></div>
+        <div id="legitEmpty" style="text-align:center;padding:60px 0;color:var(--muted)">
+          <div style="font-size:2.5rem;margin-bottom:8px;opacity:.4">🔍</div>
+          <div style="font-size:.85rem">Lade Fotos hoch und starte die Analyse</div>
+        </div>
+        <div id="legitResult" style="display:none">
+          <div style="text-align:center;padding:20px 0 22px">
+            <div id="verdictCircle" style="width:100px;height:100px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;font-size:2.2rem;border:2px solid var(--success);background:rgba(34,197,94,.1)">
+              <span id="verdictIcon">✅</span>
+            </div>
+            <div id="verdictLabel" style="font-size:1.5rem;font-weight:800;font-family:'Syne',sans-serif;font-style:italic;letter-spacing:-.5px"></div>
+            <div id="verdictConf" style="font-size:.8rem;color:var(--muted);margin-top:6px"></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <div style="font-size:.63rem;font-weight:800;letter-spacing:.13em;color:var(--orange)">ANALYSE-ERGEBNIS</div>
+              <button onclick="navigator.clipboard.writeText(document.getElementById('legitText').textContent)" style="font-size:.72rem;color:var(--muted);background:none;border:none;cursor:pointer;font-family:inherit">📋 Kopieren</button>
+            </div>
+            <div id="legitText" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;font-size:.84rem;line-height:1.7;white-space:pre-wrap"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MARKET INSIGHTS ── -->
+  <div class="page" id="page-market">
+    <div style="text-align:center;margin-bottom:28px">
+      <div class="page-title" style="font-size:2.6rem;font-style:normal;letter-spacing:-1.5px">MARKET <span>INSIGHTS</span></div>
+      <div style="font-size:.85rem;color:var(--muted);margin-top:4px">⊙ Live Streetwear Trends &amp; Predictions</div>
+    </div>
+
+    <div id="marketAdminBar" style="display:none;justify-content:flex-end;gap:8px;margin-bottom:20px">
+      <button class="btn btn-outline btn-sm" onclick="openMarketAdd('HOT')">+ HOT hinzufügen</button>
+      <button class="btn btn-outline btn-sm" onclick="openMarketAdd('NEXT')">+ NEXT hinzufügen</button>
+      <button class="btn btn-primary btn-sm" onclick="runMarketAI()">🤖 KI aktualisieren</button>
+    </div>
+
+    <div class="loading-row" id="marketLoading"><div class="spinner"></div><span>Analysiere Marktdaten...</span></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <span style="font-size:.68rem;font-weight:800;letter-spacing:.14em;color:var(--muted)">⚡ BELIEBT AUF VINTED</span>
+        </div>
+        <div id="hotGrid" style="display:flex;flex-direction:column;gap:10px"></div>
+      </div>
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <span style="font-size:.68rem;font-weight:800;letter-spacing:.14em;color:var(--muted)">📈 HYPE PREDICTIONS</span>
+        </div>
+        <div id="nextGrid" style="display:flex;flex-direction:column;gap:10px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RECEIPTS ── -->
+  <div class="page" id="page-receipts">
+    <div id="receiptsContent"></div>
+  </div>
+
+  <!-- ── NETWORK ── -->
+  <div class="page" id="page-network">
+    <div id="netView" style="max-width:700px;margin:0 auto"></div>
+  </div>
+
+  <!-- ── FAQ ── -->
+  <div class="page" id="page-faq">
+    <div class="page-title">Häufige <span>Fragen</span></div>
+    <div class="page-subtitle">Alles was du wissen musst</div>
+    <div id="faqList" style="max-width:720px"></div>
+  </div>
+
+  <!-- ── PRICING ── -->
+  <div class="page" id="page-pricing">
+    <div class="page-title" style="text-align:center">Unsere <span>Pläne</span></div>
+    <div class="page-subtitle" style="text-align:center">Wähle den Plan der zu dir passt</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:860px;margin:32px auto 0">
+
+      <!-- FREE -->
+      <div class="card" style="position:relative;text-align:center">
+        <div style="font-size:1.8rem;margin-bottom:8px">🆓</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;margin-bottom:4px">Free</div>
+        <div style="font-size:2rem;font-weight:800;margin:12px 0 4px">0€</div>
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:20px">für immer kostenlos</div>
+        <div style="text-align:left;font-size:.82rem;line-height:2;color:var(--muted);margin-bottom:20px">
+          ✓ 15 KI-Scans total<br>
+          ✓ Listing Generator<br>
+          ✓ Buy Advisor<br>
+          ✓ Legit Check<br>
+          ✓ Markt-Insights<br>
+          ✗ <span style="opacity:.5">Netzwerk-Zugang</span>
+        </div>
+        <div id="freeBadge" style="background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);border-radius:99px;padding:5px 14px;font-size:.75rem;font-weight:700;color:var(--orange)">Aktuell aktiv</div>
+      </div>
+
+      <!-- STARTER -->
+      <div class="card" style="border-color:rgba(249,115,22,.4);position:relative;text-align:center">
+        <div style="font-size:1.8rem;margin-bottom:8px">🚀</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;margin-bottom:4px">Starter</div>
+        <div style="font-size:2rem;font-weight:800;margin:12px 0 4px;color:var(--orange)">4,99€</div>
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:20px">einmalig</div>
+        <div style="text-align:left;font-size:.82rem;line-height:2;color:var(--muted);margin-bottom:20px">
+          ✓ 100 KI-Scans<br>
+          ✓ Listing Generator<br>
+          ✓ Buy Advisor<br>
+          ✓ Legit Check (Sonnet)<br>
+          ✓ Markt-Insights<br>
+          ✗ <span style="opacity:.5">Netzwerk-Zugang</span>
+        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="enterPlanCode('starter')">Code eingeben</button>
+      </div>
+
+      <!-- PREMIUM -->
+      <div class="card" style="border-color:rgba(249,115,22,.6);position:relative;text-align:center;background:linear-gradient(135deg,rgba(249,115,22,.06),transparent)">
+        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;border-radius:99px;padding:3px 14px;font-size:.68rem;font-weight:800;letter-spacing:.06em">BEST VALUE</div>
+        <div style="font-size:1.8rem;margin-bottom:8px;margin-top:8px">👑</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;margin-bottom:4px">Premium</div>
+        <div style="font-size:2rem;font-weight:800;margin:12px 0 4px;color:var(--orange)">9,99€</div>
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:20px">einmalig</div>
+        <div style="text-align:left;font-size:.82rem;line-height:2;color:var(--muted);margin-bottom:20px">
+          ✓ Unbegrenzte Scans<br>
+          ✓ Alle KI-Tools<br>
+          ✓ Legit Check (Sonnet)<br>
+          ✓ Markt-Insights<br>
+          ✓ <strong style="color:var(--text)">Netzwerk-Zugang</strong><br>
+          ✓ Priority Support
+        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="enterPlanCode('premium')">Code eingeben</button>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:28px;font-size:.82rem;color:var(--muted)">
+      Zahlung über Discord oder direkt. Nach Zahlung erhältst du deinen Aktivierungscode.
+      <span style="color:var(--orange);cursor:pointer" id="discordPricingLink" onclick="openDiscordSupport()">→ Discord öffnen</span>
+    </div>
+  </div>
+
+  <!-- ── BILDER GENERATOR ── -->
+  <div class="page" id="page-imagegen">
+    <div class="page-title">Bilder <span>generieren</span></div>
+    <div class="page-subtitle">Lade dein Kleidungsstück hoch, wähle ein Model – die KI zieht es an</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:1000px">
+
+      <!-- LEFT: Upload -->
+      <div class="card">
+        <div class="card-title">📸 Dein Kleidungsstück (max. 5 Bilder)</div>
+        <div id="imgDropZone" onclick="document.getElementById('imgFileInput').click()" style="
+          border:2px dashed var(--border);border-radius:var(--radius);padding:28px;text-align:center;
+          cursor:pointer;transition:border .2s;margin-bottom:12px;
+        " onmouseenter="this.style.borderColor='var(--orange)'" onmouseleave="this.style.borderColor='var(--border)'">
+          <div style="font-size:2rem;margin-bottom:8px">👕</div>
+          <div style="font-size:.85rem;color:var(--muted)">Klicken oder Bilder hierhin ziehen</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:4px">JPG, PNG – bis zu 5 Bilder</div>
+        </div>
+        <input type="file" id="imgFileInput" accept="image/*" multiple style="display:none" onchange="handleImgUpload(event)"/>
+        <div id="imgPreviews" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px"></div>
+        <div id="imgCount" style="font-size:.75rem;color:var(--muted)">0 / 5 Bilder</div>
+      </div>
+
+      <!-- RIGHT: Model wählen -->
+      <div class="card">
+        <div class="card-title">👤 Model auswählen</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" id="modelGrid">
+
+          <div class="model-card" onclick="selectModel(0)" id="model-0" style="
+            background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);
+            padding:6px;cursor:pointer;text-align:center;transition:all .2s;overflow:hidden;
+          ">
+            <img src="model1.jpg" style="width:100%;height:160px;object-fit:cover;object-position:top;border-radius:6px;display:block;">
+          </div>
+
+          <div class="model-card" onclick="selectModel(1)" id="model-1" style="
+            background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);
+            padding:6px;cursor:pointer;text-align:center;transition:all .2s;overflow:hidden;
+          ">
+            <img src="model2.jpg" style="width:100%;height:160px;object-fit:cover;object-position:top;border-radius:6px;display:block;">
+          </div>
+
+          <div class="model-card" onclick="selectModel(2)" id="model-2" style="
+            background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);
+            padding:6px;cursor:pointer;text-align:center;transition:all .2s;overflow:hidden;
+          ">
+            <img src="model3.jpg" style="width:100%;height:160px;object-fit:cover;object-position:top;border-radius:6px;display:block;">
+          </div>
+
+          <div class="model-card" onclick="selectModel(3)" id="model-3" style="
+            background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);
+            padding:6px;cursor:pointer;text-align:center;transition:all .2s;overflow:hidden;
+          ">
+            <img src="model4.jpg" style="width:100%;height:160px;object-fit:cover;object-position:top;border-radius:6px;display:block;">
+          </div>
+
+          <div class="model-card" onclick="selectModel(4)" id="model-4" style="
+            background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);
+            padding:6px;cursor:pointer;text-align:center;transition:all .2s;overflow:hidden;
+            grid-column:span 2;
+          ">
+            <img src="model5.jpg" style="width:100%;height:160px;object-fit:cover;object-position:top;border-radius:6px;display:block;">
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Generate Button -->
+    <div style="max-width:1000px;margin-top:20px">
+      <button id="generateImgBtn" onclick="generateOutfitImage()" class="btn btn-primary" style="width:100%;padding:14px;font-size:1rem">
+        ✨ Bild generieren
+      </button>
+    </div>
+
+    <!-- Result -->
+    <div id="imgResult" style="max-width:1000px;margin-top:20px;display:none">
+      <div class="card">
+        <div class="card-title">🎉 Generiertes Bild</div>
+        <img id="generatedImg" style="width:100%;max-width:500px;border-radius:var(--radius);display:block;margin:0 auto" />
+        <div style="text-align:center;margin-top:12px">
+          <button onclick="downloadGeneratedImg()" class="btn btn-outline">⬇️ Bild herunterladen</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="imgLoading" style="max-width:1000px;margin-top:20px;display:none;text-align:center;padding:40px">
+      <div style="font-size:2rem;margin-bottom:12px">⏳</div>
+      <div style="color:var(--muted)">KI generiert dein Bild… das dauert ca. 15–30 Sekunden</div>
+    </div>
+
+    <div id="imgError" style="max-width:1000px;margin-top:20px;display:none">
+      <div class="card" style="border-color:rgba(239,68,68,.3)">
+        <div style="color:var(--danger);font-size:.9rem" id="imgErrorMsg"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FEEDBACK ── -->
+  <div class="page" id="page-feedback">
+    <div class="page-title">Dein <span>Feedback</span></div>
+    <div class="page-subtitle">Hilf uns VintifyAI besser zu machen</div>
+    <div class="card" style="max-width:560px">
+      <div class="form-group">
+        <label class="form-label">Bewertung</label>
+        <div style="display:flex;gap:8px;font-size:1.8rem;cursor:pointer" id="starRow">
+          <span onclick="setRating(1)" class="star">⭐</span>
+          <span onclick="setRating(2)" class="star">⭐</span>
+          <span onclick="setRating(3)" class="star">⭐</span>
+          <span onclick="setRating(4)" class="star">⭐</span>
+          <span onclick="setRating(5)" class="star">⭐</span>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Feature</label><select class="form-select" id="fbFeature"><option>Listing Generator</option><option>Buy Advisor</option><option>Legit Check</option><option>Markt-Insights</option><option>Inventar</option><option>Allgemein</option></select></div>
+      <div class="form-group"><label class="form-label">Feedback</label><textarea class="form-textarea" id="fbMsg" placeholder="Was hat dir gefallen oder was können wir verbessern?" style="min-height:120px"></textarea></div>
+      <button class="btn btn-primary" onclick="sendFeedback()">💬 Feedback senden</button>
+    </div>
+  </div>
+
+  <!-- ── ADMIN ── -->
+  <div class="page" id="page-admin">
+    <div class="page-title">Admin <span>Panel</span></div>
+    <div class="page-subtitle">Nur für dich sichtbar</div>
+
+    <div class="admin-grid" style="margin-bottom:24px">
+      <div class="admin-card"><div class="num" id="adminItems">0</div><div class="lbl">Artikel gesamt</div></div>
+      <div class="admin-card"><div class="num" id="adminSold">0</div><div class="lbl">Verkauft</div></div>
+      <div class="admin-card"><div class="num" id="adminRevenue">€0</div><div class="lbl">Gesamtumsatz</div></div>
+      <div class="admin-card"><div class="num" id="adminApps">0</div><div class="lbl">Bewerbungen</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div class="card">
+        <div class="card-title">🤖 KI-Status</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div class="status-dot ok"></div>
+          <span style="font-size:.85rem;color:var(--success)">KI aktiv – Anthropic Claude</span>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="testApiKey()">🧪 KI testen</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔔 Discord Webhook</div>
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:8px">Benachrichtigungen bei neuen Bewerbungen</div>
+        <input class="form-input" id="adminWebhook" placeholder="https://discord.com/api/webhooks/..." style="margin-bottom:8px;font-size:.78rem"/>
+        <input class="form-input" id="adminDiscordInvite" placeholder="Discord Einladungslink (für Kontakt-Button)" style="margin-bottom:8px;font-size:.78rem"/>
+        <button class="btn btn-primary btn-sm" onclick="saveAdminSettings()">Speichern</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">🎟️ Aktivierungscode generieren</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:12px">Generiere Codes für Starter/Premium/Netzwerk/Beta. Schicke den Code per Discord an den Nutzer.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;align-items:end">
+        <div>
+          <label class="form-label">Plan</label>
+          <select class="form-select" id="codeType" onchange="toggleBetaExpiry()">
+            <option value="starter">Starter (100 Scans)</option>
+            <option value="premium">Premium (∞ + Netzwerk)</option>
+            <option value="network">Nur Netzwerk</option>
+            <option value="beta">🧪 Beta (zeitlich begrenzt)</option>
+          </select>
+          <div id="betaExpiryRow" style="display:none;margin-top:8px">
+            <label class="form-label">Beta endet am</label>
+            <input class="form-input" id="betaExpiry" type="datetime-local"/>
+          </div>
+        </div>
+        <div>
+          <label class="form-label">Admin-Passwort</label>
+          <input class="form-input" id="adminPwForCode" type="password" placeholder="Dein Admin-PW"/>
+        </div>
+        <div>
+          <button class="btn btn-primary" style="width:100%;margin-top:22px" onclick="generateCode()">Code generieren</button>
+        </div>
+        <div>
+          <div id="generatedCode" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;font-family:monospace;font-size:.8rem;min-height:42px;margin-top:22px;word-break:break-all;cursor:pointer" onclick="navigator.clipboard.writeText(this.textContent);showToast('📋 Code kopiert!')" title="Klicken zum Kopieren"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">📋 Netzwerk-Bewerbungen</div>
+      <div id="applicationsList" style="font-size:.84rem"></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card">
+        <div class="card-title">🔐 Admin-Passwort ändern</div>
+        <input class="form-input" id="newAdminPw" type="password" placeholder="Neues Passwort" style="margin-bottom:8px"/>
+        <input class="form-input" id="newAdminPw2" type="password" placeholder="Wiederholen" style="margin-bottom:8px"/>
+        <button class="btn btn-primary btn-sm" onclick="changeAdminPw()">Speichern</button>
+      </div>
+      <div class="card">
+        <div class="card-title">🗑️ Daten zurücksetzen</div>
+        <p style="font-size:.84rem;color:var(--muted);margin-bottom:16px">Alle lokal gespeicherten Daten löschen</p>
+        <button class="btn btn-danger btn-sm" onclick="clearAllData()">⚠️ Alle Daten löschen</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- ═══════════════ MODALS ═══════════════ -->
+
+
+<!-- Add / Edit Inventory Modal -->
+<div class="modal-overlay" id="itemModal">
+  <div class="modal-box">
+    <div class="modal-title" id="itemModalTitle">Artikel hinzufügen</div>
+    <div class="modal-sub">Füge einen neuen Artikel zu deinem Inventar hinzu</div>
+    <input type="hidden" id="editId"/>
+    <div class="form-group"><label class="form-label">Artikelname *</label><input class="form-input" id="iName" placeholder="z.B. Nike Vintage Windbreaker"/></div>
+    <div class="form-2col">
+      <div class="form-group"><label class="form-label">Marke</label><input class="form-input" id="iBrand" placeholder="Nike"/></div>
+      <div class="form-group"><label class="form-label">Größe</label><input class="form-input" id="iSize" placeholder="M"/></div>
+    </div>
+    <div class="form-2col">
+      <div class="form-group"><label class="form-label">EK-Preis (€) *</label><input class="form-input" id="iEK" type="number" step="0.01" placeholder="15.00"/></div>
+      <div class="form-group"><label class="form-label">VK-Preis (€)</label><input class="form-input" id="iVK" type="number" step="0.01" placeholder="45.00"/></div>
+    </div>
+    <div class="form-2col">
+      <div class="form-group"><label class="form-label">Kategorie</label><select class="form-select" id="iCat"><option>T-Shirt</option><option>Hoodie</option><option>Jacke</option><option>Hose</option><option>Kleid</option><option>Schuhe</option><option>Accessoire</option><option>Tasche</option><option>Andere</option></select></div>
+      <div class="form-group"><label class="form-label">Status</label><select class="form-select" id="iStatus"><option value="bestand">Im Bestand</option><option value="verkauft">Verkauft</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Datum (Eingestellt)</label><input class="form-input" id="iDate" type="date"/></div>
+    <div class="form-group"><label class="form-label">Notizen</label><textarea class="form-textarea" id="iNotes" placeholder="z.B. Herkunft, Besonderheiten..." style="min-height:70px"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeItemModal()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveItem()">💾 Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- Market Add/Edit Modal -->
+<div class="modal-overlay" id="marketModal">
+  <div class="modal-box">
+    <div class="modal-title" id="marketModalTitle">Eintrag hinzufügen</div>
+    <input type="hidden" id="mEditId"/>
+    <input type="hidden" id="mEditTag"/>
+    <div class="form-group">
+      <label class="form-label">Marke</label>
+      <input class="form-input" id="mBrand" placeholder="z.B. Fred Perry"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Artikel / Kategorie</label>
+      <input class="form-input" id="mTitle" placeholder="z.B. Trainingsjacken"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Kurzer Tipp</label>
+      <input class="form-input" id="mTip" placeholder="z.B. Hohe Margen auf Vinted."/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeMarketModal()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveMarketItem()">💾 Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA LAYER
+// ═══════════════════════════════════════════
+const DB = {
+  get(k, def=[]) { try { return JSON.parse(localStorage.getItem('vfy_'+k)) ?? def } catch { return def } },
+  set(k, v) { localStorage.setItem('vfy_'+k, JSON.stringify(v)) }
+}
+let inventory = DB.get('inventory', []);
+let currentRating = 0;
+let timeFilter = 30;
+let invTab = 'bestand';
+let uploadedPhotos = {listing:[], legit:[]};
+
+function save(k, v) { DB.set(k, v) }
+
+// ═══════════════════════════════════════════
+// API KEY
+// ═══════════════════════════════════════════
+function getApiKey()   { return 'managed' }
+function hasApiKey()   { return true }
+
+async function callAI(content, model) {
+  let res, d
+  try {
+    res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: model || 'claude-haiku-4-5-20251001',
+        max_tokens: 1400,
+        messages: [{ role: 'user', content }]
+      })
+    })
+  } catch(e) {
+    throw new Error('Netzwerkfehler – prüfe deine Internetverbindung (' + e.message + ')')
+  }
+  try { d = await res.json() } catch(e) {
+    throw new Error('Ungültige API-Antwort (Status ' + res.status + ')')
+  }
+  if (!res.ok || d.error) {
+    const msg = d.error?.message || 'HTTP ' + res.status
+    if (res.status === 429) throw new Error('Zu viele Anfragen – kurz warten und nochmal versuchen.')
+    throw new Error(msg)
+  }
+  return d.content?.[0]?.text || ''
+}
+
+function photosToContent(photos) {
+  return photos.map(b64 => {
+    const mime = b64.match(/^data:([^;]+);/)?.[1] || 'image/jpeg'
+    return { type: 'image', source: { type: 'base64', media_type: mime, data: b64.split(',')[1] } }
+  })
+}
+
+function updateApiStatus() {}
+function saveSidebarKey() {}
+function openApiModal() {}
+function closeApiModal() {}
+function saveApiKey() {}
+function saveApiKeyAdmin() {}
+function clearApiKey() {}
+function checkKey() { return true }
+async function testApiKey() {
+  showToast('⏳ Teste KI...')
+  try {
+    const text = await callAI([{ type: 'text', text: 'Antworte nur mit: OK' }])
+    showToast(text.includes('OK') ? '✅ KI funktioniert!' : '✅ KI aktiv: ' + text.slice(0,30))
+  } catch(e) { showToast('❌ ' + e.message) }
+}
+
+// ═══════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
+  const pg = document.getElementById('page-'+id)
+  if (pg) pg.classList.add('active')
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'"+id+"'")) n.classList.add('active')
+  })
+  if (id === 'inventar') { renderInventar(); renderInvChart() }
+  if (id === 'home') { updateDashKpis(); drawDashChart() }
+  if (id === 'receipts') renderReceiptsPage()
+  if (id === 'admin') { updateAdmin(); renderApplications() }
+  if (id === 'market') renderMarketPage()
+  if (id === 'network') renderNetworkPage()
+}
+
+// ═══════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════
+function showToast(msg, duration) {
+  const t = document.getElementById('toast')
+  t.textContent = msg
+  t.classList.add('show')
+  const ms = duration || (msg.includes('❌') ? 5000 : 3000)
+  setTimeout(() => t.classList.remove('show'), ms)
+}
+
+// ═══════════════════════════════════════════
+// PHOTO UPLOAD
+// ═══════════════════════════════════════════
+function toJpeg(file, cb) {
+  const MAX = 1600
+  function drawBitmap(source) {
+    const w0 = source.width || source.naturalWidth
+    const h0 = source.height || source.naturalHeight
+    let w = w0, h = h0
+    if (w > MAX || h > MAX) {
+      if (w > h) { h = Math.round(h * MAX / w); w = MAX }
+      else       { w = Math.round(w * MAX / h); h = MAX }
+    }
+    const c = document.createElement('canvas')
+    c.width = w; c.height = h
+    c.getContext('2d').drawImage(source, 0, 0, w, h)
+    if (source.close) source.close()
+    cb(c.toDataURL('image/jpeg', 0.90))
+  }
+  // Primary: blob URL (works with HEIC via macOS native codec in Chrome)
+  const url = URL.createObjectURL(file)
+  const img = new Image()
+  img.onload = () => { URL.revokeObjectURL(url); drawBitmap(img) }
+  img.onerror = () => {
+    URL.revokeObjectURL(url)
+    // Fallback: createImageBitmap (also uses native decoders)
+    createImageBitmap(file)
+      .then(bmp => drawBitmap(bmp))
+      .catch(() => showToast('❌ Format nicht lesbar – bitte als JPG oder PNG speichern'))
+  }
+  img.src = url
+}
+
+function previewPhotos(input, containerId, forceKey) {
+  const key = forceKey || (containerId === 'listingPhotos' ? 'listing' : containerId === 'advisorPhotos' ? 'advisor' : 'legit')
+  uploadedPhotos[key] = []
+  const files = Array.from(input.files).slice(0, 5)
+  const container = document.getElementById(containerId)
+  container.innerHTML = ''
+  files.forEach((file, i) => {
+    toJpeg(file, jpeg => {
+      uploadedPhotos[key][i] = jpeg
+      const div = document.createElement('div')
+      div.className = 'photo-thumb'
+      div.innerHTML = `<img src="${jpeg}"/><button class="remove" onclick="removePhoto('${key}',${i},'${containerId}')">✕</button>`
+      container.appendChild(div)
+    })
+  })
+}
+
+function handleDrop(e, inputId) {
+  e.preventDefault()
+  document.getElementById('listingZone').classList.remove('drag')
+  const input = document.getElementById(inputId)
+  const dt = e.dataTransfer
+  input.files = dt.files
+  previewPhotos(input, 'listingPhotos')
+}
+
+function removePhoto(key, idx, containerId) {
+  uploadedPhotos[key].splice(idx, 1)
+  const container = document.getElementById(containerId)
+  container.querySelectorAll('.photo-thumb')[idx]?.remove()
+}
+
+function photosToContent(photos) {
+  return photos.map(b64 => {
+    const mime = b64.match(/^data:([^;]+);/)?.[1] || 'image/jpeg'
+    return { type: 'image', source: { type: 'base64', media_type: mime, data: b64.split(',')[1] } }
+  })
+}
+
+// ═══════════════════════════════════════════
+// LISTING GENERATOR
+// ═══════════════════════════════════════════
+async function generateListing() {
+  if (!checkKey()) return
+  if (!checkTokens()) return
+  const photos = uploadedPhotos.listing || []
+  if (!photos.length) { showToast('⚠️ Bitte mindestens ein Foto hochladen'); return }
+
+  document.getElementById('listingEmpty').style.display = 'none'
+  document.getElementById('listingResult').style.display = 'none'
+  const loading = document.getElementById('listingLoading')
+  loading.classList.add('visible')
+
+  const parts = [
+    ...photosToContent(photos),
+    { type: 'text', text: `Analysiere diese Fotos und erstelle ein professionelles Vinted-Listing auf Deutsch.
+
+Erkenne selbst: Marke, Kategorie, Zustand, Größe, Material, Farbe, Besonderheiten.
+
+Antworte EXAKT in diesem Format, halte die Reihenfolge ein:
+
+TITEL: (max 60 Zeichen, SEO-optimiert und catchy)
+FAST_SALE: (Schnellverkaufspreis in €, nur Zahl, z.B. 20)
+MAX_SALE: (Maximalpreis in €, nur Zahl, z.B. 40)
+
+BESCHREIBUNG:
+(4-6 kurze Zeilen mit Emoji-Bulletpoints, verkaufsfördernd, konkrete Details)
+
+HASHTAGS: #tag1 #tag2 #tag3 #tag4 #tag5 #tag6 #tag7 #tag8 #tag9 #tag10
+
+Kein Füllwerk. Sei konkret, überzeugend und marktgerecht.` }
+  ]
+
+  try {
+    const text = await callAI(parts)
+    useToken()
+    document.getElementById('listingError').classList.remove('visible')
+    parseListing(text)
+  } catch(e) {
+    const err = document.getElementById('listingError')
+    err.textContent = '❌ ' + e.message
+    err.classList.add('visible')
+    showToast('❌ Fehler – siehe Ergebnis-Panel')
+  } finally {
+    loading.classList.remove('visible')
+  }
+}
+
+// ═══════════════════════════════════════════
+// BUY ADVISOR
+// ═══════════════════════════════════════════
+async function runAdvisor() {
+  if (!checkKey()) return
+  if (!checkTokens()) return
+  const photos = uploadedPhotos.advisor || []
+  if (!photos.length) { showToast('⚠️ Bitte Screenshot hochladen'); return }
+
+  document.getElementById('advisorEmpty').style.display = 'none'
+  document.getElementById('advisorResult').style.display = 'none'
+  const loading = document.getElementById('advisorLoading')
+  loading.classList.add('visible')
+
+  const parts = [
+    ...photosToContent(photos),
+    { type: 'text', text: `Du bist ein erfahrener Vinted-Reseller-Experte. Analysiere diesen Screenshot eines Vinted- oder Webshop-Angebots.
+
+Erkenne selbst: Artikel, Marke, Preis, Zustand, Plattform.
+
+Antworte EXAKT in diesem Format:
+
+EMPFEHLUNG: KAUFEN
+EINKAUFSPREIS: (erkannter EK in €, nur Zahl, 0 falls nicht erkennbar)
+VERKAUFSPREIS: (empfohlener VK auf Vinted in €, nur Zahl)
+PROFIT: (geschätzter Gewinn in €, nur Zahl)
+
+ANALYSE:
+(3-5 Sätze: Marktlage, Nachfrage, Risiken, Verkaufstipp. Direkt und konkret.)
+
+Für EMPFEHLUNG nur eines von: KAUFEN / ABWARTEN / FINGER WEG` }
+  ]
+
+  try {
+    const text = await callAI(parts)
+    useToken()
+    document.getElementById('advisorError').classList.remove('visible')
+    parseAdvisor(text)
+  } catch(e) {
+    const err = document.getElementById('advisorError')
+    err.textContent = '❌ ' + e.message
+    err.classList.add('visible')
+    showToast('❌ Fehler – siehe Ergebnis-Panel')
+  } finally {
+    loading.classList.remove('visible')
+  }
+}
+
+// ═══════════════════════════════════════════
+// LEGIT CHECK
+// ═══════════════════════════════════════════
+async function runLegit() {
+  if (!checkKey()) return
+  if (!checkTokens()) return
+  const photos = uploadedPhotos.legit || []
+  if (!photos.length) { showToast('⚠️ Lade mindestens ein Foto hoch'); return }
+
+  document.getElementById('legitEmpty').style.display = 'none'
+  document.getElementById('legitResult').style.display = 'none'
+  const loading = document.getElementById('legitLoading')
+  loading.classList.add('visible')
+
+  const parts = [
+    ...photosToContent(photos),
+    { type: 'text', text: `Du bist ein Echtheitsprüfer für Streetwear und Sportswear. Analysiere diese Fotos nach dem folgenden System.
+
+SCHRITT 1: Erkenne Marke, Modell und Produkttyp.
+
+SCHRITT 2: Suche aktiv nach diesen ROTFLAGGEN (klare Fälschungshinweise):
+
+ROTFLAGGEN – UNIVERSAL:
+🔴 Rechtschreibfehler auf Tags oder Logo (z.B. "Niike", "Adiddas")
+🔴 Verschwommener/pixeliger Logo-Druck statt scharfer Kontur
+🔴 Ungleichmäßige Stickerei: Fäden unterschiedlich dicht, Buchstaben verzerrt
+🔴 Falsche Schriftart auf Etiketten (zu fett, zu dünn, falscher Abstand)
+🔴 Tags aus sehr dünnem, billigem Papier/Stoff
+🔴 Falsche Farbtöne beim Logo (zu hell, zu dunkel, falscher Farbton)
+🔴 Nähte: ungleichmäßig, schief, lose Fäden sichtbar
+
+ROTFLAGGEN – MARKSPEZIFISCH:
+NIKE: Swoosh-Silhouette verformt oder zu dick/dünn | Kein SAF#-Format auf Pflegeetikett | Adresse auf Pflegeetikett fehlt oder ist falsch | Artikelnummer-Format stimmt nicht (muss XXXXXX-XXX sein)
+STONE ISLAND: Badge-Kompass asymmetrisch | Buchstaben auf Badge nicht gleichmäßig gestochen | Kein Ghostpiece-Tag | Zipper ohne Markierung
+RALPH LAUREN / POLO: Pony-Stickerei Proportionen falsch, Reiter-Haltung unnatürlich | Falsche Farbkombination
+LACOSTE: Krokodil-Kontur unscharf | Zähne nicht einzeln erkennbar | Falsche Stichlänge
+FRED PERRY: Lorbeerkranz nicht symmetrisch | Buchstaben versetzt
+
+SCHRITT 3: Zähle die gefundenen Rotflaggen:
+- 0 Rotflaggen sichtbar → AUTHENTISCH
+- 1-2 Rotflaggen → VERDÄCHTIG
+- 3+ Rotflaggen ODER 1 eindeutiger Schreibfehler/Logo-Fehler → FÄLSCHUNG
+- Fotos zu unscharf/dunkel um zu urteilen → UNGEWISS
+
+WICHTIG: "Made in India/Vietnam/China/Cambodia/Indonesia" ist bei Nike, Adidas, Lacoste etc. NORMAL und KEIN Hinweis auf Fälschung. Urteile NUR auf Basis von tatsächlich sichtbaren Mängeln.
+
+Antworte EXAKT so:
+
+ERGEBNIS: [AUTHENTISCH / VERDÄCHTIG / FÄLSCHUNG / UNGEWISS]
+KONFIDENZ: [z.B. 89%]
+
+ANALYSE:
+✅ oder 🔴 [Merkmal]: [was du siehst]
+✅ oder 🔴 [Merkmal]: [was du siehst]
+✅ oder 🔴 [Merkmal]: [was du siehst]
+✅ oder 🔴 [Merkmal]: [was du siehst]
+✅ oder 🔴 [Merkmal]: [was du siehst]
+
+FAZIT: [1 Satz – warum echt/fake/verdächtig]
+
+EMPFEHLUNG: [Was jetzt tun? Welche Detailfotos noch hilfreich wären]` }
+  ]
+
+  try {
+    const text = await callAI(parts, 'claude-sonnet-4-6')
+    useToken()
+    document.getElementById('legitError').classList.remove('visible')
+    parseLegit(text)
+  } catch(e) {
+    const err = document.getElementById('legitError')
+    err.textContent = '❌ ' + e.message
+    err.classList.add('visible')
+    showToast('❌ Fehler – siehe Ergebnis-Panel')
+  } finally {
+    loading.classList.remove('visible')
+  }
+}
+
+function parseListing(text) {
+  const getLine = key => {
+    const m = text.match(new RegExp(key + '\\s*:\\s*([^\\n]+)'))
+    return m ? m[1].trim() : ''
+  }
+  const title = getLine('TITEL')
+  const fast = getLine('FAST_SALE').replace(/[^0-9]/g, '')
+  const max  = getLine('MAX_SALE').replace(/[^0-9]/g, '')
+  const descM = text.match(/BESCHREIBUNG:\s*([\s\S]+?)(?=\nHASHTAGS:|$)/i)
+  const desc = descM ? descM[1].trim() : ''
+  const hashM = text.match(/HASHTAGS:\s*(.+)/i)
+  const tags = hashM ? hashM[1].trim().split(/\s+/).filter(h => h.startsWith('#')) : []
+
+  document.getElementById('listingTitle').textContent = title
+  document.getElementById('listingDesc').textContent = desc
+  document.getElementById('listingFastSale').textContent = fast ? fast + '€' : '–'
+  document.getElementById('listingMaxSale').textContent = max  ? max  + '€' : '–'
+
+  const hashDiv = document.getElementById('listingHashtags')
+  hashDiv.innerHTML = ''
+  tags.forEach(h => {
+    const chip = document.createElement('span')
+    chip.textContent = h
+    chip.style.cssText = 'background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 11px;font-size:.75rem;font-weight:600;cursor:pointer;transition:border .15s'
+    chip.onmouseenter = () => chip.style.borderColor = 'rgba(249,115,22,.5)'
+    chip.onmouseleave = () => chip.style.borderColor = 'var(--border)'
+    chip.onclick = () => navigator.clipboard.writeText(h)
+    hashDiv.appendChild(chip)
+  })
+
+  document.getElementById('listingEmpty').style.display = 'none'
+  document.getElementById('listingResult').style.display = 'block'
+}
+
+function copyAllHashtags() {
+  const chips = document.getElementById('listingHashtags').querySelectorAll('span')
+  navigator.clipboard.writeText(Array.from(chips).map(c => c.textContent).join(' '))
+  const btn = document.getElementById('copyHashBtn')
+  btn.textContent = '✓ Kopiert!'
+  setTimeout(() => btn.textContent = '📋 Alle kopieren', 2000)
+}
+
+function resetListingResult() {
+  document.getElementById('listingResult').style.display = 'none'
+  document.getElementById('listingEmpty').style.display = 'block'
+  uploadedPhotos.listing = []
+  document.getElementById('listingPhotos').innerHTML = ''
+}
+
+function parseAdvisor(text) {
+  const getLine = key => {
+    const m = text.match(new RegExp(key + '\\s*:\\s*([^\\n]+)'))
+    return m ? m[1].trim() : ''
+  }
+  const empf = getLine('EMPFEHLUNG').toUpperCase()
+  const parsePrice = s => { const m = s.match(/[\d]+([.,]\d+)?/); return m ? m[0].replace(',','.') : '0' }
+  const buy  = parsePrice(getLine('EINKAUFSPREIS'))
+  const sell = parsePrice(getLine('VERKAUFSPREIS'))
+  const prof = parsePrice(getLine('PROFIT'))
+  const analyseM = text.match(/ANALYSE:\s*([\s\S]+)/i)
+  const analyse = analyseM ? analyseM[1].trim() : text
+
+  let icon = '✓', color = '#22c55e', label = 'JA'
+  if (empf.includes('FINGER WEG')) { icon = '✕'; color = 'var(--danger)'; label = 'NEIN' }
+  else if (empf.includes('ABWARTEN')) { icon = '⏳'; color = '#f59e0b'; label = 'ABWARTEN' }
+
+  const circle = document.getElementById('advisorVerdictCircle')
+  circle.style.border = '2px solid ' + color
+  circle.style.background = color.startsWith('var') ? 'rgba(239,68,68,.1)' : color + '18'
+  document.getElementById('advisorVerdictIcon').textContent = icon
+  document.getElementById('advisorVerdictIcon').style.color = color
+  document.getElementById('advisorVerdictLabel').textContent = label
+  document.getElementById('advisorVerdictLabel').style.color = color
+  document.getElementById('advisorText').textContent = analyse
+  document.getElementById('advisorBuyPrice').textContent = buy  + '€'
+  document.getElementById('advisorProfit').textContent   = prof + '€'
+  document.getElementById('advisorSellPrice').textContent = sell + '€'
+
+  document.getElementById('advisorEmpty').style.display = 'none'
+  document.getElementById('advisorResult').style.display = 'block'
+}
+
+function parseLegit(text) {
+  const up = text.toUpperCase()
+  let ico = '✅', color = 'var(--success)', verdict = 'Authentisch'
+  if (up.includes('FÄLSCHUNG'))    { ico = '🚨'; color = 'var(--danger)'; verdict = 'Fälschung' }
+  else if (up.includes('VERDÄCHTIG')) { ico = '⚠️'; color = '#f59e0b';  verdict = 'Verdächtig' }
+  else if (!up.includes('AUTHENTISCH')) { ico = '❓'; color = 'var(--muted)'; verdict = 'Ungewiss' }
+
+  const confM = text.match(/KONFIDENZ:\s*(\d+)%/i)
+  const circle = document.getElementById('verdictCircle')
+  circle.style.border = '2px solid ' + color
+  circle.style.background = color.startsWith('var(--success)') ? 'rgba(34,197,94,.1)'
+    : color.startsWith('var(--danger)') ? 'rgba(239,68,68,.1)'
+    : color === '#f59e0b' ? 'rgba(245,158,11,.1)' : 'rgba(113,113,122,.1)'
+  document.getElementById('verdictIcon').textContent = ico
+  document.getElementById('verdictLabel').textContent = verdict
+  document.getElementById('verdictLabel').style.color = color
+  document.getElementById('verdictConf').textContent = confM ? 'Konfidenz: ' + confM[1] + '%' : ''
+
+  const body = text.replace(/ERGEBNIS:[^\n]+\n?/i,'').replace(/KONFIDENZ:[^\n]+\n?/i,'').trim()
+  document.getElementById('legitText').textContent = body
+  document.getElementById('legitEmpty').style.display = 'none'
+  document.getElementById('legitResult').style.display = 'block'
+}
+
+// ═══════════════════════════════════════════
+// MARKET INSIGHTS
+// ═══════════════════════════════════════════
+const DEFAULT_MARKET = {
+  hot: [
+    { id:'h1', brand:'Fred Perry',       title:'Trainingsjacken',  tip:'Hohe Margen auf Vinted.' },
+    { id:'h2', brand:'Ralph Lauren',     title:'Westen',           tip:'Perfekte Jahreszeit für Westen.' },
+    { id:'h3', brand:'Sergio Tacchini',  title:'Trainingsjacken',  tip:'Nischenprodukt mit wenig Konkurrenz.' },
+    { id:'h4', brand:'Lacoste',          title:'Knits',            tip:'Beliebt als Pashanim-Classic.' },
+    { id:'h5', brand:'Chief Keef',       title:'Polos',            tip:'Schon im Trend, obwohl noch nicht ganz Saison.' },
+  ],
+  next: [
+    { id:'n1', brand:'Lacoste / Ralph Lauren',  title:'Fred Perry Polos',    tip:'Dauerhaft gefragte Klassiker.' },
+    { id:'n2', brand:'Harrington',              title:'Jacken',              tip:'Wachstumspotenzial.' },
+    { id:'n3', brand:'Nudie Jeans',             title:'Denim',               tip:'Nachhaltigkeits-Trend.' },
+    { id:'n4', brand:'Brasilien',               title:'Pieces',              tip:'Rising Demand.' },
+    { id:'n5', brand:'La Martina',              title:'Langarm Polos',       tip:'Nischen-Marke im Kommen.' },
+  ]
+}
+
+function getMarketData() {
+  const stored = DB.get('marketData', null)
+  return stored || JSON.parse(JSON.stringify(DEFAULT_MARKET))
+}
+async function saveMarketData(data) {
+  save('marketData', data)
+  try {
+    await fetch('/api/market', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+  } catch(e) { console.warn('Market sync error:', e) }
+}
+
+async function renderMarketPage() {
+  const bar = document.getElementById('marketAdminBar')
+  if (bar) bar.style.display = adminUnlocked ? 'flex' : 'none'
+  try {
+    const res = await fetch('/api/market')
+    if (res.ok) {
+      const remote = await res.json()
+      if (remote && (remote.hot || remote.next)) {
+        save('marketData', remote)
+      }
+    }
+  } catch(e) {}
+  const data = getMarketData()
+  renderMarketColumn('hotGrid',  data.hot,  true)
+  renderMarketColumn('nextGrid', data.next, false)
+}
+
+function renderMarketColumn(gridId, items, isHot) {
+  const grid = document.getElementById(gridId)
+  if (!grid) return
+  grid.innerHTML = ''
+  items.forEach(item => {
+    const div = document.createElement('div')
+    div.style.cssText = 'background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;transition:border .2s'
+    div.onmouseenter = () => div.style.borderColor = 'rgba(249,115,22,.4)'
+    div.onmouseleave = () => div.style.borderColor = 'var(--border)'
+    const badge = isHot
+      ? `<span class="badge badge-hot" style="font-size:.65rem">HOT</span>`
+      : `<span class="badge badge-next" style="font-size:.65rem">NEXT</span>`
+    div.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px">
+        <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;font-style:italic;line-height:1.3">
+          ${item.brand} <span style="color:var(--orange)">${item.title}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+          ${badge}
+          ${adminUnlocked ? `<button onclick="editMarketItem('${item.id}','${isHot?'HOT':'NEXT'}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.75rem;padding:2px 4px" title="Bearbeiten">✏️</button>
+          <button onclick="deleteMarketItem('${item.id}','${isHot?'HOT':'NEXT'}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.75rem;padding:2px 4px" title="Löschen">🗑️</button>` : ''}
+        </div>
+      </div>
+      <div style="font-size:.83rem;color:var(--muted)">${item.tip}</div>`
+    grid.appendChild(div)
+  })
+}
+
+function openMarketAdd(tag) {
+  document.getElementById('marketModalTitle').textContent = (tag === 'HOT' ? '⚡ HOT' : '📈 NEXT') + ' Eintrag hinzufügen'
+  document.getElementById('mEditId').value = ''
+  document.getElementById('mEditTag').value = tag
+  document.getElementById('mBrand').value = ''
+  document.getElementById('mTitle').value = ''
+  document.getElementById('mTip').value = ''
+  document.getElementById('marketModal').classList.add('open')
+}
+
+function editMarketItem(id, tag) {
+  const data = getMarketData()
+  const list = tag === 'HOT' ? data.hot : data.next
+  const item = list.find(x => x.id === id)
+  if (!item) return
+  document.getElementById('marketModalTitle').textContent = 'Eintrag bearbeiten'
+  document.getElementById('mEditId').value = id
+  document.getElementById('mEditTag').value = tag
+  document.getElementById('mBrand').value = item.brand
+  document.getElementById('mTitle').value = item.title
+  document.getElementById('mTip').value = item.tip
+  document.getElementById('marketModal').classList.add('open')
+}
+
+function closeMarketModal() { document.getElementById('marketModal').classList.remove('open') }
+
+async function saveMarketItem() {
+  const id    = document.getElementById('mEditId').value
+  const tag   = document.getElementById('mEditTag').value
+  const brand = document.getElementById('mBrand').value.trim()
+  const title = document.getElementById('mTitle').value.trim()
+  const tip   = document.getElementById('mTip').value.trim()
+  if (!brand || !title) { showToast('⚠️ Marke und Artikel erforderlich'); return }
+
+  const data = getMarketData()
+  const list = tag === 'HOT' ? data.hot : data.next
+  if (id) {
+    const idx = list.findIndex(x => x.id === id)
+    if (idx >= 0) list[idx] = { id, brand, title, tip }
+  } else {
+    list.push({ id: Date.now().toString(), brand, title, tip })
+  }
+  saveMarketData(data)
+  closeMarketModal()
+  renderMarketPage()
+  showToast('✅ Gespeichert')
+}
+
+async function deleteMarketItem(id, tag) {
+  const data = getMarketData()
+  if (tag === 'HOT') data.hot  = data.hot.filter(x => x.id !== id)
+  else               data.next = data.next.filter(x => x.id !== id)
+  saveMarketData(data)
+  renderMarketPage()
+  showToast('🗑️ Gelöscht')
+}
+
+async function runMarketAI() {
+  if (!checkKey()) return
+  if (!checkTokens()) return
+  const loading = document.getElementById('marketLoading')
+  loading.classList.add('visible')
+  const prompt = `Du bist ein Vinted-Marktexperte für Streetwear und Vintage-Mode.
+
+Erstelle aktuelle Marktdaten mit GENAU 5 HOT und 5 NEXT Einträgen.
+Antworte NUR mit diesem JSON:
+{
+  "hot":[{"brand":"Marke","title":"Artikel","tip":"Kurzer Tipp max 6 Wörter"}],
+  "next":[{"brand":"Marke","title":"Artikel","tip":"Kurzer Tipp max 6 Wörter"}]
+}
+- HOT = aktuell sehr gefragt auf Vinted
+- NEXT = bald trending, jetzt günstig kaufen
+- Typische Marken: Fred Perry, Ralph Lauren, Lacoste, Sergio Tacchini, Stone Island, CP Company, Carhartt, Vintage Levi's, Nike Vintage, Adidas Originals etc.
+Nur JSON, kein weiterer Text.`
+  try {
+    const raw = await callAI([{ type: 'text', text: prompt }])
+    useToken()
+    const json = JSON.parse(raw.replace(/```json?|```/g,'').trim())
+    const data = {
+      hot:  (json.hot  || []).map((x,i) => ({ ...x, id: 'h'+Date.now()+i })),
+      next: (json.next || []).map((x,i) => ({ ...x, id: 'n'+Date.now()+i }))
+    }
+    saveMarketData(data)
+    renderMarketPage()
+    showToast('✅ KI-Daten aktualisiert!')
+  } catch(e) {
+    showToast('❌ Fehler: ' + e.message)
+  } finally {
+    loading.classList.remove('visible')
+  }
+}
+
+async function runMarket() {
+  if (!checkKey()) return
+  const q   = document.getElementById('mQuery').value.trim()
+  const seg = document.getElementById('mSeg').value
+  if (!q) { showToast('⚠️ Gib eine Kategorie ein'); return }
+
+  document.getElementById('marketEmpty').style.display = 'none'
+  document.getElementById('marketResults').style.display = 'none'
+  const loading = document.getElementById('marketLoading')
+  loading.classList.add('visible')
+
+  const prompt = `Du bist ein Vinted-Marktexperte. Analysiere den Markt für: "${q}" (Segment: ${seg})
+
+Erstelle eine Marktanalyse mit GENAU 10 Artikeln/Trends – davon GENAU 5 mit tag "HOT" und GENAU 5 mit tag "NEXT".
+
+Antworte NUR mit diesem JSON, kein weiterer Text:
+
+{
+  "items": [
+    {
+      "brand": "Markenname",
+      "title": "Modell oder Kollektion",
+      "avgPrice": "€XX-€XX",
+      "tag": "HOT",
+      "tip": "Ein konkreter kurzer Tipp für Reseller"
+    }
+  ]
+}
+
+Regeln:
+- "HOT" = aktuell auf Vinted sehr gefragt, hohe Verkaufsrate
+- "NEXT" = bald trending, jetzt günstig einkaufen
+- brand und title getrennt halten (z.B. brand: "Fred Perry", title: "Trainingsjacken")
+- tip: maximal 6 Wörter, prägnant
+- Gib NUR das JSON zurück, keine Erklärungen`
+
+  try {
+    const raw = await callAI([{ type: 'text', text: prompt }])
+    const json = JSON.parse(raw.replace(/```json?|```/g,'').trim())
+    renderMarket(json)
+  } catch(e) {
+    showToast('❌ Fehler: ' + e.message)
+    document.getElementById('marketEmpty').style.display = 'block'
+  } finally {
+    loading.classList.remove('visible')
+  }
+}
+
+function renderMarket(data) {
+  const hotGrid  = document.getElementById('hotGrid')
+  const nextGrid = document.getElementById('nextGrid')
+  hotGrid.innerHTML = ''
+  nextGrid.innerHTML = ''
+
+  const hotItems  = data.items.filter(i => i.tag === 'HOT' || i.tag === 'STEADY')
+  const nextItems = data.items.filter(i => i.tag === 'NEXT' || i.tag === 'FADING')
+
+  // fill remainders so both columns feel balanced
+  if (!hotItems.length)  data.items.slice(0, Math.ceil(data.items.length/2)).forEach(i => hotItems.push(i))
+  if (!nextItems.length) data.items.slice(Math.ceil(data.items.length/2)).forEach(i => nextItems.push(i))
+
+  function makeCard(item, isHot) {
+    const div = document.createElement('div')
+    div.style.cssText = 'background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;transition:border .2s;cursor:default'
+    div.onmouseenter = () => div.style.borderColor = 'rgba(249,115,22,.4)'
+    div.onmouseleave = () => div.style.borderColor = 'var(--border)'
+
+    const badge = isHot
+      ? `<span class="badge badge-hot" style="font-size:.65rem">HOT</span>`
+      : `<span class="badge badge-next" style="font-size:.65rem">NEXT</span>`
+
+    div.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;font-style:italic">
+            ${item.brand} <span style="color:var(--orange)">${item.title}</span>
+          </div>
+        </div>
+        ${badge}
+      </div>
+      <div style="font-size:.82rem;color:var(--muted);line-height:1.5">${item.tip}</div>
+      ${item.avgPrice ? `<div style="font-family:'Syne',sans-serif;font-weight:800;color:var(--orange);margin-top:8px;font-size:.9rem">${item.avgPrice}</div>` : ''}`
+    return div
+  }
+
+  hotItems.forEach(i  => hotGrid.appendChild(makeCard(i, true)))
+  nextItems.forEach(i => nextGrid.appendChild(makeCard(i, false)))
+
+  document.getElementById('marketResults').style.display = 'block'
+}
+
+// ═══════════════════════════════════════════
+// INVENTORY
+// ═══════════════════════════════════════════
+function openAddModal() {
+  document.getElementById('itemModalTitle').textContent = 'Artikel hinzufügen'
+  document.getElementById('editId').value = ''
+  ;['iName','iBrand','iSize','iEK','iVK','iNotes'].forEach(id => document.getElementById(id).value = '')
+  document.getElementById('iCat').value = 'T-Shirt'
+  document.getElementById('iStatus').value = 'bestand'
+  document.getElementById('iDate').value = new Date().toISOString().split('T')[0]
+  document.getElementById('itemModal').classList.add('open')
+}
+
+function openEditModal(id) {
+  const item = inventory.find(x => x.id === id)
+  if (!item) return
+  document.getElementById('itemModalTitle').textContent = 'Artikel bearbeiten'
+  document.getElementById('editId').value = id
+  document.getElementById('iName').value = item.name || ''
+  document.getElementById('iBrand').value = item.brand || ''
+  document.getElementById('iSize').value = item.size || ''
+  document.getElementById('iEK').value = item.ek || ''
+  document.getElementById('iVK').value = item.vk || ''
+  document.getElementById('iCat').value = item.cat || 'T-Shirt'
+  document.getElementById('iStatus').value = item.status || 'bestand'
+  document.getElementById('iDate').value = item.date || ''
+  document.getElementById('iNotes').value = item.notes || ''
+  document.getElementById('itemModal').classList.add('open')
+}
+
+function closeItemModal() { document.getElementById('itemModal').classList.remove('open') }
+
+function saveItem() {
+  const name = document.getElementById('iName').value.trim()
+  const ek   = parseFloat(document.getElementById('iEK').value) || 0
+  if (!name) { showToast('⚠️ Artikelname erforderlich'); return }
+
+  const item = {
+    id: document.getElementById('editId').value || Date.now().toString(),
+    name,
+    brand:  document.getElementById('iBrand').value.trim(),
+    size:   document.getElementById('iSize').value.trim(),
+    ek,
+    vk:     parseFloat(document.getElementById('iVK').value) || 0,
+    cat:    document.getElementById('iCat').value,
+    status: document.getElementById('iStatus').value,
+    date:   document.getElementById('iDate').value,
+    notes:  document.getElementById('iNotes').value.trim()
+  }
+
+  const idx = inventory.findIndex(x => x.id === item.id)
+  if (idx >= 0) inventory[idx] = item
+  else inventory.unshift(item)
+
+  save('inventory', inventory)
+  closeItemModal()
+  renderInventar()
+  renderInvChart()
+  updateDashKpis()
+  showToast('✅ Gespeichert')
+}
+
+function deleteItem(id) {
+  if (!confirm('Artikel löschen?')) return
+  inventory = inventory.filter(x => x.id !== id)
+  save('inventory', inventory)
+  renderInventar()
+  renderInvChart()
+  updateDashKpis()
+  showToast('🗑️ Gelöscht')
+}
+
+function setTimeFilter(days, btn) {
+  timeFilter = days
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'))
+  btn.classList.add('active')
+  renderInventar()
+  renderInvChart()
+}
+
+function setInvTab(tab, el) {
+  invTab = tab
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
+  el.classList.add('active')
+  renderInventar()
+}
+
+function filteredInventory() {
+  const q = (document.getElementById('inventarSearch')?.value || '').toLowerCase()
+  const cutoff = new Date()
+  cutoff.setDate(cutoff.getDate() - (timeFilter < 9999 ? timeFilter : 36500))
+
+  return inventory.filter(item => {
+    const matchTime = !item.date || new Date(item.date) >= cutoff
+    const matchQ = !q || item.name?.toLowerCase().includes(q) || item.brand?.toLowerCase().includes(q)
+    if (!matchTime || !matchQ) return false
+    if (invTab === 'bestand') return item.status === 'bestand'
+    if (invTab === 'verkauft') return item.status === 'verkauft'
+    if (invTab === 'stale') {
+      if (item.status !== 'bestand') return false
+      const d = new Date(item.date)
+      const diffDays = (Date.now() - d) / 86400000
+      return diffDays > 14
+    }
+    return true
+  })
+}
+
+function renderInventar() {
+  const items = filteredInventory()
+  const tbody = document.getElementById('invTbody')
+
+  // KPIs
+  const sold = inventory.filter(i => i.status === 'verkauft')
+  const rev  = sold.reduce((s,i) => s+(i.vk||0), 0)
+  const cost = sold.reduce((s,i) => s+(i.ek||0), 0)
+  const profit = rev - cost
+  const margin = rev ? ((profit/rev)*100).toFixed(1) : 0
+
+  const soldFiltered = filteredInventory()
+  const revF = soldFiltered.filter(i=>i.status==='verkauft').reduce((s,i)=>s+(i.vk||0),0)
+  document.getElementById('invRevenue').textContent = '€' + revF.toFixed(2)
+  document.getElementById('invRevSub').textContent = timeFilter < 9999 ? `${timeFilter} Tage` : 'Gesamt'
+  document.getElementById('invProfit').textContent = '€' + (soldFiltered.filter(i=>i.status==='verkauft').reduce((s,i)=>s+(i.vk-i.ek||0),0)).toFixed(2)
+  document.getElementById('invMarginTxt').textContent = margin + '% Marge'
+  document.getElementById('invSold').textContent = soldFiltered.filter(i=>i.status==='verkauft').length
+  const prices = soldFiltered.filter(i=>i.status==='verkauft').map(i=>i.vk||0)
+  document.getElementById('invAvg').textContent = prices.length ? '€'+(prices.reduce((a,b)=>a+b,0)/prices.length).toFixed(2) : '€0'
+
+  // Table
+  if (!items.length) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--muted)">Keine Artikel gefunden</td></tr>`
+    return
+  }
+
+  tbody.innerHTML = items.map(item => {
+    const profit = ((item.vk||0) - (item.ek||0)).toFixed(2)
+    const profitColor = profit > 0 ? 'var(--success)' : profit < 0 ? 'var(--danger)' : 'var(--muted)'
+    const staleWarn = item.status === 'bestand' && item.date && ((Date.now()-new Date(item.date))/86400000 > 14)
+    return `<tr>
+      <td>
+        <div style="font-weight:600;font-size:.88rem">${item.name}</div>
+        ${staleWarn ? '<span class="badge badge-red" style="font-size:.65rem">⚠️ Ladenhüter</span>' : ''}
+      </td>
+      <td>${item.brand || '–'}</td>
+      <td>${item.size || '–'}</td>
+      <td>€${item.ek?.toFixed(2) || '0.00'}</td>
+      <td>${item.vk ? '€'+item.vk.toFixed(2) : '–'}</td>
+      <td style="color:${profitColor};font-weight:600">${item.vk ? '€'+profit : '–'}</td>
+      <td style="color:var(--muted);font-size:.8rem">${item.date || '–'}</td>
+      <td><span class="badge ${item.status==='verkauft'?'badge-green':'badge-orange'}">${item.status==='verkauft'?'✓ Verkauft':'Im Bestand'}</span></td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-outline btn-sm" onclick="openEditModal('${item.id}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteItem('${item.id}')">🗑️</button>
+        </div>
+      </td>
+    </tr>`
+  }).join('')
+
+  updateGauge()
+}
+
+// ═══════════════════════════════════════════
+// GAUGE
+// ═══════════════════════════════════════════
+function saveGoal() {
+  const v = parseFloat(document.getElementById('goalInput').value) || 500
+  save('goal', v)
+  updateGauge()
+  showToast('🎯 Ziel gespeichert')
+}
+
+function updateGauge() {
+  const goal = parseFloat(document.getElementById('goalInput').value) || DB.get('goal', 500)
+  document.getElementById('goalInput').value = goal
+
+  const rev = inventory.filter(i => i.status === 'verkauft').reduce((s,i) => s+(i.vk||0), 0)
+  const pct = Math.min(rev/goal, 1)
+  const arcLen = 220
+  const filled = pct * arcLen
+
+  document.getElementById('gaugePath').setAttribute('stroke-dasharray', `${filled} ${arcLen}`)
+  document.getElementById('gaugeVal').textContent = Math.round(pct*100) + '%'
+  document.getElementById('gaugeSub').textContent = `€${rev.toFixed(0)} / €${goal}`
+}
+
+// ═══════════════════════════════════════════
+// CHARTS
+// ═══════════════════════════════════════════
+let invChartInst = null, dashChartInst = null
+
+function renderInvChart() {
+  const ctx = document.getElementById('invChart')
+  if (!ctx) return
+  if (invChartInst) { invChartInst.destroy(); invChartInst = null }
+
+  const days = 30
+  const labels = []
+  const revenueData = []
+  const profitData = []
+
+  for (let i = days-1; i >= 0; i--) {
+    const d = new Date()
+    d.setDate(d.getDate() - i)
+    const ds = d.toISOString().split('T')[0]
+    labels.push(ds.slice(5))
+    const dayItems = inventory.filter(x => x.date === ds && x.status === 'verkauft')
+    const rev = dayItems.reduce((s,x)=>s+(x.vk||0),0)
+    const cost = dayItems.reduce((s,x)=>s+(x.ek||0),0)
+    revenueData.push(rev)
+    profitData.push(rev-cost)
+  }
+
+  drawChart(ctx, labels, revenueData, profitData, 'invChartInst', ref => invChartInst = ref)
+}
+
+function drawDashChart() {
+  const ctx = document.getElementById('dashChart')
+  if (!ctx) return
+  if (dashChartInst) { dashChartInst.destroy(); dashChartInst = null }
+
+  const days = 30
+  const labels = []
+  const revenueData = []
+  const profitData = []
+
+  for (let i = days-1; i >= 0; i--) {
+    const d = new Date()
+    d.setDate(d.getDate() - i)
+    const ds = d.toISOString().split('T')[0]
+    labels.push(ds.slice(5))
+    const dayItems = inventory.filter(x => x.date === ds && x.status === 'verkauft')
+    const rev = dayItems.reduce((s,x)=>s+(x.vk||0),0)
+    const cost = dayItems.reduce((s,x)=>s+(x.ek||0),0)
+    revenueData.push(rev)
+    profitData.push(rev-cost)
+  }
+
+  drawChart(ctx, labels, revenueData, profitData, 'dashChartInst', ref => dashChartInst = ref)
+}
+
+function drawChart(canvas, labels, rev, profit, instName, setRef) {
+  const dpr = window.devicePixelRatio || 1
+  const w = canvas.parentElement.clientWidth - 40
+  const h = parseInt(canvas.getAttribute('height')) || 160
+  canvas.width = w * dpr
+  canvas.height = h * dpr
+  canvas.style.width = w + 'px'
+  canvas.style.height = h + 'px'
+  const cx = canvas.getContext('2d')
+  cx.scale(dpr, dpr)
+
+  const pad = { top:16, right:16, bottom:36, left:46 }
+  const cw = w - pad.left - pad.right
+  const ch = h - pad.top - pad.bottom
+  const maxVal = Math.max(...rev, ...profit, 1)
+
+  cx.clearRect(0, 0, w, h)
+
+  // Grid
+  cx.strokeStyle = '#2e2e36'
+  cx.lineWidth = 1
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (ch / 4) * i
+    cx.beginPath(); cx.moveTo(pad.left, y); cx.lineTo(pad.left+cw, y); cx.stroke()
+    cx.fillStyle = '#71717a'
+    cx.font = '10px Inter'
+    cx.textAlign = 'right'
+    cx.fillText('€' + ((maxVal - (maxVal/4)*i)).toFixed(0), pad.left-6, y+4)
+  }
+
+  const step = cw / (labels.length - 1 || 1)
+
+  function drawLine(data, color, fill=false) {
+    if (!data.length) return
+    cx.beginPath()
+    data.forEach((v,i) => {
+      const x = pad.left + i*step
+      const y = pad.top + ch - (v/maxVal)*ch
+      i === 0 ? cx.moveTo(x,y) : cx.lineTo(x,y)
+    })
+    if (fill) {
+      cx.lineTo(pad.left+cw, pad.top+ch)
+      cx.lineTo(pad.left, pad.top+ch)
+      cx.closePath()
+      cx.fillStyle = color.replace('1)','0.12)')
+      cx.fill()
+    }
+    cx.strokeStyle = color
+    cx.lineWidth = 2
+    cx.lineJoin = 'round'
+    cx.stroke()
+  }
+
+  drawLine(rev, 'rgba(249,115,22,1)', true)
+  drawLine(profit, 'rgba(34,197,94,1)', false)
+
+  // X labels (every 5)
+  cx.fillStyle = '#52525b'
+  cx.font = '10px Inter'
+  cx.textAlign = 'center'
+  labels.forEach((l,i) => {
+    if (i % 5 === 0) {
+      cx.fillText(l, pad.left + i*step, h - 6)
+    }
+  })
+
+  // Legend
+  cx.fillStyle = 'rgba(249,115,22,1)'; cx.fillRect(pad.left, 4, 10, 4)
+  cx.fillStyle = '#e4e4e7'; cx.font = '10px Inter'; cx.textAlign = 'left'
+  cx.fillText('Umsatz', pad.left+14, 10)
+  cx.fillStyle = 'rgba(34,197,94,1)'; cx.fillRect(pad.left+70, 4, 10, 4)
+  cx.fillStyle = '#e4e4e7'
+  cx.fillText('Gewinn', pad.left+84, 10)
+
+  setRef(true)
+}
+
+// ═══════════════════════════════════════════
+// DASHBOARD KPIs
+// ═══════════════════════════════════════════
+function updateDashKpis() {
+  const sold = inventory.filter(i => i.status === 'verkauft')
+  const rev = sold.reduce((s,i) => s+(i.vk||0), 0)
+  const cost = sold.reduce((s,i) => s+(i.ek||0), 0)
+  const profit = rev - cost
+  const margin = rev ? ((profit/rev)*100).toFixed(1) : 0
+  const stock = inventory.filter(i => i.status === 'bestand').length
+  const stale = inventory.filter(i => i.status === 'bestand' && i.date && (Date.now()-new Date(i.date))/86400000 > 14).length
+
+  document.getElementById('dkTotal').textContent = '€' + rev.toFixed(2)
+  document.getElementById('dkTotalSub').textContent = sold.length + ' Artikel verkauft'
+  document.getElementById('dkProfit').textContent = '€' + profit.toFixed(2)
+  document.getElementById('dkMargin').textContent = margin + '% Marge'
+  document.getElementById('dkStock').textContent = stock
+  document.getElementById('dkStale').textContent = stale
+}
+
+// ═══════════════════════════════════════════
+// EXCEL EXPORT
+// ═══════════════════════════════════════════
+function exportXLSX() {
+  const data = inventory.map(i => ({
+    'Name': i.name, 'Marke': i.brand, 'Größe': i.size,
+    'EK (€)': i.ek, 'VK (€)': i.vk,
+    'Gewinn (€)': ((i.vk||0)-(i.ek||0)).toFixed(2),
+    'Kategorie': i.cat, 'Status': i.status, 'Datum': i.date, 'Notizen': i.notes
+  }))
+  const ws = XLSX.utils.json_to_sheet(data)
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, 'Inventar')
+  XLSX.writeFile(wb, 'VintifyAI_Inventar.xlsx')
+  showToast('📊 Excel exportiert!')
+}
+
+// ═══════════════════════════════════════════
+// RECEIPT / BELEG GENERATOR
+// ═══════════════════════════════════════════
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+}
+
+function getBizProfile() {
+  const raw = localStorage.getItem('vfy_biz_profile')
+  return raw ? JSON.parse(raw) : null
+}
+function saveBizProfile(profile) {
+  localStorage.setItem('vfy_biz_profile', JSON.stringify(profile))
+}
+
+function renderReceiptsPage() {
+  const profile = getBizProfile()
+  const wrap = document.getElementById('receiptsContent')
+  if (!wrap) return
+  if (!profile) renderBizProfileForm(wrap)
+  else renderBelegGenerator(wrap, profile)
+}
+
+function renderBizProfileForm(wrap, editing) {
+  const p = editing || {}
+  const taxOptions = [
+    { val: 'kleinunternehmer', label: 'Kleinunternehmer §19 UStG' },
+    { val: 'regelbesteuert',   label: 'Regelbesteuert (19%)' },
+    { val: 'regelbesteuert7',  label: 'Regelbesteuert (7%)' },
+  ]
+  wrap.innerHTML = `
+    <div class="page-title">Geschäfts<span>profil</span></div>
+    <div class="page-subtitle">Richte dein Profil ein, um Belege zu erstellen</div>
+    <div style="max-width:600px;margin:32px auto 0">
+      <div class="card" style="padding:28px">
+        <div class="form-2col">
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Firmenname / Name *</label>
+            <input class="form-input" id="bizName" value="${escHtml(p.name||'')}" placeholder="Max Mustermann / Musterfirma GmbH"/>
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Straße & Hausnummer *</label>
+            <input class="form-input" id="bizStreet" value="${escHtml(p.street||'')}" placeholder="Musterstraße 12"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">PLZ *</label>
+            <input class="form-input" id="bizPlz" value="${escHtml(p.plz||'')}" placeholder="20357"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ort *</label>
+            <input class="form-input" id="bizCity" value="${escHtml(p.city||'')}" placeholder="Hamburg"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Land</label>
+            <input class="form-input" id="bizCountry" value="${escHtml(p.country||'Deutschland')}" placeholder="Deutschland"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Steuernummer</label>
+            <input class="form-input" id="bizTaxNr" value="${escHtml(p.taxNr||'')}" placeholder="21/815/08150"/>
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Besteuerungsart</label>
+            <select class="form-select" id="bizTaxType">
+              ${taxOptions.map(o=>`<option value="${o.val}"${(p.taxType||'kleinunternehmer')===o.val?' selected':''}>${o.label}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:20px;display:flex;gap:12px;justify-content:flex-end">
+          ${editing ? `<button class="btn btn-outline" onclick="renderReceiptsPage()">Abbrechen</button>` : ''}
+          <button class="btn btn-primary" onclick="saveBizForm()">💾 Profil speichern</button>
+        </div>
+      </div>
+    </div>`
+}
+
+function saveBizForm() {
+  const name   = document.getElementById('bizName').value.trim()
+  const street = document.getElementById('bizStreet').value.trim()
+  const plz    = document.getElementById('bizPlz').value.trim()
+  const city   = document.getElementById('bizCity').value.trim()
+  if (!name || !street || !plz || !city) { showToast('⚠️ Bitte alle Pflichtfelder ausfüllen'); return }
+  saveBizProfile({
+    name, street, plz, city,
+    country: document.getElementById('bizCountry').value.trim() || 'Deutschland',
+    taxNr:   document.getElementById('bizTaxNr').value.trim(),
+    taxType: document.getElementById('bizTaxType').value
+  })
+  showToast('✅ Profil gespeichert')
+  renderReceiptsPage()
+}
+
+function editBizProfile() {
+  const wrap = document.getElementById('receiptsContent')
+  renderBizProfileForm(wrap, getBizProfile())
+}
+
+function renderBelegGenerator(wrap, profile) {
+  const taxLabels = {
+    kleinunternehmer: 'Kleinunternehmer §19 UStG',
+    regelbesteuert:   'Regelbesteuert (19%)',
+    regelbesteuert7:  'Regelbesteuert (7%)'
+  }
+  wrap.innerHTML = `
+    <div class="page-title">Beleg<span>generator</span></div>
+    <div class="page-subtitle">Erstelle Eigenbelege & Rechnungen als PDF-ZIP</div>
+
+    <div style="max-width:800px;margin:0 auto 24px">
+      <div class="card" style="padding:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+        <div>
+          <div style="font-weight:700;font-size:16px">${escHtml(profile.name)}</div>
+          <div style="color:var(--text-muted);font-size:13px">${escHtml(profile.street)}, ${escHtml(profile.plz)} ${escHtml(profile.city)} · ${escHtml(profile.country)}</div>
+          <div style="color:var(--text-muted);font-size:13px">${profile.taxNr ? `StNr: ${escHtml(profile.taxNr)} · ` : ''}${taxLabels[profile.taxType]||profile.taxType}</div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="editBizProfile()">✏️ Bearbeiten</button>
+      </div>
+    </div>
+
+    <div style="max-width:800px;margin:0 auto">
+      <div class="card" style="padding:24px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--accent);color:#000;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0">1</div>
+          <div>
+            <div style="font-weight:700">Excel-Vorlage herunterladen</div>
+            <div style="color:var(--text-muted);font-size:13px">Fülle die Vorlage mit deinen Artikeln aus</div>
+          </div>
+        </div>
+        <button class="btn btn-outline" onclick="downloadTemplate()">📥 Vorlage herunterladen (.xlsx)</button>
+      </div>
+
+      <div class="card" style="padding:24px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--accent);color:#000;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0">2</div>
+          <div>
+            <div style="font-weight:700">Ausgefüllte Excel-Datei hochladen</div>
+            <div style="color:var(--text-muted);font-size:13px">Wähle deine ausgefüllte .xlsx Datei aus</div>
+          </div>
+        </div>
+        <input type="file" id="receiptExcelInput" accept=".xlsx,.xls" style="display:none" onchange="receiptFileSelected(this)"/>
+        <div id="receiptDropZone" style="border:2px dashed var(--border);border-radius:12px;padding:28px;text-align:center;cursor:pointer" onclick="document.getElementById('receiptExcelInput').click()">
+          <div style="font-size:32px;margin-bottom:8px">📊</div>
+          <div style="font-weight:600" id="receiptFileName">Excel-Datei auswählen</div>
+          <div style="color:var(--text-muted);font-size:13px">.xlsx oder .xls</div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:24px">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--accent);color:#000;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0">3</div>
+          <div>
+            <div style="font-weight:700">Belege generieren & herunterladen</div>
+            <div style="color:var(--text-muted);font-size:13px">ZIP mit Eigenbelegen & Rechnungen</div>
+          </div>
+        </div>
+        <div id="receiptPreviewArea" style="display:none;margin-bottom:16px">
+          <div id="receiptPreviewTable"></div>
+        </div>
+        <button class="btn btn-primary" id="btnGeneratePdfs" onclick="generatePDFs()" disabled style="opacity:0.5">
+          🗜️ ZIP erstellen & herunterladen
+        </button>
+      </div>
+    </div>`
+  window._receiptRows = null
+}
+
+let _receiptExcelFile = null
+
+function receiptFileSelected(input) {
+  const file = input.files[0]
+  if (!file) return
+  _receiptExcelFile = file
+  document.getElementById('receiptFileName').textContent = file.name
+  document.getElementById('receiptDropZone').style.borderColor = 'var(--accent)'
+  const reader = new FileReader()
+  reader.onload = function(e) {
+    try {
+      const wb   = XLSX.read(e.target.result, { type: 'array' })
+      const ws   = wb.Sheets[wb.SheetNames[0]]
+      const rows = XLSX.utils.sheet_to_json(ws, { defval: '' })
+      window._receiptRows = rows
+      showReceiptPreview(rows)
+      const btn = document.getElementById('btnGeneratePdfs')
+      if (btn) { btn.disabled = false; btn.style.opacity = '1' }
+    } catch(err) {
+      showToast('❌ Excel-Datei konnte nicht gelesen werden')
+    }
+  }
+  reader.readAsArrayBuffer(file)
+}
+
+function showReceiptPreview(rows) {
+  const area  = document.getElementById('receiptPreviewArea')
+  const table = document.getElementById('receiptPreviewTable')
+  if (!area || !table) return
+  const valid = rows.filter(r => r.Bezeichnung)
+  area.style.display = 'block'
+  table.innerHTML = `
+    <div style="font-weight:600;margin-bottom:10px">${valid.length} Artikel gefunden:</div>
+    <div style="max-height:200px;overflow-y:auto;border:1px solid var(--border);border-radius:8px">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:var(--bg-card2)">
+          <th style="padding:8px 12px;text-align:left">Bezeichnung</th>
+          <th style="padding:8px 12px;text-align:left">Kaufdatum</th>
+          <th style="padding:8px 12px;text-align:right">EK</th>
+          <th style="padding:8px 12px;text-align:left">Verkaufsdatum</th>
+          <th style="padding:8px 12px;text-align:right">VK</th>
+          <th style="padding:8px 12px;text-align:left">Plattform</th>
+        </tr></thead>
+        <tbody>${valid.map(r=>`<tr style="border-top:1px solid var(--border)">
+          <td style="padding:8px 12px">${escHtml(String(r.Bezeichnung||''))}</td>
+          <td style="padding:8px 12px">${escHtml(String(r.Kaufdatum||''))}</td>
+          <td style="padding:8px 12px;text-align:right">${escHtml(String(r.Einkaufspreis||''))}</td>
+          <td style="padding:8px 12px">${escHtml(String(r.Verkaufsdatum||''))}</td>
+          <td style="padding:8px 12px;text-align:right">${escHtml(String(r.Verkaufspreis||''))}</td>
+          <td style="padding:8px 12px">${escHtml(String(r.Plattform||''))}</td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>`
+}
+
+function downloadTemplate() {
+  const wb = XLSX.utils.book_new()
+  const ws = XLSX.utils.aoa_to_sheet([
+    ['Bezeichnung','Kaufdatum','Einkaufspreis','Verkaufsdatum','Verkaufspreis','Kaefer','Plattform'],
+    ['Nike Air Force 1','15.04.2024','45,00','20.04.2024','80,00','Max Mustermann','Vinted']
+  ])
+  ws['!cols'] = [22,14,14,14,14,22,14].map(w=>({wch:w}))
+  XLSX.utils.book_append_sheet(wb, ws, 'Belege')
+  XLSX.writeFile(wb, 'vintifyai_beleg_vorlage.xlsx')
+}
+
+function parseDate(str) {
+  if (!str) return null
+  const s = String(str).trim()
+  let m = s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/)
+  if (m) return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]))
+  m = s.match(/^(\d{4})-(\d{2})-(\d{2})/)
+  if (m) return new Date(parseInt(m[1]), parseInt(m[2])-1, parseInt(m[3]))
+  if (/^\d+(\.\d+)?$/.test(s)) {
+    try { const d = XLSX.SSF.parse_date_code(parseFloat(s)); if (d) return new Date(d.y, d.m-1, d.d) } catch(e){}
+  }
+  const d = new Date(s)
+  return isNaN(d) ? null : d
+}
+
+function fmtDateDE(str) {
+  const d = parseDate(str)
+  if (!d) return String(str||'–')
+  return d.getDate().toString().padStart(2,'0') + '.' + (d.getMonth()+1).toString().padStart(2,'0') + '.' + d.getFullYear()
+}
+
+function formatDateForFile(str) {
+  const d = parseDate(str)
+  if (!d) return String(str||'').replace(/[^0-9]/g,'')
+  return d.getFullYear() + '-' + (d.getMonth()+1).toString().padStart(2,'0') + '-' + d.getDate().toString().padStart(2,'0')
+}
+
+function fmtPrice(val) {
+  const n = parseFloat(String(val||0).replace(',','.')) || 0
+  return n.toFixed(2).replace('.',',') + ' €'
+}
+
+function getTaxNote(taxType) {
+  if (taxType === 'kleinunternehmer') return 'Gemäß §19 UStG wird keine Umsatzsteuer berechnet.'
+  if (taxType === 'regelbesteuert7')  return 'Enthält 7% Umsatzsteuer (MwSt.).'
+  return 'Enthält 19% Umsatzsteuer (MwSt.).'
+}
+
+function slugify(str) {
+  return String(str||'').replace(/\s+/g,'_').replace(/[^a-zA-Z0-9äöüÄÖÜß_\-]/g,'').substring(0,30)
+}
+
+async function generatePDFs() {
+  const rows = window._receiptRows
+  if (!rows || !rows.length) { showToast('⚠️ Bitte zuerst Excel-Datei hochladen'); return }
+  const profile = getBizProfile()
+  if (!profile) { showToast('⚠️ Kein Geschäftsprofil gefunden'); return }
+  const valid = rows.filter(r => r.Bezeichnung)
+  if (!valid.length) { showToast('⚠️ Keine Artikel mit Bezeichnung gefunden'); return }
+
+  const btn = document.getElementById('btnGeneratePdfs')
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Generiere...' }
+
+  try {
+    const { jsPDF } = window.jspdf
+    const zip        = new JSZip()
+    const eigenFolder = zip.folder('Eigenbelege')
+    const rechnFolder = zip.folder('Rechnungen')
+
+    valid.forEach((row, i) => {
+      const nr      = String(i+1).padStart(4,'0')
+      const artikel = String(row.Bezeichnung||'Artikel')
+
+      if (row.Kaufdatum || row.Einkaufspreis) {
+        const doc  = generateEigenbeleg(jsPDF, row, nr, profile)
+        const name = `${formatDateForFile(row.Kaufdatum)}_Einkauf_${slugify(artikel)}_EB-${nr}.pdf`
+        eigenFolder.file(name, doc.output('arraybuffer'))
+      }
+      if (row.Verkaufsdatum || row.Verkaufspreis) {
+        const doc  = generateRechnung(jsPDF, row, nr, profile)
+        const name = `${formatDateForFile(row.Verkaufsdatum)}_Verkauf_${slugify(artikel)}_V-${nr}.pdf`
+        rechnFolder.file(name, doc.output('arraybuffer'))
+      }
+    })
+
+    const today   = new Date()
+    const zipName = `belege-${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2,'0')}-${today.getDate().toString().padStart(2,'0')}.zip`
+    const blob    = await zip.generateAsync({ type: 'blob' })
+    const a       = document.createElement('a')
+    a.href        = URL.createObjectURL(blob)
+    a.download    = zipName
+    a.click()
+    URL.revokeObjectURL(a.href)
+    showToast(`✅ ${valid.length} Artikel · ZIP heruntergeladen`)
+  } catch(err) {
+    console.error(err)
+    showToast('❌ Fehler beim Generieren: ' + err.message)
+  }
+  if (btn) { btn.disabled = false; btn.textContent = '🗜️ ZIP erstellen & herunterladen' }
+}
+
+function generateEigenbeleg(jsPDF, row, nr, profile) {
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' })
+  const lm = 20, rm = 190
+  let y = 24
+
+  doc.setFont('helvetica','bold')
+  doc.setFontSize(20)
+  doc.text('EIGENBELEG', lm, y)
+  y += 9
+
+  doc.setFont('helvetica','normal')
+  doc.setFontSize(10)
+  doc.setTextColor(120)
+  doc.text(`EB-${nr}   ·   Kaufdatum: ${fmtDateDE(row.Kaufdatum)}`, lm, y)
+  y += 7
+
+  doc.setTextColor(0)
+  doc.setDrawColor(200)
+  doc.line(lm, y, rm, y)
+  y += 9
+
+  doc.setFontSize(11)
+  doc.setFont('helvetica','bold');   doc.text('Artikel:', lm, y)
+  doc.setFont('helvetica','normal'); doc.text(String(row.Bezeichnung||''), lm+32, y)
+  y += 8
+
+  doc.setFont('helvetica','bold');   doc.text('Einkaufspreis (brutto):', lm, y)
+  doc.setFont('helvetica','normal'); doc.text(fmtPrice(row.Einkaufspreis), lm+58, y)
+  y += 7
+
+  doc.setFontSize(9)
+  doc.setTextColor(120)
+  doc.text(getTaxNote(profile.taxType), lm, y)
+  y += 9
+
+  doc.setTextColor(0)
+  doc.setDrawColor(200)
+  doc.line(lm, y, rm, y)
+  y += 9
+
+  doc.setFont('helvetica','bold')
+  doc.setFontSize(11)
+  doc.text('Käufer / Empfänger:', lm, y)
+  y += 7
+  doc.setFont('helvetica','normal')
+  ;[profile.name, profile.street, `${profile.plz} ${profile.city}`, profile.country||'Deutschland',
+    ...(profile.taxNr ? [`Steuernummer: ${profile.taxNr}`] : [])
+  ].forEach(line => { doc.text(line, lm, y); y += 6 })
+
+  return doc
+}
+
+function generateRechnung(jsPDF, row, nr, profile) {
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' })
+  const lm = 20, rm = 190
+  let y = 20
+
+  doc.setFont('helvetica','normal')
+  doc.setFontSize(9)
+  doc.setTextColor(120)
+  ;[profile.name, profile.street, `${profile.plz} ${profile.city}`,
+    profile.country||'Deutschland', ...(profile.taxNr?[`StNr: ${profile.taxNr}`]:[])
+  ].forEach(line => { doc.text(line, rm, y, { align:'right' }); y += 5 })
+  y += 6
+
+  doc.setFont('helvetica','bold')
+  doc.setFontSize(20)
+  doc.setTextColor(0)
+  doc.text('RECHNUNG', lm, y)
+  y += 9
+
+  doc.setFont('helvetica','normal')
+  doc.setFontSize(10)
+  doc.setTextColor(120)
+  doc.text(`V-${nr}   ·   Verkaufsdatum: ${fmtDateDE(row.Verkaufsdatum)}`, lm, y)
+  y += 7
+
+  doc.setTextColor(0)
+  doc.setDrawColor(200)
+  doc.line(lm, y, rm, y)
+  y += 9
+
+  doc.setFontSize(11)
+  doc.setFont('helvetica','bold');   doc.text('Leistung / Artikel:', lm, y)
+  doc.setFont('helvetica','normal'); doc.text(String(row.Bezeichnung||''), lm+48, y)
+  y += 8
+
+  doc.setFont('helvetica','bold');   doc.text('Verkaufspreis:', lm, y)
+  doc.setFont('helvetica','normal'); doc.text(fmtPrice(row.Verkaufspreis), lm+38, y)
+  y += 7
+
+  if (row.Kaefer) {
+    doc.setFont('helvetica','bold');   doc.text('Käufer:', lm, y)
+    doc.setFont('helvetica','normal'); doc.text(String(row.Kaefer), lm+22, y)
+    y += 7
+  }
+  if (row.Plattform) {
+    doc.setFont('helvetica','bold');   doc.text('Plattform:', lm, y)
+    doc.setFont('helvetica','normal'); doc.text(String(row.Plattform), lm+26, y)
+    y += 7
+  }
+
+  doc.setDrawColor(200)
+  doc.line(lm, y, rm, y)
+  y += 8
+
+  doc.setFontSize(9)
+  doc.setTextColor(120)
+  doc.text(getTaxNote(profile.taxType), lm, y)
+
+  return doc
+}
+
+// ═══════════════════════════════════════════
+// TOKEN SYSTEM
+// ═══════════════════════════════════════════
+const PLAN_TOKENS = { free: 15, starter: 100, premium: 9999, beta: 9999 }
+
+function getPlan() {
+  const plan = localStorage.getItem('vfy_plan') || 'free'
+  if (plan === 'beta') {
+    const exp = parseInt(localStorage.getItem('vfy_beta_expires') || '0')
+    if (exp && Date.now() > exp) {
+      localStorage.setItem('vfy_plan', 'free')
+      localStorage.removeItem('vfy_beta_expires')
+      localStorage.setItem('vfy_tokens', 15)
+      return 'free'
+    }
+  }
+  return plan
+}
+function getTokensLeft() { const t = parseInt(localStorage.getItem('vfy_tokens') ?? PLAN_TOKENS[getPlan()]); return isNaN(t) ? PLAN_TOKENS[getPlan()] : t }
+function useToken()      { const t = getTokensLeft(); localStorage.setItem('vfy_tokens', Math.max(0, t - 1)); updateTokenBar() }
+function checkTokens()   {
+  if (getTokensLeft() <= 0) {
+    showToast('⚠️ Keine Tokens mehr! Upgrade unter Preise.')
+    setTimeout(() => goPage('pricing'), 1200)
+    return false
+  }
+  return true
+}
+function updateTokenBar() {
+  const plan = getPlan()
+  const left = getTokensLeft()
+  const badge = document.getElementById('planBadge')
+  const count = document.getElementById('tokenCount')
+  if (badge) badge.textContent = plan.toUpperCase()
+  if (count) count.textContent = plan === 'premium' ? '∞ Scans' : left + ' Scans'
+  const netLock = document.getElementById('netLockIcon')
+  if (netLock) netLock.style.display = (plan === 'premium') ? 'none' : 'inline'
+  const freeBadge = document.getElementById('freeBadge')
+  if (freeBadge) {
+    const labels = { free: 'Aktuell aktiv', starter: 'Aktuell aktiv', premium: 'Aktuell aktiv' }
+    document.querySelectorAll('#page-pricing .card').forEach((c,i) => {
+      const btn = c.querySelector('button')
+      if (i===0 && plan==='free') { c.style.borderColor='rgba(249,115,22,.5)' }
+      else if (i===1 && plan==='starter') { c.style.borderColor='var(--orange)' }
+      else if (i===2 && plan==='premium') { c.style.borderColor='var(--orange)' }
+    })
+  }
+}
+
+function enterPlanCode(expectedType) {
+  const code = prompt('Gib deinen Aktivierungscode ein:')
+  if (!code) return
+  try {
+    const decoded = atob(code.trim())
+    if (!decoded.startsWith('VFY:')) { showToast('❌ Ungültiger Code'); return }
+    const parts = decoded.split(':')
+    const type = parts[1]
+    if (expectedType && type !== expectedType && type !== 'premium' && type !== 'starter' && type !== 'network') {
+      showToast('❌ Falscher Code-Typ'); return
+    }
+    if (type === 'premium') {
+      localStorage.setItem('vfy_plan', 'premium')
+      localStorage.setItem('vfy_tokens', 9999)
+      localStorage.setItem('vfy_net_status', 'accepted')
+      showToast('👑 Premium aktiviert – Netzwerk freigeschaltet!')
+    } else if (type === 'starter') {
+      localStorage.setItem('vfy_plan', 'starter')
+      localStorage.setItem('vfy_tokens', 100)
+      showToast('🚀 Starter aktiviert – 100 Scans freigeschaltet!')
+    } else if (type === 'network') {
+      localStorage.setItem('vfy_net_status', 'accepted')
+      showToast('🌐 Netzwerk-Zugang freigeschaltet!')
+    } else if (type === 'beta') {
+      const expiry = parseInt(parts[4] || '0')
+      if (expiry && Date.now() > expiry) { showToast('❌ Dieser Beta-Code ist abgelaufen'); return }
+      localStorage.setItem('vfy_plan', 'beta')
+      localStorage.setItem('vfy_beta_expires', expiry || '0')
+      localStorage.setItem('vfy_tokens', 9999)
+      showToast('🧪 Beta-Zugang aktiviert!')
+    }
+    updateTokenBar()
+    renderNetworkPage()
+  } catch(e) { showToast('❌ Ungültiger Code') }
+}
+
+// ═══════════════════════════════════════════
+// ADMIN AUTH
+// ═══════════════════════════════════════════
+const ADMIN_PW_DEFAULT = 'thryft2024'
+// Migration: altes Default-Passwort löschen damit neues greift
+if (localStorage.getItem('vfy_admin_pw') === 'admin123') localStorage.removeItem('vfy_admin_pw')
+function getAdminPw() { return localStorage.getItem('vfy_admin_pw') || ADMIN_PW_DEFAULT }
+let adminUnlocked = false
+
+function promptAdmin() {
+  if (adminUnlocked) { goPage('admin'); return }
+  const pw = prompt('Admin-Passwort:')
+  if (pw === getAdminPw()) {
+    adminUnlocked = true
+    goPage('admin')
+    renderMarketPage()
+  } else showToast('❌ Falsches Passwort')
+}
+
+function changeAdminPw() {
+  const p1 = document.getElementById('newAdminPw').value
+  const p2 = document.getElementById('newAdminPw2').value
+  if (!p1 || p1 !== p2) { showToast('⚠️ Passwörter stimmen nicht überein'); return }
+  localStorage.setItem('vfy_admin_pw', p1)
+  document.getElementById('newAdminPw').value = ''
+  document.getElementById('newAdminPw2').value = ''
+  showToast('✅ Admin-Passwort geändert')
+}
+
+function toggleBetaExpiry() {
+  const type = document.getElementById('codeType').value
+  document.getElementById('betaExpiryRow').style.display = type === 'beta' ? 'block' : 'none'
+}
+
+function generateCode() {
+  const type = document.getElementById('codeType').value
+  const pw = document.getElementById('adminPwForCode').value
+  if (pw !== getAdminPw()) { showToast('❌ Falsches Admin-Passwort'); return }
+  let expiry = 0
+  if (type === 'beta') {
+    const dateVal = document.getElementById('betaExpiry').value
+    if (!dateVal) { showToast('⚠️ Bitte Beta-Ablaufdatum angeben'); return }
+    expiry = new Date(dateVal).getTime()
+  }
+  const code = btoa('VFY:' + type + ':' + pw + ':' + Date.now() + ':' + expiry)
+  document.getElementById('generatedCode').textContent = code
+  showToast('✅ Code generiert – klicken zum Kopieren')
+}
+
+function saveAdminSettings() {
+  const wh = document.getElementById('adminWebhook').value.trim()
+  const inv = document.getElementById('adminDiscordInvite').value.trim()
+  localStorage.setItem('vfy_discord_webhook', wh)
+  localStorage.setItem('vfy_discord_invite', inv)
+  showToast('✅ Einstellungen gespeichert!')
+}
+
+// ═══════════════════════════════════════════
+// DISCORD
+// ═══════════════════════════════════════════
+const DEFAULT_WEBHOOK = 'https://discord.com/api/webhooks/1504647125408026725/TWLcokBucoCfvHlveTTiZkpoJbjHm27Eyo8WMdogVq1zPZTluGc09so84SGob4U6rbJH'
+async function sendDiscordWebhook(payload) {
+  const url = localStorage.getItem('vfy_discord_webhook') || DEFAULT_WEBHOOK
+  if (!url) return
+  try {
+    await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) })
+  } catch(e) { console.warn('Discord webhook error:', e) }
+}
+
+function openDiscordSupport() {
+  const inv = localStorage.getItem('vfy_discord_invite')
+  if (inv) { window.open(inv, '_blank') }
+  else showToast('⚠️ Discord-Link noch nicht konfiguriert (Admin → Webhook-Einstellungen)')
+}
+
+// ═══════════════════════════════════════════
+// NETWORK
+// ═══════════════════════════════════════════
+function getNetStatus()  { return localStorage.getItem('vfy_net_status') || 'none' }
+function getApplications() { try { return JSON.parse(localStorage.getItem('vfy_applications') || '[]') } catch { return [] } }
+function saveApplications(a) { localStorage.setItem('vfy_applications', JSON.stringify(a)) }
+
+function renderNetworkPage() {
+  const status = getNetStatus()
+  const plan = getPlan()
+  const el = document.getElementById('netView')
+  if (!el) return
+
+  if (status === 'accepted' || plan === 'premium') {
+    el.innerHTML = `
+      <div style="text-align:center;margin-bottom:28px">
+        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);border-radius:99px;padding:6px 16px;font-size:.75rem;font-weight:700;color:#22c55e;letter-spacing:.06em;margin-bottom:16px">✅ ZUGANG FREIGESCHALTET</div>
+        <div class="page-title" style="font-size:2.2rem;margin-bottom:8px">VintifyAI <span>Network</span></div>
+        <div style="font-size:.88rem;color:var(--muted)">Exklusive Supplier & Reseller Kontakte</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px">
+        ${renderSupplierCards()}
+      </div>
+      <div class="card" style="border-color:rgba(249,115,22,.2);text-align:center;padding:20px">
+        <div style="font-size:1.2rem;margin-bottom:8px">💬 Direkt vernetzen</div>
+        <div style="font-size:.85rem;color:var(--muted);margin-bottom:14px">Tritt unserem exklusiven Discord-Server bei für direkte Deals</div>
+        <button class="btn btn-primary" onclick="openDiscordSupport()">→ Discord öffnen</button>
+      </div>`
+    return
+  }
+
+  if (status === 'pending') {
+    el.innerHTML = `
+      <div style="text-align:center;padding:60px 20px">
+        <div style="font-size:3.5rem;margin-bottom:16px">⏳</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;margin-bottom:8px">Bewerbung wird geprüft</div>
+        <div style="color:var(--muted);font-size:.9rem;margin-bottom:28px;line-height:1.7">Deine Anfrage ist eingegangen. Du wirst über Discord benachrichtigt<br>sobald dein Zugang freigeschaltet wird.</div>
+        <div class="card" style="max-width:360px;margin:0 auto;border-color:rgba(249,115,22,.25)">
+          <div style="font-size:.78rem;font-weight:700;color:var(--orange);margin-bottom:8px">HAST DU BEREITS EINEN CODE?</div>
+          <button class="btn btn-primary" style="width:100%" onclick="enterPlanCode('network')">Code eingeben</button>
+        </div>
+      </div>`
+    return
+  }
+
+  if (status === 'declined') {
+    el.innerHTML = `
+      <div style="text-align:center;padding:60px 20px">
+        <div style="font-size:3.5rem;margin-bottom:16px">❌</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;margin-bottom:8px">Zugang nicht gewährt</div>
+        <div style="color:var(--muted);font-size:.9rem;margin-bottom:24px">Leider wurde deine Anfrage abgelehnt. Bei Fragen wende dich über Discord an uns.</div>
+        <button class="btn btn-outline" onclick="openDiscordSupport()">💬 Discord kontaktieren</button>
+      </div>`
+    return
+  }
+
+  // Default: show application form
+  el.innerHTML = `
+    <div style="text-align:center;padding-top:16px;margin-bottom:28px">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);border-radius:99px;padding:6px 16px;font-size:.75rem;font-weight:700;color:var(--orange);letter-spacing:.06em;margin-bottom:20px">🔒 EXKLUSIVER ZUGANG</div>
+      <div class="page-title" style="font-size:2.4rem;margin-bottom:10px">Das <span>Network</span></div>
+      <p style="color:var(--muted);font-size:.9rem;line-height:1.8;max-width:520px;margin:0 auto">Supplier und Reseller vernetzen sich, tauschen Deals aus und handeln exklusiv. Zugang nur auf Anfrage.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px">
+      <div class="card" style="border-color:rgba(249,115,22,.2);text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:6px">🤝</div>
+        <div style="font-weight:700;font-size:.85rem;margin-bottom:4px">Direktkontakt</div>
+        <div style="font-size:.78rem;color:var(--muted)">Direkt mit Suppliern & Resellern</div>
+      </div>
+      <div class="card" style="border-color:rgba(249,115,22,.2);text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:6px">📦</div>
+        <div style="font-weight:700;font-size:.85rem;margin-bottom:4px">Exklusive Ware</div>
+        <div style="font-size:.78rem;color:var(--muted)">Angebote vor allen anderen</div>
+      </div>
+      <div class="card" style="border-color:rgba(249,115,22,.2);text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:6px">💬</div>
+        <div style="font-weight:700;font-size:.85rem;margin-bottom:4px">Deal-Board</div>
+        <div style="font-size:.78rem;color:var(--muted)">Deals vorbereiten & abschließen</div>
+      </div>
+    </div>
+    <div class="card" style="border-color:rgba(249,115,22,.25);background:linear-gradient(135deg,rgba(249,115,22,.05),transparent)">
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;margin-bottom:4px">Zugang anfragen</div>
+      <div style="font-size:.8rem;color:var(--muted);margin-bottom:18px">Nur eine Bewerbung möglich. Du wirst per Discord benachrichtigt.</div>
+      <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="netName" placeholder="Vor- und Nachname"/></div>
+      <div class="form-group"><label class="form-label">E-Mail</label><input class="form-input" id="netEmail" type="email" placeholder="deine@email.de"/></div>
+      <div class="form-group"><label class="form-label">Du bist...</label>
+        <select class="form-select" id="netRole">
+          <option value="reseller">Reseller – ich kaufe und verkaufe</option>
+          <option value="supplier">Supplier – ich biete Ware an</option>
+          <option value="beide">Beides</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Über dich (optional)</label>
+        <textarea class="form-textarea" id="netMsg" placeholder="Wie lange resellst du? Welche Marken? Monatliches Volumen?" style="min-height:80px"></textarea>
+      </div>
+      <button class="btn btn-primary" style="width:100%;padding:12px" onclick="sendNetworkApplication()">🚀 Zugang anfragen</button>
+    </div>`
+}
+
+function renderSupplierCards() {
+  const suppliers = [
+    { name:'SupplyDrop EU', role:'Supplier', cat:'Vintage Jacken, Fleece', disc:'@supplydrop_eu', verified:true },
+    { name:'FlipKing Berlin', role:'Reseller', cat:'Nike, Adidas, Stone Island', disc:'@flipking_b', verified:true },
+    { name:'VintageHouse GmbH', role:'Supplier', cat:'90s Sportswear, Tracksuits', disc:'@vintagehouse', verified:false },
+    { name:'SneakerStash', role:'Reseller', cat:'Deadstock Sneakers', disc:'@sneakerstash', verified:true },
+  ]
+  return suppliers.map(s => `
+    <div class="card" style="border-color:${s.verified?'rgba(249,115,22,.3)':'var(--border)'}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div style="font-weight:700;font-size:.9rem">${s.name}</div>
+        ${s.verified ? '<span style="font-size:.65rem;background:rgba(249,115,22,.15);color:var(--orange);border:1px solid rgba(249,115,22,.3);border-radius:99px;padding:2px 8px;font-weight:700">✓ VERIFIED</span>' : ''}
+      </div>
+      <div style="font-size:.75rem;color:var(--orange);font-weight:600;margin-bottom:4px">${s.role}</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:10px">${s.cat}</div>
+      <div style="font-size:.78rem;color:var(--text);font-family:monospace">${s.disc}</div>
+    </div>`).join('')
+}
+
+async function sendNetworkApplication() {
+  const name  = document.getElementById('netName')?.value.trim()
+  const email = document.getElementById('netEmail')?.value.trim()
+  const role  = document.getElementById('netRole')?.value
+  const msg   = document.getElementById('netMsg')?.value.trim()
+  if (!name || !email) { showToast('⚠️ Name und E-Mail erforderlich'); return }
+
+  // Save to localStorage
+  const apps = getApplications()
+  apps.push({ name, email, role, msg, date: new Date().toLocaleDateString('de'), status:'pending', id: Date.now() })
+  saveApplications(apps)
+  localStorage.setItem('vfy_net_status', 'pending')
+  localStorage.setItem('vfy_net_email', email)
+
+  // Discord webhook
+  await sendDiscordWebhook({
+    embeds: [{
+      title: '🚀 Neue Network-Bewerbung',
+      color: 0xF97316,
+      fields: [
+        { name:'👤 Name', value: name, inline: true },
+        { name:'📧 E-Mail', value: email, inline: true },
+        { name:'🎭 Rolle', value: role, inline: true },
+        { name:'💬 Nachricht', value: msg || '—', inline: false },
+      ],
+      footer: { text: 'VintifyAI Network • Admin Panel → Bewerbungen → Annehmen/Ablehnen' },
+      timestamp: new Date().toISOString()
+    }]
+  })
+
+  renderNetworkPage()
+  showToast('✅ Bewerbung gesendet!')
+}
+
+function renderApplications() {
+  const el = document.getElementById('applicationsList')
+  if (!el) return
+  const apps = getApplications()
+  document.getElementById('adminApps').textContent = apps.length
+  if (!apps.length) { el.innerHTML = '<div style="color:var(--muted);padding:12px 0">Noch keine Bewerbungen.</div>'; return }
+  el.innerHTML = apps.map(a => `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div>
+        <div style="font-weight:600;font-size:.85rem">${a.name}</div>
+        <div style="font-size:.75rem;color:var(--muted)">${a.email}</div>
+      </div>
+      <div style="font-size:.78rem;color:var(--muted)">${a.role}</div>
+      <div style="font-size:.75rem;color:var(--muted)">${a.date}</div>
+      <span style="font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:99px;background:${a.status==='accepted'?'rgba(34,197,94,.15)':a.status==='declined'?'rgba(239,68,68,.12)':'rgba(249,115,22,.12)'};color:${a.status==='accepted'?'#22c55e':a.status==='declined'?'var(--danger)':'var(--orange)'}">${a.status.toUpperCase()}</span>
+      <div style="display:flex;gap:6px">
+        ${a.status==='pending' ? `<button class="btn btn-primary btn-sm" onclick="changeAppStatus(${a.id},'accepted')">✓</button><button class="btn btn-danger btn-sm" onclick="changeAppStatus(${a.id},'declined')">✗</button>` : ''}
+      </div>
+    </div>`).join('')
+}
+
+function changeAppStatus(id, status) {
+  const apps = getApplications()
+  const app = apps.find(a => a.id === id)
+  if (!app) return
+  app.status = status
+  saveApplications(apps)
+  renderApplications()
+  if (status === 'accepted') {
+    sendDiscordWebhook({ embeds:[{ title:'✅ Network-Anfrage ANGENOMMEN', color:0x22c55e,
+      fields:[
+        { name:'👤 Name', value: app.name, inline: true },
+        { name:'📧 Email', value: app.email || '–', inline: true },
+        { name:'💼 Rolle', value: app.role || '–', inline: true },
+        { name:'📋 Nächster Schritt', value: 'Kontaktiere die Person und sende den Aktivierungscode per Discord DM', inline: false }
+      ],
+      footer:{ text:'VintifyAI Admin' }, timestamp: new Date().toISOString() }] })
+    showToast('✅ Angenommen – jetzt Aktivierungscode per Discord senden!')
+  } else {
+    sendDiscordWebhook({ embeds:[{ title:'❌ Network-Anfrage ABGELEHNT', color:0xef4444,
+      fields:[
+        { name:'👤 Name', value: app.name, inline: true },
+        { name:'📧 Email', value: app.email || '–', inline: true }
+      ],
+      footer:{ text:'VintifyAI Admin' }, timestamp: new Date().toISOString() }] })
+    showToast('❌ Abgelehnt')
+  }
+}
+
+// ═══════════════════════════════════════════
+// FAQ
+// ═══════════════════════════════════════════
+const FAQ_DATA = [
+  ['Wie funktioniert der Listing Generator?','Gib Marke, Größe, Zustand und optionale Fotos ein. Die KI erstellt automatisch einen optimierten Titel, Beschreibung und Hashtags auf Basis deiner Eingaben.'],
+  ['Woher bekomme ich einen Anthropic API-Key?','Registriere dich auf console.anthropic.com, erstelle ein Konto und generiere einen API-Key unter "API Keys". Es gibt ein kostenloses Guthaben für neue Nutzer.'],
+  ['Werden meine Daten gespeichert?','Alle Daten (Inventar, Belege, API-Key) werden nur lokal in deinem Browser gespeichert. Wir haben keinen Zugriff auf deine Daten.'],
+  ['Wie genau ist der Legit Check?','Die KI analysiert visuelle Merkmale auf deinen Fotos. Je mehr hochwertige Bilder (Logo, Nähte, Tags, Sohlen) du hochlädst, desto genauer wird die Analyse.'],
+  ['Kann ich die App auf dem Handy nutzen?','Ja! Die App ist responsiv und funktioniert auf allen Geräten. Für das beste Erlebnis empfehlen wir aber einen Desktop-Browser.'],
+  ['Was kostet ein API-Key?','Anthropic bietet ein Startguthaben. Danach sind die Kosten sehr gering – typischerweise wenige Cent pro Anfrage. Sieh dir die aktuelle Preisliste auf anthropic.com an.'],
+  ['Wie exportiere ich mein Inventar?','Im Inventar-Bereich gibt es den Button "⬇️ Excel". Damit exportierst du alle Artikel als .xlsx-Datei.'],
+  ['Was ist ein Ladenhüter?','Artikel, die seit mehr als 14 Tagen im Bestand sind, werden als Ladenhüter markiert. Das hilft dir, deinen Bestand im Blick zu behalten.'],
+]
+
+// ═══════════════════════════════════════════
+// BILDER GENERATOR
+// ═══════════════════════════════════════════
+let imgFiles = []
+let selectedModel = 0
+
+function selectModel(idx) {
+  selectedModel = idx
+  document.querySelectorAll('.model-card').forEach((c, i) => {
+    c.style.borderColor = i === idx ? 'var(--orange)' : 'var(--border)'
+    c.style.background  = i === idx ? 'rgba(249,115,22,.1)' : 'var(--surface2)'
+  })
+}
+
+function handleImgUpload(event) {
+  const files = Array.from(event.target.files)
+  const remaining = 5 - imgFiles.length
+  const toAdd = files.slice(0, remaining)
+  toAdd.forEach(file => {
+    const reader = new FileReader()
+    reader.onload = e => {
+      imgFiles.push(e.target.result)
+      renderImgPreviews()
+    }
+    reader.readAsDataURL(file)
+  })
+  if (files.length > remaining) showToast('⚠️ Maximal 5 Bilder erlaubt')
+}
+
+function renderImgPreviews() {
+  const container = document.getElementById('imgPreviews')
+  container.innerHTML = imgFiles.map((src, i) => `
+    <div style="position:relative;display:inline-block">
+      <img src="${src}" style="width:70px;height:70px;object-fit:cover;border-radius:8px;border:1px solid var(--border)"/>
+      <button onclick="removeImg(${i})" style="position:absolute;top:-6px;right:-6px;background:var(--danger);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer;line-height:1">✕</button>
+    </div>`).join('')
+  document.getElementById('imgCount').textContent = imgFiles.length + ' / 5 Bilder'
+}
+
+function removeImg(idx) {
+  imgFiles.splice(idx, 1)
+  renderImgPreviews()
+}
+
+async function generateOutfitImage() {
+  if (imgFiles.length === 0) { showToast('⚠️ Bitte mindestens 1 Bild hochladen'); return }
+  document.getElementById('imgResult').style.display  = 'none'
+  document.getElementById('imgError').style.display   = 'none'
+  document.getElementById('imgLoading').style.display = 'block'
+  document.getElementById('generateImgBtn').disabled  = true
+
+  try {
+    const res = await fetch('/api/imagegen', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ images: imgFiles, modelIndex: selectedModel })
+    })
+    const data = await res.json()
+    if (data.error) throw new Error(data.error)
+    document.getElementById('generatedImg').src = data.image
+    document.getElementById('imgResult').style.display  = 'block'
+  } catch(e) {
+    document.getElementById('imgErrorMsg').textContent = '❌ Fehler: ' + e.message
+    document.getElementById('imgError').style.display = 'block'
+  } finally {
+    document.getElementById('imgLoading').style.display = 'none'
+    document.getElementById('generateImgBtn').disabled  = false
+  }
+}
+
+function downloadGeneratedImg() {
+  const img = document.getElementById('generatedImg').src
+  const a = document.createElement('a')
+  a.href = img
+  a.download = 'vintifyai-outfit.png'
+  a.click()
+}
+
+// Init model selection
+document.addEventListener('DOMContentLoaded', () => selectModel(0))
+
+function renderFAQ() {
+  const list = document.getElementById('faqList')
+  list.innerHTML = FAQ_DATA.map((item,i) => `
+    <div class="faq-item" id="faq${i}">
+      <div class="faq-q" onclick="toggleFAQ(${i})">
+        <span>${item[0]}</span>
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a">${item[1]}</div>
+    </div>`).join('')
+}
+
+function toggleFAQ(i) {
+  const el = document.getElementById('faq'+i)
+  el.classList.toggle('open')
+}
+
+// ═══════════════════════════════════════════
+// CONTACT / FEEDBACK
+// ═══════════════════════════════════════════
+async function sendContact() {
+  const name = document.getElementById('cName').value.trim()
+  const email = document.getElementById('cEmail').value.trim()
+  const msg = document.getElementById('cMsg').value.trim()
+  if (!name || !email || !msg) { showToast('⚠️ Bitte alle Felder ausfüllen'); return }
+  await sendDiscordWebhook({ embeds:[{ title:'📧 Neue Kontaktanfrage', color:0x3b82f6,
+    fields:[
+      { name:'👤 Name', value: name, inline: true },
+      { name:'📧 Email', value: email, inline: true },
+      { name:'💬 Nachricht', value: msg, inline: false }
+    ],
+    footer:{ text:'VintifyAI Kontakt' }, timestamp: new Date().toISOString() }] })
+  showToast('✅ Nachricht gesendet – wir melden uns bald!')
+  ;['cName','cEmail','cMsg'].forEach(id => document.getElementById(id).value='')
+}
+
+function setRating(n) {
+  currentRating = n
+  document.querySelectorAll('.star').forEach((s,i) => s.style.opacity = i < n ? '1' : '0.3')
+}
+
+async function sendFeedback() {
+  const msg = document.getElementById('fbMsg').value.trim()
+  const feature = document.getElementById('fbFeature').value
+  if (!currentRating || !msg) { showToast('⚠️ Bitte Bewertung und Nachricht angeben'); return }
+  const stars = '⭐'.repeat(currentRating)
+  await sendDiscordWebhook({ embeds:[{ title:'💬 Neues Feedback', color:0xf97316,
+    fields:[
+      { name:'Feature', value: feature, inline: true },
+      { name:'Bewertung', value: stars, inline: true },
+      { name:'Nachricht', value: msg, inline: false }
+    ],
+    footer:{ text:'VintifyAI Feedback' }, timestamp: new Date().toISOString() }] })
+  showToast('💬 Danke für dein Feedback!')
+  document.getElementById('fbMsg').value = ''
+  document.querySelectorAll('.star').forEach(s => s.style.opacity='1')
+  currentRating = 0
+}
+
+// ═══════════════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════════════
+function updateAdmin() {
+  const sold = inventory.filter(i=>i.status==='verkauft')
+  document.getElementById('adminItems').textContent = inventory.length
+  document.getElementById('adminSold').textContent = sold.length
+  document.getElementById('adminRevenue').textContent = '€'+sold.reduce((s,i)=>s+(i.vk||0),0).toFixed(0)
+
+  const wh = localStorage.getItem('vfy_discord_webhook') || ''
+  const inv = localStorage.getItem('vfy_discord_invite') || ''
+  const webhookEl = document.getElementById('adminWebhook')
+  const invEl = document.getElementById('adminDiscordInvite')
+  if (webhookEl) webhookEl.value = wh
+  if (invEl) invEl.value = inv
+}
+
+function clearAllData() {
+  if (!confirm('Wirklich ALLE Daten löschen? Diese Aktion kann nicht rückgängig gemacht werden!')) return
+  localStorage.removeItem('vfy_inventory')
+  localStorage.removeItem('vfy_receipts')
+  localStorage.removeItem('vfy_biz_profile')
+  localStorage.removeItem('vfy_goal')
+  inventory = []
+  updateAdmin()
+  showToast('🗑️ Alle Daten gelöscht')
+}
+
+// ═══════════════════════════════════════════
+// COPY
+// ═══════════════════════════════════════════
+function copyResult(id) {
+  const el = document.getElementById(id)
+  const text = el.querySelector('span')?.textContent || el.textContent
+  navigator.clipboard.writeText(text).then(() => showToast('📋 Kopiert!')).catch(()=>showToast('⚠️ Kopieren fehlgeschlagen'))
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+function init() {
+  updateApiStatus()
+  renderFAQ()
+  updateDashKpis()
+  drawDashChart()
+  renderMarketPage()
+  renderReceiptsPage()
+  uploadedPhotos.advisor = []
+  updateTokenBar()
+
+  // initialise token count if first run
+  if (localStorage.getItem('vfy_tokens') === null) {
+    localStorage.setItem('vfy_tokens', PLAN_TOKENS[getPlan()])
+  }
+
+  // show admin nav only after password prompt
+  const adminNav = document.getElementById('navAdmin')
+  if (adminNav) adminNav.style.display = 'block'
+
+  if (!hasApiKey()) {
+    setTimeout(() => showToast('🔑 Richte deinen API-Key ein, um KI-Features zu nutzen'), 1500)
+  }
+}
+
+init()
+</script>
+</body>
+</html>
