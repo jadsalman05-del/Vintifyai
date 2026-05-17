@@ -11,80 +11,52 @@ module.exports = async function handler(req, res) {
   try {
     const { images, modelIndex } = req.body;
 
-    // Read model image as base64 data URI
     const modelPath = path.join(process.cwd(), `model${(modelIndex || 0) + 1}.jpg`);
     const modelBuffer = fs.readFileSync(modelPath);
-    const modelDataUri = `data:image/jpeg;base64,${modelBuffer.toString('base64')}`;
+    const modelBase64 = modelBuffer.toString('base64');
 
-    // Use first clothing image
-    const clothingImage = images[0];
+    const parts = [
+      {
+        text: "Virtual try-on: The first image is a person (the model). The following images show a clothing item. Generate a realistic photo of this exact person wearing exactly that clothing item. Keep the person's face, pose, body, hair, and background completely identical. Only replace the clothing with the exact item shown in the other images."
+      },
+      { inline_data: { mime_type: 'image/jpeg', data: modelBase64 } }
+    ];
 
-    // Describe clothing with Gemini (free text-only)
-    const visionParts = [];
     for (const img of images) {
       const match = img.match(/^data:([^;]+);base64,(.+)$/);
-      if (match) visionParts.push({ inline_data: { mime_type: match[1], data: match[2] } });
+      if (match) {
+        parts.push({ inline_data: { mime_type: match[1], data: match[2] } });
+      }
     }
-    visionParts.push({ text: "Describe this clothing item briefly: color, brand, type." });
 
-    const visionRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GOOGLE_API_KEY}`,
+    const geminiRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${process.env.GOOGLE_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: visionParts }] })
+        body: JSON.stringify({
+          contents: [{ parts }],
+          generationConfig: { responseModalities: ['IMAGE', 'TEXT'] }
+        })
       }
     );
-    const visionData = await visionRes.json();
-    const clothingDesc = visionData.candidates?.[0]?.content?.parts?.[0]?.text || "a clothing item";
 
-    // Start Replicate prediction (IDM-VTON)
-    const predRes = await fetch('https://api.replicate.com/v1/models/cuuupid/idm-vton/predictions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.REPLICATE_API_TOKEN}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'wait'
-      },
-      body: JSON.stringify({
-        input: {
-          human_img: modelDataUri,
-          garm_img: clothingImage,
-          garment_des: clothingDesc,
-          is_checked: true,
-          is_checked_crop: false,
-          denoise_steps: 30,
-          seed: 42
-        }
-      })
-    });
+    const geminiData = await geminiRes.json();
 
-    const predData = await predRes.json();
-
-    if (predData.error) {
-      return res.status(500).json({ error: predData.error });
+    if (geminiData.error) {
+      return res.status(500).json({ error: `Gemini: ${geminiData.error.message}` });
     }
 
-    // Poll for result if not done yet
-    let result = predData;
-    let attempts = 0;
-    while (result.status !== 'succeeded' && result.status !== 'failed' && attempts < 60) {
-      await new Promise(r => setTimeout(r, 2000));
-      const pollRes = await fetch(`https://api.replicate.com/v1/predictions/${result.id}`, {
-        headers: { 'Authorization': `Bearer ${process.env.REPLICATE_API_TOKEN}` }
-      });
-      result = await pollRes.json();
-      attempts++;
+    const responseParts = geminiData.candidates?.[0]?.content?.parts || [];
+    const imagePart = responseParts.find(p => p.inline_data);
+
+    if (!imagePart) {
+      const textPart = responseParts.find(p => p.text);
+      return res.status(500).json({ error: textPart?.text || JSON.stringify(geminiData).slice(0, 300) });
     }
 
-    if (result.status === 'failed') {
-      return res.status(500).json({ error: result.error || 'Replicate failed' });
-    }
-
-    const imageUrl = Array.isArray(result.output) ? result.output[0] : result.output;
-    if (!imageUrl) return res.status(500).json({ error: `Kein Bild. Status: ${result.status}. Output: ${JSON.stringify(result.output)}` });
-
-    res.status(200).json({ image: imageUrl });
+    const image = `data:${imagePart.inline_data.mime_type};base64,${imagePart.inline_data.data}`;
+    res.status(200).json({ image });
 
   } catch (e) {
     res.status(500).json({ error: e.message });
