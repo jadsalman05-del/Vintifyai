@@ -3,12 +3,16 @@
   "builds": [
     { "src": "api/*.js", "use": "@vercel/node" },
     { "src": "index.html", "use": "@vercel/static" },
-    { "src": "*.{jpg,png,webp}", "use": "@vercel/static" }
+    { "src": "model1.jpg", "use": "@vercel/static" },
+    { "src": "model2.jpg", "use": "@vercel/static" },
+    { "src": "model3.jpg", "use": "@vercel/static" },
+    { "src": "model4.jpg", "use": "@vercel/static" },
+    { "src": "model5.jpg", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/api/claude", "dest": "/api/claude.js" },
     { "src": "/api/market", "dest": "/api/market.js" },
     { "src": "/api/imagegen", "dest": "/api/imagegen.js" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    { "src": "/(.*)", "dest": "/$1" }
   ]
 }
