@@ -1,17 +1,67 @@
 {
-  "updatedAt": "2025-05-22",
+  "updatedAt": "2026-05-23",
   "hot": [
-    { "id": "h1", "brand": "Fred Perry", "title": "Trainingsjacken", "tip": "Schnellste Verkäufer auf Vinted DE." },
-    { "id": "h2", "brand": "Ralph Lauren", "title": "Poloshirts & Strick", "tip": "Saisonal stark gefragt jetzt." },
-    { "id": "h3", "brand": "Sergio Tacchini", "title": "Tracksuits", "tip": "Nische, kaum Konkurrenz auf Vinted." },
-    { "id": "h4", "brand": "Lacoste", "title": "Knit Pullover", "tip": "Pashanim-Effekt hält Preise hoch." },
-    { "id": "h5", "brand": "Stone Island", "title": "Jacken & Hemden", "tip": "Hohe Margen, echte immer gefragt." }
+    {
+      "brand": "Sergio Tacchini",
+      "title": "Vintage Tennis Tracksuit",
+      "tip": "90er Court-Aesthetic boomt auf TikTok jetzt",
+      "id": "h1"
+    },
+    {
+      "brand": "Adidas Originals",
+      "title": "Retro Fußball-Trikot (2000er)",
+      "tip": "EM 2024 Nostalgie hält bis Juni stark",
+      "id": "h2"
+    },
+    {
+      "brand": "Stüssy",
+      "title": "Vintage Graphic T-Shirt",
+      "tip": "Y2K Skate-Trend ungebrochen relevant aktuell",
+      "id": "h3"
+    },
+    {
+      "brand": "Carhartt WIP",
+      "title": "Vintage Carpenter Jacket Beige",
+      "tip": "Workwear-Hype bleibt Sommer-Must-Have für alle",
+      "id": "h4"
+    },
+    {
+      "brand": "Ralph Lauren",
+      "title": "Polo Sport Windbreaker 90s",
+      "tip": "Old Money Prep-Aesthetic peak season now",
+      "id": "h5"
+    }
   ],
   "next": [
-    { "id": "n1", "brand": "Le Coq Sportif", "title": "Vintage Tracksuits", "tip": "Preis steigt im Sommer." },
-    { "id": "n2", "brand": "Kappa", "title": "Banda Jacken", "tip": "90er Comeback, jetzt noch günstig." },
-    { "id": "n3", "brand": "Ellesse", "title": "Trainingsjacken", "tip": "Wachsende Nachfrage in DE." },
-    { "id": "n4", "brand": "Paul & Shark", "title": "Poloshirts", "tip": "Niche brand mit Potenzial." },
-    { "id": "n5", "brand": "Burberry", "title": "Vintage Hemden", "tip": "Authentic pieces stark im Kommen." }
+    {
+      "brand": "Napapijri",
+      "title": "Vintage Puffer Jacket",
+      "tip": "Herbst-Nachfrage startet in Juni massiv",
+      "id": "n1"
+    },
+    {
+      "brand": "Columbia Vintage",
+      "title": "Outdoor Technical Fleece",
+      "tip": "Gorpcore wird Sommer-Trend Juli/August 2026",
+      "id": "n2"
+    },
+    {
+      "brand": "Timberland",
+      "title": "Vintage Hiking Boot (90s)",
+      "tip": "Outdoor-Sommer-Boom Juni startet zu kaufen",
+      "id": "n3"
+    },
+    {
+      "brand": "Fila",
+      "title": "Vintage Tennis Set (Match + Shorts)",
+      "tip": "Tennis-Saison Peak Juni bis August ahead",
+      "id": "n4"
+    },
+    {
+      "brand": "Barbour",
+      "title": "Vintage Quilted Jacket British",
+      "tip": "Heritage-Trend Herbst Peak startet Juli early",
+      "id": "n5"
+    }
   ]
 }
