@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "vintify-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["http-server", ".", "-p", "4321", "--cors", "-c-1"],
+      "port": 4321
+    }
+  ]
+}

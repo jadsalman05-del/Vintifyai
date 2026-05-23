@@ -1,0 +1,36 @@
+name: Weekly Vinted Trend Update
+
+on:
+  schedule:
+    # Jeden Montag um 07:00 UTC (09:00 DE/AT Sommerzeit)
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+    # Kann auch manuell über GitHub > Actions > "Run workflow" ausgelöst werden
+
+jobs:
+  update-trends:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate new trend data
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/generate-trends.js
+
+      - name: Commit updated market data
+        run: |
+          git config user.email "vintifyai-bot@users.noreply.github.com"
+          git config user.name "VintifyAI Trend Bot"
+          git add api/market-data.json
+          git diff --staged --quiet || git commit -m "chore: weekly trend update $(date +%Y-%m-%d)"
+          git push

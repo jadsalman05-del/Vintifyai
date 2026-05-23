@@ -1,8 +1,9 @@
 {
   "version": 2,
   "builds": [
-    { "src": "api/*.js", "use": "@vercel/node" },
+    { "src": "api/*.js", "use": "@vercel/node", "config": { "includeFiles": ["api/**", "model*.jpg", "scripts/**"], "maxDuration": 60 } },
     { "src": "index.html", "use": "@vercel/static" },
+    { "src": "maintenance.html", "use": "@vercel/static" },
     { "src": "model1.jpg", "use": "@vercel/static" },
     { "src": "model2.jpg", "use": "@vercel/static" },
     { "src": "model3.jpg", "use": "@vercel/static" },
@@ -13,6 +14,10 @@
     { "src": "/api/claude", "dest": "/api/claude.js" },
     { "src": "/api/market", "dest": "/api/market.js" },
     { "src": "/api/imagegen", "dest": "/api/imagegen.js" },
-    { "src": "/(.*)", "dest": "/$1" }
+    { "src": "/api/imagegen2", "dest": "/api/imagegen2.js" },
+    { "src": "/api/webhook", "dest": "/api/webhook.js" },
+    { "src": "/api/activate", "dest": "/api/activate.js" },
+    { "src": "/model[1-5]\\.jpg", "dest": "/$0" },
+    { "src": "/(.*)", "dest": "/api/gate.js" }
   ]
 }

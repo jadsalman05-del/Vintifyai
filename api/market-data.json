@@ -1,0 +1,17 @@
+{
+  "updatedAt": "2025-05-22",
+  "hot": [
+    { "id": "h1", "brand": "Fred Perry", "title": "Trainingsjacken", "tip": "Schnellste Verkäufer auf Vinted DE." },
+    { "id": "h2", "brand": "Ralph Lauren", "title": "Poloshirts & Strick", "tip": "Saisonal stark gefragt jetzt." },
+    { "id": "h3", "brand": "Sergio Tacchini", "title": "Tracksuits", "tip": "Nische, kaum Konkurrenz auf Vinted." },
+    { "id": "h4", "brand": "Lacoste", "title": "Knit Pullover", "tip": "Pashanim-Effekt hält Preise hoch." },
+    { "id": "h5", "brand": "Stone Island", "title": "Jacken & Hemden", "tip": "Hohe Margen, echte immer gefragt." }
+  ],
+  "next": [
+    { "id": "n1", "brand": "Le Coq Sportif", "title": "Vintage Tracksuits", "tip": "Preis steigt im Sommer." },
+    { "id": "n2", "brand": "Kappa", "title": "Banda Jacken", "tip": "90er Comeback, jetzt noch günstig." },
+    { "id": "n3", "brand": "Ellesse", "title": "Trainingsjacken", "tip": "Wachsende Nachfrage in DE." },
+    { "id": "n4", "brand": "Paul & Shark", "title": "Poloshirts", "tip": "Niche brand mit Potenzial." },
+    { "id": "n5", "brand": "Burberry", "title": "Vintage Hemden", "tip": "Authentic pieces stark im Kommen." }
+  ]
+}
