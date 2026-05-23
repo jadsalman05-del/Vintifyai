@@ -2,7 +2,9 @@ const crypto = require('crypto');
 
 function generateCode(plan) {
   const random = crypto.randomBytes(8).toString('hex').toUpperCase();
-  return Buffer.from(`VFY:${plan}:${random}`).toString('base64');
+  const createdAt = Date.now();
+  const expiry = createdAt + 30 * 24 * 60 * 60 * 1000; // 30 Tage
+  return Buffer.from(`VFY:${plan}:${random}:${createdAt}:${expiry}`).toString('base64');
 }
 
 module.exports = async function handler(req, res) {

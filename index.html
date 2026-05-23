@@ -3382,14 +3382,18 @@ const PLAN_TOKENS = { free: 15, starter: 100, premium: 200, beta: 200 }
 
 function getPlan() {
   const plan = localStorage.getItem('vfy_plan') || 'free'
-  if (plan === 'beta') {
-    const exp = parseInt(localStorage.getItem('vfy_beta_expires') || '0')
-    if (exp && Date.now() > exp) {
-      localStorage.setItem('vfy_plan', 'free')
-      localStorage.removeItem('vfy_beta_expires')
-      localStorage.setItem('vfy_tokens', 15)
-      return 'free'
-    }
+  if (plan === 'free') return 'free'
+
+  // Ablaufdatum prüfen für ALLE bezahlten Pläne
+  const exp = parseInt(localStorage.getItem('vfy_plan_expires') || localStorage.getItem('vfy_beta_expires') || '0')
+  if (exp && Date.now() > exp) {
+    // Plan abgelaufen → zurück auf Free
+    localStorage.setItem('vfy_plan', 'free')
+    localStorage.removeItem('vfy_plan_expires')
+    localStorage.removeItem('vfy_beta_expires')
+    localStorage.removeItem('vfy_net_status')
+    localStorage.setItem('vfy_tokens', 15)
+    return 'free'
   }
   return plan
 }
@@ -3450,28 +3454,42 @@ function enterPlanCode(expectedType) {
     if (!decoded.startsWith('VFY:')) { showToast('❌ Invalid code'); return }
     const parts = decoded.split(':')
     const type = parts[1]
+
     if (expectedType && type !== expectedType && type !== 'premium' && type !== 'starter' && type !== 'network') {
       showToast('❌ Wrong code type'); return
     }
+
+    // Ablaufdatum prüfen (parts[4]) – gilt für ALLE Typen
+    const expiry = parseInt(parts[4] || '0')
+    if (expiry && Date.now() > expiry) {
+      const expDate = new Date(expiry).toLocaleDateString('de-DE')
+      showToast('❌ Dieser Code ist abgelaufen (am ' + expDate + ')')
+      return
+    }
+
     if (type === 'premium') {
       localStorage.setItem('vfy_plan', 'premium')
+      localStorage.setItem('vfy_plan_expires', expiry || '0')
       localStorage.setItem('vfy_tokens', 200)
       localStorage.setItem('vfy_net_status', 'accepted')
-      showToast('👑 Premium activated – Network unlocked!')
+      const expDate = expiry ? new Date(expiry).toLocaleDateString('de-DE') : '–'
+      showToast('👑 Premium aktiviert – läuft bis ' + expDate)
     } else if (type === 'starter') {
       localStorage.setItem('vfy_plan', 'starter')
+      localStorage.setItem('vfy_plan_expires', expiry || '0')
       localStorage.setItem('vfy_tokens', 100)
-      showToast('🚀 Starter activated – 100 scans unlocked!')
+      const expDate = expiry ? new Date(expiry).toLocaleDateString('de-DE') : '–'
+      showToast('🚀 Starter aktiviert – läuft bis ' + expDate)
     } else if (type === 'network') {
       localStorage.setItem('vfy_net_status', 'accepted')
+      localStorage.setItem('vfy_net_expires', expiry || '0')
       showToast('🌐 Network access unlocked!')
     } else if (type === 'beta') {
-      const expiry = parseInt(parts[4] || '0')
-      if (expiry && Date.now() > expiry) { showToast('❌ This beta code has expired'); return }
       localStorage.setItem('vfy_plan', 'beta')
-      localStorage.setItem('vfy_beta_expires', expiry || '0')
+      localStorage.setItem('vfy_plan_expires', expiry || '0')
       localStorage.setItem('vfy_tokens', 200)
-      showToast('🧪 Beta access activated!')
+      const expDate = expiry ? new Date(expiry).toLocaleDateString('de-DE') : '–'
+      showToast('🧪 Beta aktiviert – läuft bis ' + expDate)
     }
     updateTokenBar()
     renderNetworkPage()
@@ -3516,15 +3534,22 @@ function generateCode() {
   const type = document.getElementById('codeType').value
   const pw = document.getElementById('adminPwForCode').value
   if (pw !== getAdminPw()) { showToast('❌ Incorrect admin password'); return }
+
   let expiry = 0
   if (type === 'beta') {
     const dateVal = document.getElementById('betaExpiry').value
     if (!dateVal) { showToast('⚠️ Please enter a beta expiry date'); return }
     expiry = new Date(dateVal).getTime()
+  } else {
+    // Alle anderen Codes: 30 Tage ab jetzt
+    expiry = Date.now() + 30 * 24 * 60 * 60 * 1000
   }
+
   const code = btoa('VFY:' + type + ':' + pw + ':' + Date.now() + ':' + expiry)
   document.getElementById('generatedCode').textContent = code
-  showToast('✅ Code generated – click to copy')
+
+  const expiryDate = new Date(expiry).toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric' })
+  showToast('✅ Code generiert – läuft ab am ' + expiryDate)
 }
 
 function saveAdminSettings() {
@@ -4163,22 +4188,29 @@ init()
   try {
     const decoded = atob(code.trim())
     if (!decoded.startsWith('VFY:')) throw new Error()
-    const plan = decoded.split(':')[1]
+    const parts = decoded.split(':')
+    const plan = parts[1]
+    const expiry = parseInt(parts[4] || '0')
+
+    // Ablauf prüfen
+    if (expiry && Date.now() > expiry) {
+      setTimeout(() => showToast('❌ Dieser Code ist bereits abgelaufen.'), 800)
+      return
+    }
+
     if (plan === 'premium') {
       localStorage.setItem('vfy_plan', 'premium')
+      localStorage.setItem('vfy_plan_expires', expiry || '0')
       localStorage.setItem('vfy_tokens', 200)
       localStorage.setItem('vfy_net_status', 'accepted')
-      setTimeout(() => {
-        showToast('👑 Premium activated! 200 scans unlocked.')
-        updateTokenBar()
-      }, 600)
+      const expDate = expiry ? new Date(expiry).toLocaleDateString('de-DE') : '–'
+      setTimeout(() => { showToast('👑 Premium aktiviert – läuft bis ' + expDate); updateTokenBar() }, 600)
     } else if (plan === 'starter') {
       localStorage.setItem('vfy_plan', 'starter')
+      localStorage.setItem('vfy_plan_expires', expiry || '0')
       localStorage.setItem('vfy_tokens', 100)
-      setTimeout(() => {
-        showToast('🚀 Starter activated! 100 scans unlocked.')
-        updateTokenBar()
-      }, 600)
+      const expDate = expiry ? new Date(expiry).toLocaleDateString('de-DE') : '–'
+      setTimeout(() => { showToast('🚀 Starter aktiviert – läuft bis ' + expDate); updateTokenBar() }, 600)
     }
   } catch(e) {
     setTimeout(() => showToast('⚠️ Invalid activation code.'), 800)
