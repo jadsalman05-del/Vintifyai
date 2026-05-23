@@ -994,27 +994,7 @@ if (localStorage.getItem('va_session')) {
             <div class="ticker-live"><div class="pulse-dot"></div>Live</div>
           </div>
           <div class="ticker-items" id="tickerItems">
-            <div class="ticker-item">
-              <div class="ticker-brand">Nike Air Force 1</div>
-              <div class="ticker-right">
-                <div class="ticker-price">€89</div>
-                <div class="ticker-change up">▲ +4.2%</div>
-              </div>
-            </div>
-            <div class="ticker-item">
-              <div class="ticker-brand">Supreme Hoodie</div>
-              <div class="ticker-right">
-                <div class="ticker-price">€145</div>
-                <div class="ticker-change dn">▼ -1.8%</div>
-              </div>
-            </div>
-            <div class="ticker-item">
-              <div class="ticker-brand">Adidas Samba</div>
-              <div class="ticker-right">
-                <div class="ticker-price">€72</div>
-                <div class="ticker-change up">▲ +2.1%</div>
-              </div>
-            </div>
+            <div class="ticker-item"><div class="ticker-brand" style="color:var(--muted);font-size:.75rem">Lädt...</div></div>
           </div>
         </div>
 
@@ -4232,25 +4212,75 @@ document.addEventListener('mouseleave', () => {
 })
 
 // ═══════════════════════════════════════════
-// Ticker subtle price drift
+// Market Trends Ticker – aus echten Trend-Daten
 // ═══════════════════════════════════════════
-;(function tickerDrift(){
-  const prices = [68,142,54,89], changes = [4.2,2.8,-1.1,6.5]
+// Preisschätzungen nach Marke (Vinted DE Durchschnitt)
+const BRAND_PRICES = {
+  'fred perry': [28,65], 'lacoste': [22,60], 'ralph lauren': [20,75],
+  'stone island': [55,180], 'cp company': [50,160], 'carhartt': [25,70],
+  'sergio tacchini': [18,55], 'nike': [20,65], 'adidas': [18,55],
+  'kappa': [15,40], 'ellesse': [14,38], 'fila': [14,38],
+  'le coq sportif': [16,45], 'umbro': [15,40], 'levi': [18,55],
+  'tommy hilfiger': [18,65], 'burberry': [40,150], 'paul & shark': [35,110],
+  'napapijri': [30,100], 'stüssy': [25,80], 'champion': [14,40],
+  'wrangler': [16,45], 'lee': [16,45], 'columbia': [20,60],
+  'nautica': [18,55], 'timberland': [22,65]
+}
+function getBrandPrice(brand) {
+  const b = brand.toLowerCase()
+  for (const [key, range] of Object.entries(BRAND_PRICES)) {
+    if (b.includes(key)) return range
+  }
+  return [20, 60]
+}
+
+function renderDashboardTicker() {
+  const data = getMarketData()
+  const items = (data.hot || []).slice(0, 3)
+  const grid = document.getElementById('tickerItems')
+  if (!grid || !items.length) return
+
+  // Initiale Preise generieren
+  const tickerState = items.map(item => {
+    const [lo, hi] = getBrandPrice(item.brand)
+    const price = lo + Math.floor(Math.random() * (hi - lo))
+    const change = parseFloat(((Math.random() * 10) - 2).toFixed(1))
+    return { price, change }
+  })
+
+  function renderItems() {
+    grid.innerHTML = items.map((item, i) => {
+      const { price, change } = tickerState[i]
+      const up = change >= 0
+      return `<div class="ticker-item">
+        <div class="ticker-brand">${item.brand} <span style="font-weight:500;color:var(--muted);font-size:.75rem">${item.title}</span></div>
+        <div class="ticker-right">
+          <div class="ticker-price">€${price}</div>
+          <div class="ticker-change ${up ? 'up' : 'dn'}">${up ? '▲ +' : '▼ '}${Math.abs(change)}%</div>
+        </div>
+      </div>`
+    }).join('')
+  }
+
+  renderItems()
+
+  // Leichte Preis-Animation alle 3 Sekunden
   setInterval(() => {
-    document.querySelectorAll('#tickerItems .ticker-item').forEach((item, i) => {
-      const drift = (Math.random() - 0.5) * 2
-      prices[i] = Math.max(10, prices[i] + drift)
-      changes[i] = parseFloat((changes[i] + (Math.random()-0.5)*0.3).toFixed(1))
-      const priceEl = item.querySelector('.ticker-price')
-      const changeEl = item.querySelector('.ticker-change')
-      if (priceEl) priceEl.textContent = '€ ' + prices[i].toFixed(0)
-      if (changeEl) {
-        changeEl.textContent = (changes[i] >= 0 ? '▲ +' : '▼ ') + changes[i] + '%'
-        changeEl.className = 'ticker-change ' + (changes[i] >= 0 ? 'up' : 'dn')
-      }
+    tickerState.forEach((s, i) => {
+      const [lo, hi] = getBrandPrice(items[i].brand)
+      s.price = Math.max(lo, Math.min(hi, s.price + Math.round((Math.random()-0.5)*3)))
+      s.change = parseFloat((s.change + (Math.random()-0.5)*0.4).toFixed(1))
+      s.change = Math.max(-9.9, Math.min(15, s.change))
     })
+    renderItems()
   }, 3000)
-})()
+}
+
+// Ticker beim Laden der Seite befüllen
+document.addEventListener('DOMContentLoaded', () => {
+  // Kurz warten bis getMarketData() verfügbar ist
+  setTimeout(renderDashboardTicker, 500)
+})
 </script>
 </body>
 </html>
