@@ -81,44 +81,50 @@ module.exports = async function handler(req, res) {
 
     try {
       const body = req.body;
-      // Accept both { suppliers, ts } and plain array
       const suppliers = body.suppliers || (Array.isArray(body) ? body : []);
       const ts        = body.ts || Date.now();
       const payload   = { suppliers, ts };
+      const content   = Buffer.from(JSON.stringify(payload, null, 2)).toString('base64');
 
-      // Get current SHA
-      const getR = await fetch(
-        `https://api.github.com/repos/${repo}/contents/api/suppliers-data.json`,
-        { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
-      );
-      if (!getR.ok) {
-        const err = await getR.json();
-        return res.status(500).json({ error: 'SHA fetch failed: ' + (err.message || getR.status) });
-      }
-      const getJson = await getR.json();
-      const sha = getJson.sha;
-
-      // Update file
-      const content = Buffer.from(JSON.stringify(payload, null, 2)).toString('base64');
-      const updateR = await fetch(
-        `https://api.github.com/repos/${repo}/contents/api/suppliers-data.json`,
-        {
-          method: 'PUT',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ message: 'admin: update suppliers', content, sha })
+      // Retry up to 3 times in case of SHA mismatch
+      let lastError = null;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        // Always fetch fresh SHA before each attempt
+        const getR = await fetch(
+          `https://api.github.com/repos/${repo}/contents/api/suppliers-data.json`,
+          { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json', 'Cache-Control': 'no-cache' } }
+        );
+        if (!getR.ok) {
+          const err = await getR.json();
+          lastError = 'SHA fetch failed: ' + (err.message || getR.status);
+          break;
         }
-      );
+        const sha = (await getR.json()).sha;
 
-      if (!updateR.ok) {
+        const updateR = await fetch(
+          `https://api.github.com/repos/${repo}/contents/api/suppliers-data.json`,
+          {
+            method: 'PUT',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: 'application/vnd.github.v3+json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message: 'admin: update suppliers', content, sha })
+          }
+        );
+
+        if (updateR.ok) {
+          return res.status(200).json({ ok: true, ts });
+        }
+
         const err = await updateR.json();
-        return res.status(500).json({ error: err.message });
+        lastError = err.message || updateR.status;
+        // If not a SHA conflict, don't retry
+        if (!lastError.includes('sha') && !lastError.includes('SHA') && updateR.status !== 409) break;
       }
 
-      return res.status(200).json({ ok: true, ts });
+      return res.status(500).json({ error: lastError });
     } catch (e) {
       return res.status(500).json({ error: e.message });
     }
