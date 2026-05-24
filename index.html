@@ -3736,28 +3736,37 @@ function getSuppliers() {
   const stored = localStorage.getItem('vfy_suppliers')
   return stored ? JSON.parse(stored) : JSON.parse(JSON.stringify(DEFAULT_SUPPLIERS))
 }
+function getSuppliersTs() {
+  return parseInt(localStorage.getItem('vfy_suppliers_ts') || '0')
+}
 
 async function loadSuppliersFromServer() {
   try {
     const r = await fetch('/api/suppliers?t=' + Date.now())
-    if (r.ok) {
-      const data = await r.json()
-      if (Array.isArray(data) && data.length) {
-        localStorage.setItem('vfy_suppliers', JSON.stringify(data))
-        renderNetworkPage()
-        renderAdminSupplierList()
-      }
+    if (!r.ok) return
+    const result = await r.json()
+    const serverData = result.suppliers || (Array.isArray(result) ? result : null)
+    const serverTs   = result.ts || 0
+    const localTs    = getSuppliersTs()
+    // Only overwrite local if server is strictly newer
+    if (serverData && Array.isArray(serverData) && serverData.length && serverTs > localTs) {
+      localStorage.setItem('vfy_suppliers', JSON.stringify(serverData))
+      localStorage.setItem('vfy_suppliers_ts', serverTs.toString())
+      renderNetworkPage()
+      renderAdminSupplierList()
     }
   } catch(e) {}
 }
 
 async function saveSuppliers(data) {
+  const ts = Date.now()
   localStorage.setItem('vfy_suppliers', JSON.stringify(data))
+  localStorage.setItem('vfy_suppliers_ts', ts.toString())
   try {
     const r = await fetch('/api/suppliers', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      body: JSON.stringify({ suppliers: data, ts })
     })
     if (!r.ok) {
       const err = await r.json().catch(() => ({}))
