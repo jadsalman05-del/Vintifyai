@@ -3744,6 +3744,8 @@ async function loadSuppliersFromServer() {
       const data = await r.json()
       if (Array.isArray(data) && data.length) {
         localStorage.setItem('vfy_suppliers', JSON.stringify(data))
+        renderNetworkPage()
+        renderAdminSupplierList()
       }
     }
   } catch(e) {}
@@ -3752,12 +3754,23 @@ async function loadSuppliersFromServer() {
 async function saveSuppliers(data) {
   localStorage.setItem('vfy_suppliers', JSON.stringify(data))
   try {
-    await fetch('/api/suppliers', {
+    const r = await fetch('/api/suppliers', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     })
-  } catch(e) { console.warn('Supplier sync error:', e) }
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}))
+      console.warn('Supplier sync error:', err)
+      showToast('⚠️ Lokal gespeichert – Server-Sync fehlgeschlagen: ' + (err.error || r.status))
+      return false
+    }
+    return true
+  } catch(e) {
+    console.warn('Supplier sync error:', e)
+    showToast('⚠️ Lokal gespeichert – kein Server-Sync')
+    return false
+  }
 }
 
 function renderSupplierCards() {
@@ -3835,11 +3848,11 @@ async function saveSupplier() {
   } else {
     suppliers.push({ id: 's' + Date.now(), name, role, cat, disc, verified })
   }
-  await saveSuppliers(suppliers)
+  const ok = await saveSuppliers(suppliers)
   closeSupplierModal()
   renderAdminSupplierList()
   renderNetworkPage()
-  showToast('✅ Gespeichert & für alle sichtbar')
+  if (ok) showToast('✅ Gespeichert & auf allen Geräten sichtbar')
 }
 
 function editSupplier(id) { openSupplierModal(id) }
