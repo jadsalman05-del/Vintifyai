@@ -3739,7 +3739,7 @@ function getSuppliers() {
 
 async function loadSuppliersFromServer() {
   try {
-    const r = await fetch('/api/suppliers')
+    const r = await fetch('/api/suppliers?t=' + Date.now())
     if (r.ok) {
       const data = await r.json()
       if (Array.isArray(data) && data.length) {

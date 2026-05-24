@@ -10,6 +10,7 @@ let memoryStore = null;
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
@@ -21,8 +22,8 @@ module.exports = async function handler(req, res) {
     if (token) {
       try {
         const r = await fetch(
-          `https://api.github.com/repos/${repo}/contents/api/suppliers-data.json`,
-          { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
+          `https://api.github.com/repos/${repo}/contents/api/suppliers-data.json?t=${Date.now()}`,
+          { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json', 'Cache-Control': 'no-cache' } }
         );
         if (r.ok) {
           const json = await r.json();
