@@ -15,6 +15,32 @@ module.exports = async function handler(req, res) {
 
   // ── GET ──────────────────────────────────────────────────────────────────
   if (req.method === 'GET') {
+    // Debug endpoint: /api/suppliers?debug=1
+    if (req.query && req.query.debug) {
+      const debug = { token: token ? 'SET' : 'MISSING', repo };
+      if (token) {
+        try {
+          const r = await fetch(
+            `https://api.github.com/repos/${repo}/contents/api/suppliers-data.json`,
+            { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
+          );
+          debug.githubStatus = r.status;
+          if (r.ok) {
+            const json = await r.json();
+            debug.githubOk = true;
+            debug.fileSha = json.sha;
+            const raw = JSON.parse(Buffer.from(json.content, 'base64').toString('utf8'));
+            debug.fileTs = raw.ts || 0;
+            debug.supplierCount = (raw.suppliers || raw).length;
+          } else {
+            debug.githubOk = false;
+            debug.githubError = await r.text();
+          }
+        } catch(e) { debug.githubError = e.message; }
+      }
+      return res.status(200).json(debug);
+    }
+
     if (token) {
       try {
         const r = await fetch(
@@ -24,20 +50,17 @@ module.exports = async function handler(req, res) {
         if (r.ok) {
           const json = await r.json();
           const raw  = JSON.parse(Buffer.from(json.content, 'base64').toString('utf8'));
-          // Support both wrapped { suppliers, ts } and legacy plain array
           if (raw && raw.suppliers) {
             return res.status(200).json(raw);
           } else if (Array.isArray(raw)) {
             return res.status(200).json({ suppliers: raw, ts: 0 });
           }
         } else {
-          console.error('GitHub GET failed:', r.status, await r.text());
+          console.error('GitHub GET failed:', r.status);
         }
       } catch(e) {
         console.error('GitHub GET error:', e.message);
       }
-    } else {
-      console.warn('GITHUB_TOKEN not set – using static fallback');
     }
 
     // Fallback: committed static file
