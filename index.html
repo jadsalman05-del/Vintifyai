@@ -1597,6 +1597,15 @@ if (localStorage.getItem('va_session')) {
       <div id="applicationsList" style="font-size:.84rem"></div>
     </div>
 
+    <!-- Network Supplier Manager -->
+    <div class="card" style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="card-title" style="margin:0">🌐 Network Supplier & Reseller</div>
+        <button class="btn btn-primary btn-sm" onclick="openSupplierModal()">+ Hinzufügen</button>
+      </div>
+      <div id="adminSupplierList" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
       <div class="card">
         <div class="card-title">🔐 Change Admin Password</div>
@@ -1678,6 +1687,45 @@ if (localStorage.getItem('va_session')) {
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeMarketModal()">Cancel</button>
       <button class="btn btn-primary" onclick="saveMarketItem()">💾 Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Supplier Modal -->
+<div class="modal-overlay" id="supplierModal">
+  <div class="modal-box">
+    <div class="modal-title" id="supplierModalTitle">Supplier hinzufügen</div>
+    <input type="hidden" id="sEditId"/>
+    <div class="form-group">
+      <label class="form-label">Name</label>
+      <input class="form-input" id="sName" placeholder="z.B. SupplyDrop EU"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Rolle</label>
+      <select class="form-select" id="sRole">
+        <option value="Supplier">Supplier</option>
+        <option value="Reseller">Reseller</option>
+        <option value="Wholesaler">Wholesaler</option>
+        <option value="Brand">Brand</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Kategorie / Spezialisierung</label>
+      <input class="form-input" id="sCat" placeholder="z.B. Vintage Jacken, Fleece"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Discord / Kontakt</label>
+      <input class="form-input" id="sDisc" placeholder="z.B. @supplydrop_eu"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="sVerified" style="accent-color:var(--orange)"/>
+        <span>Verified Badge anzeigen</span>
+      </label>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeSupplierModal()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveSupplier()">💾 Speichern</button>
     </div>
   </div>
 </div>
@@ -1770,7 +1818,7 @@ function goPage(id) {
   if (id === 'inventar') { renderInventar(); renderInvChart() }
   if (id === 'home') { updateDashKpis(); drawDashChart() }
   if (id === 'receipts') renderReceiptsPage()
-  if (id === 'admin') { updateAdmin(); renderApplications() }
+  if (id === 'admin') { updateAdmin(); renderApplications(); renderAdminSupplierList() }
   if (id === 'market') renderMarketPage()
   if (id === 'network') renderNetworkPage()
 }
@@ -3674,13 +3722,23 @@ function renderNetworkPage() {
     </div>`
 }
 
+// ── Supplier Data ──────────────────────────────
+const DEFAULT_SUPPLIERS = [
+  { id:'s1', name:'SupplyDrop EU',     role:'Supplier',  cat:'Vintage Jacken, Fleece',       disc:'@supplydrop_eu',  verified:true  },
+  { id:'s2', name:'FlipKing Berlin',   role:'Reseller',  cat:'Nike, Adidas, Stone Island',   disc:'@flipking_b',     verified:true  },
+  { id:'s3', name:'VintageHouse GmbH', role:'Supplier',  cat:'90s Sportswear, Tracksuits',   disc:'@vintagehouse',   verified:false },
+  { id:'s4', name:'SneakerStash',      role:'Reseller',  cat:'Deadstock Sneakers',           disc:'@sneakerstash',   verified:true  },
+]
+
+function getSuppliers() {
+  const stored = localStorage.getItem('vfy_suppliers')
+  return stored ? JSON.parse(stored) : JSON.parse(JSON.stringify(DEFAULT_SUPPLIERS))
+}
+function saveSuppliers(data) { localStorage.setItem('vfy_suppliers', JSON.stringify(data)) }
+
 function renderSupplierCards() {
-  const suppliers = [
-    { name:'SupplyDrop EU', role:'Supplier', cat:'Vintage Jacken, Fleece', disc:'@supplydrop_eu', verified:true },
-    { name:'FlipKing Berlin', role:'Reseller', cat:'Nike, Adidas, Stone Island', disc:'@flipking_b', verified:true },
-    { name:'VintageHouse GmbH', role:'Supplier', cat:'90s Sportswear, Tracksuits', disc:'@vintagehouse', verified:false },
-    { name:'SneakerStash', role:'Reseller', cat:'Deadstock Sneakers', disc:'@sneakerstash', verified:true },
-  ]
+  const suppliers = getSuppliers()
+  if (!suppliers.length) return '<div style="font-size:.85rem;color:var(--muted);text-align:center;padding:20px">Noch keine Einträge.</div>'
   return suppliers.map(s => `
     <div class="card" style="border-color:${s.verified?'rgba(249,115,22,.3)':'var(--border)'}">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
@@ -3691,6 +3749,84 @@ function renderSupplierCards() {
       <div style="font-size:.78rem;color:var(--muted);margin-bottom:10px">${s.cat}</div>
       <div style="font-size:.78rem;color:var(--text);font-family:monospace">${s.disc}</div>
     </div>`).join('')
+}
+
+// ── Admin: Supplier verwalten ──────────────────
+function renderAdminSupplierList() {
+  const list = document.getElementById('adminSupplierList')
+  if (!list) return
+  const suppliers = getSuppliers()
+  if (!suppliers.length) { list.innerHTML = '<div style="font-size:.83rem;color:var(--muted)">Noch keine Einträge.</div>'; return }
+  list.innerHTML = suppliers.map(s => `
+    <div style="display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:.85rem">${s.name}
+          ${s.verified ? '<span style="font-size:.6rem;background:rgba(249,115,22,.15);color:var(--orange);border:1px solid rgba(249,115,22,.3);border-radius:99px;padding:1px 6px;font-weight:700;margin-left:6px">✓ VERIFIED</span>' : ''}
+        </div>
+        <div style="font-size:.75rem;color:var(--orange);font-weight:600">${s.role} · <span style="color:var(--muted);font-weight:400">${s.cat}</span></div>
+        <div style="font-size:.72rem;color:var(--muted);font-family:monospace">${s.disc}</div>
+      </div>
+      <button onclick="editSupplier('${s.id}')" style="background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;padding:5px 10px;font-size:.75rem">✏️</button>
+      <button onclick="deleteSupplier('${s.id}')" style="background:none;border:1px solid rgba(255,77,109,.3);border-radius:8px;color:var(--danger);cursor:pointer;padding:5px 10px;font-size:.75rem">🗑️</button>
+    </div>`).join('')
+}
+
+function openSupplierModal(id) {
+  document.getElementById('supplierModalTitle').textContent = id ? 'Supplier bearbeiten' : 'Supplier hinzufügen'
+  document.getElementById('sEditId').value = id || ''
+  if (id) {
+    const s = getSuppliers().find(x => x.id === id)
+    if (!s) return
+    document.getElementById('sName').value = s.name
+    document.getElementById('sRole').value = s.role
+    document.getElementById('sCat').value = s.cat
+    document.getElementById('sDisc').value = s.disc
+    document.getElementById('sVerified').checked = s.verified
+  } else {
+    document.getElementById('sName').value = ''
+    document.getElementById('sRole').value = 'Supplier'
+    document.getElementById('sCat').value = ''
+    document.getElementById('sDisc').value = ''
+    document.getElementById('sVerified').checked = false
+  }
+  document.getElementById('supplierModal').classList.add('open')
+}
+
+function closeSupplierModal() { document.getElementById('supplierModal').classList.remove('open') }
+
+function saveSupplier() {
+  const id   = document.getElementById('sEditId').value
+  const name = document.getElementById('sName').value.trim()
+  const role = document.getElementById('sRole').value
+  const cat  = document.getElementById('sCat').value.trim()
+  const disc = document.getElementById('sDisc').value.trim()
+  const verified = document.getElementById('sVerified').checked
+
+  if (!name || !cat) { showToast('⚠️ Name und Kategorie erforderlich'); return }
+
+  const suppliers = getSuppliers()
+  if (id) {
+    const idx = suppliers.findIndex(x => x.id === id)
+    if (idx >= 0) suppliers[idx] = { id, name, role, cat, disc, verified }
+  } else {
+    suppliers.push({ id: 's' + Date.now(), name, role, cat, disc, verified })
+  }
+  saveSuppliers(suppliers)
+  closeSupplierModal()
+  renderAdminSupplierList()
+  renderNetworkPage()
+  showToast('✅ Gespeichert')
+}
+
+function editSupplier(id) { openSupplierModal(id) }
+
+function deleteSupplier(id) {
+  if (!confirm('Diesen Eintrag wirklich löschen?')) return
+  const suppliers = getSuppliers().filter(x => x.id !== id)
+  saveSuppliers(suppliers)
+  renderAdminSupplierList()
+  renderNetworkPage()
+  showToast('🗑️ Gelöscht')
 }
 
 async function sendNetworkApplication() {
