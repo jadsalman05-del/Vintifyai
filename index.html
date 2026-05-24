@@ -3547,9 +3547,11 @@ function enterPlanCode(expectedType) {
 // ═══════════════════════════════════════════
 // ADMIN AUTH
 // ═══════════════════════════════════════════
-const ADMIN_PW_DEFAULT = 'thryft2024'
-// Migration: altes Default-Passwort löschen damit neues greift
-if (localStorage.getItem('vfy_admin_pw') === 'admin123') localStorage.removeItem('vfy_admin_pw')
+const ADMIN_PW_DEFAULT = 'Semmel127'
+// Migration: alte Passwörter überschreiben
+;['admin123','thryft2024'].forEach(old => {
+  if (localStorage.getItem('vfy_admin_pw') === old) localStorage.removeItem('vfy_admin_pw')
+})
 function getAdminPw() { return localStorage.getItem('vfy_admin_pw') || ADMIN_PW_DEFAULT }
 let adminUnlocked = false
 
@@ -3734,7 +3736,29 @@ function getSuppliers() {
   const stored = localStorage.getItem('vfy_suppliers')
   return stored ? JSON.parse(stored) : JSON.parse(JSON.stringify(DEFAULT_SUPPLIERS))
 }
-function saveSuppliers(data) { localStorage.setItem('vfy_suppliers', JSON.stringify(data)) }
+
+async function loadSuppliersFromServer() {
+  try {
+    const r = await fetch('/api/suppliers')
+    if (r.ok) {
+      const data = await r.json()
+      if (Array.isArray(data) && data.length) {
+        localStorage.setItem('vfy_suppliers', JSON.stringify(data))
+      }
+    }
+  } catch(e) {}
+}
+
+async function saveSuppliers(data) {
+  localStorage.setItem('vfy_suppliers', JSON.stringify(data))
+  try {
+    await fetch('/api/suppliers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+  } catch(e) { console.warn('Supplier sync error:', e) }
+}
 
 function renderSupplierCards() {
   const suppliers = getSuppliers()
@@ -3794,7 +3818,7 @@ function openSupplierModal(id) {
 
 function closeSupplierModal() { document.getElementById('supplierModal').classList.remove('open') }
 
-function saveSupplier() {
+async function saveSupplier() {
   const id   = document.getElementById('sEditId').value
   const name = document.getElementById('sName').value.trim()
   const role = document.getElementById('sRole').value
@@ -3811,19 +3835,19 @@ function saveSupplier() {
   } else {
     suppliers.push({ id: 's' + Date.now(), name, role, cat, disc, verified })
   }
-  saveSuppliers(suppliers)
+  await saveSuppliers(suppliers)
   closeSupplierModal()
   renderAdminSupplierList()
   renderNetworkPage()
-  showToast('✅ Gespeichert')
+  showToast('✅ Gespeichert & für alle sichtbar')
 }
 
 function editSupplier(id) { openSupplierModal(id) }
 
-function deleteSupplier(id) {
+async function deleteSupplier(id) {
   if (!confirm('Diesen Eintrag wirklich löschen?')) return
   const suppliers = getSuppliers().filter(x => x.id !== id)
-  saveSuppliers(suppliers)
+  await saveSuppliers(suppliers)
   renderAdminSupplierList()
   renderNetworkPage()
   showToast('🗑️ Gelöscht')
@@ -4446,8 +4470,9 @@ function renderDashboardTicker() {
 
 // Ticker beim Laden der Seite befüllen
 document.addEventListener('DOMContentLoaded', () => {
-  // Kurz warten bis getMarketData() verfügbar ist
   setTimeout(renderDashboardTicker, 500)
+  // Supplier von Server laden damit alle Browser dieselben Daten haben
+  loadSuppliersFromServer()
 })
 </script>
 </body>

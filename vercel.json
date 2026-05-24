@@ -17,6 +17,7 @@
     { "src": "/api/imagegen2", "dest": "/api/imagegen2.js" },
     { "src": "/api/webhook", "dest": "/api/webhook.js" },
     { "src": "/api/activate", "dest": "/api/activate.js" },
+    { "src": "/api/suppliers", "dest": "/api/suppliers.js" },
     { "src": "/model[1-5]\\.jpg", "dest": "/$0" },
     { "src": "/(.*)", "dest": "/api/gate.js" }
   ]

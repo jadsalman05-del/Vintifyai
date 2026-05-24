@@ -1,0 +1,6 @@
+[
+  { "id": "s1", "name": "SupplyDrop EU",     "role": "Supplier",  "cat": "Vintage Jacken, Fleece",       "disc": "@supplydrop_eu",  "verified": true  },
+  { "id": "s2", "name": "FlipKing Berlin",   "role": "Reseller",  "cat": "Nike, Adidas, Stone Island",   "disc": "@flipking_b",     "verified": true  },
+  { "id": "s3", "name": "VintageHouse GmbH", "role": "Supplier",  "cat": "90s Sportswear, Tracksuits",   "disc": "@vintagehouse",   "verified": false },
+  { "id": "s4", "name": "SneakerStash",      "role": "Reseller",  "cat": "Deadstock Sneakers",           "disc": "@sneakerstash",   "verified": true  }
+]
