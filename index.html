@@ -1037,6 +1037,7 @@ if (localStorage.getItem('va_session')) {
         <div class="page-subtitle">Track your items, buying & selling prices, profit and slow sellers — all in one place.</div>
       </div>
       <div class="topbar-actions">
+        <button class="btn btn-primary btn-sm" onclick="exportAccountingCSV()" style="background:linear-gradient(135deg,#16a34a,#15803d)">📑 Buchhaltung (CSV)</button>
         <button class="btn btn-outline btn-sm" onclick="exportXLSX()">⬇️ Excel</button>
         <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ Add</button>
       </div>
@@ -1100,6 +1101,51 @@ if (localStorage.getItem('va_session')) {
           </thead>
           <tbody id="invTbody"></tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- ── AUTOMATIONS (Vinted) ── -->
+    <div class="card" style="margin-top:20px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <div class="card-title" style="margin-bottom:0">🤖 Vinted Automations</div>
+        <span class="badge badge-orange" style="font-size:.6rem">⏳ Bald verfügbar</span>
+      </div>
+      <div style="font-size:.8rem;color:var(--muted);margin-bottom:18px;line-height:1.5">
+        Konfiguriere hier deine Automatisierungen. Die Einstellungen werden gespeichert und aktiv,
+        sobald die Vinted-Server-Anbindung steht. <strong>Noch nicht aktiv.</strong>
+      </div>
+
+      <!-- Auto-Repost -->
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;margin-bottom:14px">
+        <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+          <div>
+            <div style="font-weight:700;font-size:.9rem">🔄 Auto-Repost</div>
+            <div style="font-size:.75rem;color:var(--muted);margin-top:2px">Listings automatisch neu einstellen, um im Vinted-Feed oben zu bleiben.</div>
+          </div>
+          <input type="checkbox" id="autoRepostToggle" onchange="saveAutomationSettings()" style="width:20px;height:20px;accent-color:var(--success)"/>
+        </label>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
+          <span style="font-size:.8rem;color:var(--muted)">Intervall:</span>
+          <input class="form-input" id="autoRepostInterval" type="number" min="1" value="30" onchange="saveAutomationSettings()" style="width:90px;padding:6px 10px;font-size:.8rem"/>
+          <span style="font-size:.8rem;color:var(--muted)">Tage</span>
+        </div>
+      </div>
+
+      <!-- Auto-DM bei Favoriten -->
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px">
+        <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+          <div>
+            <div style="font-weight:700;font-size:.9rem">💬 Auto-DM bei Favoriten</div>
+            <div style="font-size:.75rem;color:var(--muted);margin-top:2px">Automatische Nachricht an User, die einen Artikel favorisieren.</div>
+          </div>
+          <input type="checkbox" id="autoDmToggle" onchange="saveAutomationSettings()" style="width:20px;height:20px;accent-color:var(--success)"/>
+        </label>
+        <textarea class="form-textarea" id="autoDmTemplate" onchange="saveAutomationSettings()"
+          placeholder="Hey {username}! Danke fürs Liken von {item_name} 😊 Bei Interesse mache ich dir gern ein faires Angebot!"
+          style="min-height:80px;margin-top:12px"></textarea>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:6px">
+          Variablen: <code>{username}</code> · <code>{item_name}</code>
+        </div>
       </div>
     </div>
   </div>
@@ -1657,7 +1703,14 @@ if (localStorage.getItem('va_session')) {
       <div class="form-group"><label class="form-label">Category</label><select class="form-select" id="iCat"><option>T-Shirt</option><option>Hoodie</option><option>Jacket</option><option>Trousers</option><option>Dress</option><option>Shoes</option><option>Accessory</option><option>Bag</option><option>Other</option></select></div>
       <div class="form-group"><label class="form-label">Status</label><select class="form-select" id="iStatus"><option value="bestand">In Stock</option><option value="verkauft">Sold</option></select></div>
     </div>
-    <div class="form-group"><label class="form-label">Date (Listed)</label><input class="form-input" id="iDate" type="date"/></div>
+    <div class="form-2col">
+      <div class="form-group"><label class="form-label">Purchase Date / Kaufdatum</label><input class="form-input" id="iDate" type="date"/></div>
+      <div class="form-group"><label class="form-label">Sale Date / Verkaufsdatum</label><input class="form-input" id="iSaleDate" type="date"/></div>
+    </div>
+    <div class="form-2col">
+      <div class="form-group"><label class="form-label">Platform Fees / Gebühren (€)</label><input class="form-input" id="iFees" type="number" step="0.01" placeholder="0.00"/></div>
+      <div class="form-group"><label class="form-label">Shipping Status / Versand</label><select class="form-select" id="iShip"><option value="">–</option><option value="not_shipped">Not shipped / Nicht versendet</option><option value="shipped">Shipped / Versendet</option><option value="delivered">Delivered / Zugestellt</option></select></div>
+    </div>
     <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="iNotes" placeholder="e.g. origin, special features..." style="min-height:70px"></textarea></div>
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeItemModal()">Cancel</button>
@@ -1815,7 +1868,7 @@ function goPage(id) {
   document.querySelectorAll('.nav-item').forEach(n => {
     if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'"+id+"'")) n.classList.add('active')
   })
-  if (id === 'inventar') { renderInventar(); renderInvChart() }
+  if (id === 'inventar') { renderInventar(); renderInvChart(); loadAutomationSettings() }
   if (id === 'home') { updateDashKpis(); drawDashChart() }
   if (id === 'receipts') renderReceiptsPage()
   if (id === 'admin') { updateAdmin(); renderApplications(); renderAdminSupplierList() }
@@ -2604,9 +2657,10 @@ function renderMarket(data) {
 function openAddModal() {
   document.getElementById('itemModalTitle').textContent = 'Add Item'
   document.getElementById('editId').value = ''
-  ;['iName','iBrand','iSize','iEK','iVK','iNotes'].forEach(id => document.getElementById(id).value = '')
+  ;['iName','iBrand','iSize','iEK','iVK','iNotes','iFees','iSaleDate'].forEach(id => document.getElementById(id).value = '')
   document.getElementById('iCat').value = 'T-Shirt'
   document.getElementById('iStatus').value = 'bestand'
+  document.getElementById('iShip').value = ''
   document.getElementById('iDate').value = new Date().toISOString().split('T')[0]
   document.getElementById('itemModal').classList.add('open')
 }
@@ -2624,6 +2678,9 @@ function openEditModal(id) {
   document.getElementById('iCat').value = item.cat || 'T-Shirt'
   document.getElementById('iStatus').value = item.status || 'bestand'
   document.getElementById('iDate').value = item.date || ''
+  document.getElementById('iSaleDate').value = item.saleDate || ''
+  document.getElementById('iFees').value = item.fees || ''
+  document.getElementById('iShip').value = item.ship || ''
   document.getElementById('iNotes').value = item.notes || ''
   document.getElementById('itemModal').classList.add('open')
 }
@@ -2645,6 +2702,9 @@ function saveItem() {
     cat:    document.getElementById('iCat').value,
     status: document.getElementById('iStatus').value,
     date:   document.getElementById('iDate').value,
+    saleDate: document.getElementById('iSaleDate').value,
+    fees:   parseFloat(document.getElementById('iFees').value) || 0,
+    ship:   document.getElementById('iShip').value,
     notes:  document.getElementById('iNotes').value.trim()
   }
 
@@ -2974,20 +3034,110 @@ function updateDashKpis() {
 }
 
 // ═══════════════════════════════════════════
-// EXCEL EXPORT
+// EXPORT (Excel + Buchhaltungs-CSV)
 // ═══════════════════════════════════════════
+
+// Versandstatus für den Export lesbar machen
+const SHIP_LABELS = {
+  not_shipped: 'Nicht versendet',
+  shipped:     'Versendet',
+  delivered:   'Zugestellt',
+  '':          '–'
+}
+
+// Baut die Buchhaltungs-Zeilen mit allen Pflichtspalten
+function buildAccountingRows() {
+  return inventory.map(i => {
+    const vk   = i.vk   || 0
+    const ek   = i.ek   || 0
+    const fees = i.fees || 0
+    const net  = vk - ek - fees   // Netto-Gewinn = Verkaufspreis − Einkauf − Gebühren
+    return {
+      'Artikel-ID':       i.id,
+      'Titel':            i.name || '',
+      'Marke':            i.brand || '',
+      'Größe':            i.size || '',
+      'Kaufdatum':        i.date || '',
+      'Verkaufsdatum':    i.saleDate || '',
+      'Einkaufspreis (€)': ek.toFixed(2),
+      'Verkaufspreis (€)': vk.toFixed(2),
+      'Plattform-Gebühren (€)': fees.toFixed(2),
+      'Versandstatus':    SHIP_LABELS[i.ship || ''] || (i.ship || '–'),
+      'Status':           i.status === 'verkauft' ? 'Verkauft' : 'Bestand',
+      'Netto-Gewinn (€)': net.toFixed(2)
+    }
+  })
+}
+
+// Excel-Export (.xlsx) — jetzt mit Buchhaltungs-Spalten
 function exportXLSX() {
-  const data = inventory.map(i => ({
-    'Name': i.name, 'Brand': i.brand, 'Size': i.size,
-    'Purchase (€)': i.ek, 'Selling (€)': i.vk,
-    'Profit (€)': ((i.vk||0)-(i.ek||0)).toFixed(2),
-    'Category': i.cat, 'Status': i.status, 'Date': i.date, 'Notes': i.notes
-  }))
-  const ws = XLSX.utils.json_to_sheet(data)
+  if (!inventory.length) { showToast('⚠️ Inventar ist leer'); return }
+  const ws = XLSX.utils.json_to_sheet(buildAccountingRows())
   const wb = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(wb, ws, 'Inventory')
-  XLSX.writeFile(wb, 'VintifyAI_Inventory.xlsx')
-  showToast('📊 Excel exported!')
+  XLSX.utils.book_append_sheet(wb, ws, 'Buchhaltung')
+  XLSX.writeFile(wb, 'VintifyAI_Buchhaltung.xlsx')
+  showToast('📊 Excel exportiert!')
+}
+
+// CSV-Export für die Buchhaltung (Komma-getrennt, Excel/Numbers-kompatibel)
+function exportAccountingCSV() {
+  if (!inventory.length) { showToast('⚠️ Inventar ist leer'); return }
+  const rows = buildAccountingRows()
+  const headers = Object.keys(rows[0])
+
+  // CSV-sicher: Werte mit ; " oder Zeilenumbruch in Anführungszeichen setzen
+  const esc = v => {
+    const s = String(v ?? '')
+    return /[";\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s
+  }
+
+  const csv = [
+    headers.join(';'),
+    ...rows.map(r => headers.map(h => esc(r[h])).join(';'))
+  ].join('\r\n')
+
+  // BOM voranstellen, damit Excel Umlaute (ä/ö/ü/€) korrekt zeigt
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
+  const url  = URL.createObjectURL(blob)
+  const a    = document.createElement('a')
+  a.href = url
+  a.download = 'VintifyAI_Buchhaltung_' + new Date().toISOString().split('T')[0] + '.csv'
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+  showToast('📑 Buchhaltungs-CSV exportiert!')
+}
+
+// ═══════════════════════════════════════════
+// AUTOMATIONS — Einstellungen (Speicher bereit, Engine folgt mit Server)
+// ═══════════════════════════════════════════
+function getAutomationSettings() {
+  try { return JSON.parse(localStorage.getItem('vfy_automations')) || {} } catch { return {} }
+}
+
+function saveAutomationSettings() {
+  const settings = {
+    autoRepost:         document.getElementById('autoRepostToggle')?.checked || false,
+    repostIntervalDays: parseInt(document.getElementById('autoRepostInterval')?.value) || 30,
+    autoDm:             document.getElementById('autoDmToggle')?.checked || false,
+    dmTemplate:         document.getElementById('autoDmTemplate')?.value || '',
+    updatedAt:          Date.now()
+  }
+  localStorage.setItem('vfy_automations', JSON.stringify(settings))
+  showToast('💾 Automation-Einstellungen gespeichert (aktiv sobald Server steht)')
+}
+
+function loadAutomationSettings() {
+  const s = getAutomationSettings()
+  const rt  = document.getElementById('autoRepostToggle')
+  const ri  = document.getElementById('autoRepostInterval')
+  const dt  = document.getElementById('autoDmToggle')
+  const tpl = document.getElementById('autoDmTemplate')
+  if (rt)  rt.checked  = !!s.autoRepost
+  if (ri)  ri.value    = s.repostIntervalDays || 30
+  if (dt)  dt.checked  = !!s.autoDm
+  if (tpl) tpl.value   = s.dmTemplate || ''
 }
 
 // ═══════════════════════════════════════════
