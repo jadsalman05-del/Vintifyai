@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-05-25",
+  "updatedAt": "2026-06-01",
   "hot": [
     {
-      "brand": "Vintage Nike",
-      "title": "90er Nylon Windbreaker in Neonfarben",
-      "tip": "Y2K Revival Peak – täglich Dutzende Verkäufe",
+      "brand": "Vintage Nationalteams",
+      "title": "EM 2024 Retro Trikots",
+      "tip": "Deutschland, Spanien, Italien – schnell weg",
       "id": "h1"
     },
     {
-      "brand": "Sergio Tacchini",
-      "title": "Retro Tennis Trainingsanzug",
-      "tip": "Italian Sportswear Boom – Sub 24h Verkauf",
+      "brand": "Carhartt WIP",
+      "title": "Carpenter Pants & Jackets",
+      "tip": "Workwear-Trend dominiert Juni 2026",
       "id": "h2"
     },
     {
-      "brand": "Napapijri",
-      "title": "Vintage Sleeping Bag Puffer Jacke",
-      "tip": "Gorpcore + Sommer-Layering – Sofort weg",
+      "brand": "New Balance",
+      "title": "90er Vintage Sneaker",
+      "tip": "550er, 574er – täglich ausverkauft",
       "id": "h3"
     },
     {
-      "brand": "Bundesliga Retro",
-      "title": "90er-2000er Vintage Fußball Trikots",
-      "tip": "Euro 2024 Nostalgie-Effekt hält an stark",
+      "brand": "Ralph Lauren",
+      "title": "Vintage Polos & Oxford Shirts",
+      "tip": "Old Money Aesthetic nach wie vor viral",
       "id": "h4"
     },
     {
-      "brand": "Lacoste Vintage",
-      "title": "Oversized Polo Shirts in Pastelltönen",
-      "tip": "Old Money Aesthetic – Frühsommer Standard",
+      "brand": "Sergio Tacchini",
+      "title": "90er Track Jackets",
+      "tip": "Gorpcore erfährt 2. Renaissance",
       "id": "h5"
     }
   ],
   "next": [
     {
-      "brand": "Berghaus",
-      "title": "90er Fleece Jacken & Gilets",
-      "tip": "Outdoor-Trend September – jetzt billig kaufen",
+      "brand": "Stone Island",
+      "title": "Vintage Overshirts & Jackets",
+      "tip": "Juli/August: Schichtwetter-Peak kommt",
       "id": "n1"
     },
     {
-      "brand": "Timberland Vintage",
-      "title": "Heritage Hiking Boots & Trail Gear",
-      "tip": "Sommer-Aktivitäten peak in Juni/Juli",
+      "brand": "Napapijri",
+      "title": "Frühjahrs-Übergangsjacken",
+      "tip": "Restbestände günstig – Herbst steigt nach",
       "id": "n2"
     },
     {
-      "brand": "Carhartt WIP",
-      "title": "Workwear Jackets in Tan/Brown",
-      "tip": "Workwear bleibt – Juni-Nachfrage steigt",
+      "brand": "Dickies",
+      "title": "Vintage Work Shorts & Bermudas",
+      "tip": "Sommer-Workwear wird Juli mega gefragt",
       "id": "n3"
     },
     {
-      "brand": "Ralph Lauren Vintage",
-      "title": "Stadium & Spell Out Fleece",
-      "tip": "Prep-Core Summer Essential – Juni Boom",
+      "brand": "Timberland",
+      "title": "Vintage Boots & Hiking Gear",
+      "tip": "Festival-Saison + Wanderlust ab Juli",
       "id": "n4"
     },
     {
-      "brand": "Le Coq Sportif",
-      "title": "Vintage Trainingsanzüge in Metallics",
-      "tip": "French Sport Revival – nächster Hype-Zyklus",
+      "brand": "Fred Perry",
+      "title": "Retro Tracksuits & Polos",
+      "tip": "Britpop-Revival greift ab Sommer über",
       "id": "n5"
     }
   ]
