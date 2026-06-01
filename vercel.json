@@ -1,7 +1,7 @@
 {
   "version": 2,
   "builds": [
-    { "src": "api/*.js", "use": "@vercel/node", "config": { "includeFiles": ["api/**", "model*.jpg", "scripts/**"], "maxDuration": 60 } },
+    { "src": "api/*.js", "use": "@vercel/node", "config": { "includeFiles": ["api/**", "index.html", "maintenance.html", "model*.jpg", "scripts/**"], "maxDuration": 60 } },
     { "src": "index.html", "use": "@vercel/static" },
     { "src": "maintenance.html", "use": "@vercel/static" },
     { "src": "model1.jpg", "use": "@vercel/static" },
