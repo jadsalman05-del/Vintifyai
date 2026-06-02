@@ -4,6 +4,7 @@
     { "src": "api/*.js", "use": "@vercel/node", "config": { "includeFiles": ["api/**", "index.html", "maintenance.html", "model*.jpg", "scripts/**"], "maxDuration": 60 } },
     { "src": "index.html", "use": "@vercel/static" },
     { "src": "maintenance.html", "use": "@vercel/static" },
+    { "src": "dashboard-pro.html", "use": "@vercel/static" },
     { "src": "model1.jpg", "use": "@vercel/static" },
     { "src": "model2.jpg", "use": "@vercel/static" },
     { "src": "model3.jpg", "use": "@vercel/static" },
@@ -19,6 +20,8 @@
     { "src": "/api/activate", "dest": "/api/activate.js" },
     { "src": "/api/suppliers", "dest": "/api/suppliers.js" },
     { "src": "/model[1-5]\\.jpg", "dest": "/$0" },
+    { "src": "/preview", "dest": "/dashboard-pro.html" },
+    { "src": "/preview/", "dest": "/dashboard-pro.html" },
     { "src": "/(.*)", "dest": "/api/gate.js" }
   ]
 }
