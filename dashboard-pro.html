@@ -959,19 +959,54 @@ tbody tr:hover{background:rgba(255,255,255,.02)}
 
       <!-- ═══ PRICE RADAR ═══ -->
       <section class="page" id="page-radar">
-        <div class="card" style="margin-bottom:16px">
-          <div class="card-title">🎯 Price Radar</div>
-          <p class="muted" style="font-size:.82rem;line-height:1.6;margin-bottom:16px">Finde den optimalen Verkaufspreis basierend auf echten Vinted-Marktdaten.</p>
-          <div class="field-2">
-            <div class="field"><label>Marke</label><input placeholder="z.B. Nike"/></div>
-            <div class="field"><label>Artikel</label><input placeholder="z.B. Windbreaker"/></div>
+        <div class="ki-grid">
+          <div class="card">
+            <div class="card-title">🎯 Price Radar — Lohnt sich der Kauf?</div>
+            <p class="muted" style="font-size:.82rem;line-height:1.6;margin-bottom:16px">Mach einen <b>Screenshot der Vinted-Listing-Seite</b> (mit Foto + Preis + Marke) und lade ihn hoch. Claude bewertet, ob sich der Kauf für den Weiterverkauf wirklich lohnt.</p>
+            <input type="file" id="prFile" accept="image/*" style="display:none" onchange="prFilePicked(event)"/>
+            <div id="prDrop" onclick="document.getElementById('prFile').click()" style="border:2px dashed var(--border);border-radius:12px;padding:38px;text-align:center;cursor:pointer;transition:.15s" ondragover="event.preventDefault();this.style.borderColor='var(--p)'" ondragleave="this.style.borderColor='var(--border)'" ondrop="prDropFile(event)">
+              <div style="font-size:2rem">📱</div>
+              <div style="font-size:.84rem;font-weight:600;margin-top:8px">Vinted-Screenshot hierher ziehen oder klicken</div>
+              <div class="muted" style="font-size:.74rem;margin-top:4px">Vollständige Listing-Seite mit Preis</div>
+            </div>
+            <div id="prPreview" style="display:none;margin-top:12px;text-align:center"><img id="prPreviewImg" style="max-width:100%;max-height:240px;border-radius:9px;border:1px solid var(--border)"/><div style="margin-top:6px"><a class="muted" style="font-size:.74rem;cursor:pointer" onclick="prReset()">✕ anderes Foto wählen</a></div></div>
+            <div class="field-2" style="margin-top:14px">
+              <div class="field"><label>Preis (€, optional override)</label><input id="prPrice" type="number" step="0.01" placeholder="z.B. 20"/></div>
+              <div class="field"><label>Versandkosten (€)</label><input id="prShip" type="number" step="0.01" value="4.85"/></div>
+            </div>
+            <button class="btn btn-primary" style="width:100%" id="prBtn" onclick="prAnalyze()">🎯 Lohnt sich das?</button>
           </div>
-          <button class="btn btn-primary">🔍 Markt analysieren</button>
-        </div>
-        <div class="mini-grid">
-          <div class="mini"><div class="l">Empfohlener Preis</div><div class="v" style="color:var(--g)">38–45 €</div></div>
-          <div class="mini"><div class="l">Ø Marktpreis</div><div class="v">41 €</div></div>
-          <div class="mini"><div class="l">Verkaufschance</div><div class="v" style="color:var(--c)">Hoch</div></div>
+          <div class="card">
+            <div class="card-title">📊 Ergebnis <span class="badge b-purple" style="margin-left:auto">Claude Vision</span></div>
+            <div id="prLoading" style="display:none;text-align:center;padding:30px 0"><div class="muted" style="font-size:.82rem">⏳ Claude analysiert den Vinted-Markt…</div></div>
+            <div id="prError" style="display:none;background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.3);border-radius:9px;padding:11px;font-size:.78rem;color:var(--r);margin-bottom:12px"></div>
+            <div id="prEmpty" class="muted" style="text-align:center;padding:30px 0;font-size:.82rem">Noch kein Ergebnis. Lade einen Vinted-Screenshot hoch.</div>
+            <div id="prResult" style="display:none">
+              <!-- Verdict-Box riesig -->
+              <div id="prVerdictBox" style="text-align:center;padding:24px 16px;border-radius:14px;margin-bottom:16px;border:2px solid var(--border)">
+                <div id="prVerdict" style="font-size:2.6rem;font-weight:900;letter-spacing:-1.5px;line-height:1">–</div>
+                <div id="prConfidence" class="muted" style="font-size:.74rem;margin-top:6px">–</div>
+              </div>
+              <!-- Detected Item -->
+              <div style="font-size:.7rem;font-weight:800;color:var(--muted);letter-spacing:.08em;margin-bottom:6px">ERKANNTER ARTIKEL</div>
+              <div id="prItem" style="font-size:.84rem;font-weight:700;margin-bottom:14px"></div>
+              <!-- Zahlen -->
+              <div class="mini-grid" style="grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
+                <div class="mini" style="padding:10px"><div class="l" style="font-size:.66rem">Kaufpreis</div><div id="prBuy" class="v" style="font-size:1rem">–</div></div>
+                <div class="mini" style="padding:10px"><div class="l" style="font-size:.66rem">Wiederverkauf</div><div id="prResale" class="v" style="font-size:1rem;color:var(--c)">–</div></div>
+                <div class="mini" style="padding:10px"><div class="l" style="font-size:.66rem">Profit</div><div id="prProfit" class="v" style="font-size:1rem;color:var(--g)">–</div></div>
+              </div>
+              <!-- Pros -->
+              <div style="font-size:.7rem;font-weight:800;color:var(--g);letter-spacing:.08em;margin-bottom:6px">PRO</div>
+              <ul id="prPros" style="list-style:none;font-size:.8rem;line-height:1.65;color:rgba(255,255,255,.85);padding:0;margin-bottom:12px"></ul>
+              <!-- Cons -->
+              <div style="font-size:.7rem;font-weight:800;color:var(--r);letter-spacing:.08em;margin-bottom:6px">CONTRA</div>
+              <ul id="prCons" style="list-style:none;font-size:.8rem;line-height:1.65;color:rgba(255,255,255,.85);padding:0;margin-bottom:12px"></ul>
+              <!-- Advice -->
+              <div style="font-size:.7rem;font-weight:800;color:var(--muted);letter-spacing:.08em;margin-bottom:6px">EMPFEHLUNG</div>
+              <div id="prAdvice" style="font-size:.82rem;line-height:1.6;color:rgba(255,255,255,.9);background:rgba(255,255,255,.04);border-radius:10px;padding:12px"></div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -980,24 +1015,34 @@ tbody tr:hover{background:rgba(255,255,255,.02)}
         <div class="ki-grid">
           <div class="card">
             <div class="card-title">🔬 Auth Scanner</div>
-            <p class="muted" style="font-size:.82rem;line-height:1.6;margin-bottom:16px">Lade Fotos vom Etikett, Logo und der Naht hoch — die KI prüft auf Echtheits-Merkmale.</p>
-            <div style="border:2px dashed var(--border);border-radius:12px;padding:38px;text-align:center;cursor:pointer">
+            <p class="muted" style="font-size:.82rem;line-height:1.6;margin-bottom:16px">Lade ein klares Foto vom <b>Etikett, Logo oder Tag</b> hoch — Claude prüft auf typische Echtheits-Merkmale (Schriftart, Tag-Stil, Nähte, Style-Code, Epochen-Plausibilität).</p>
+            <input type="file" id="asFile" accept="image/*" style="display:none" onchange="asFilePicked(event)"/>
+            <div id="asDrop" onclick="document.getElementById('asFile').click()" style="border:2px dashed var(--border);border-radius:12px;padding:38px;text-align:center;cursor:pointer;transition:.15s" ondragover="event.preventDefault();this.style.borderColor='var(--p)'" ondragleave="this.style.borderColor='var(--border)'" ondrop="asDropFile(event)">
               <div style="font-size:2rem">🏷️</div>
-              <div style="font-size:.84rem;font-weight:600;margin-top:8px">Etikett-/Logo-Fotos hochladen</div>
+              <div style="font-size:.84rem;font-weight:600;margin-top:8px">Etikett-/Logo-Foto hierher ziehen oder klicken</div>
+              <div class="muted" style="font-size:.74rem;margin-top:4px">JPG, PNG, WEBP — bis 10 MB</div>
             </div>
-            <button class="btn btn-primary" style="width:100%;margin-top:14px">🔬 Echtheit prüfen</button>
+            <div id="asPreview" style="display:none;margin-top:12px;text-align:center"><img id="asPreviewImg" style="max-width:100%;max-height:200px;border-radius:9px;border:1px solid var(--border)"/><div style="margin-top:6px"><a class="muted" style="font-size:.74rem;cursor:pointer" onclick="asReset()">✕ anderes Foto wählen</a></div></div>
+            <div class="field-2" style="margin-top:14px">
+              <div class="field"><label>Marke</label><input id="asBrand" placeholder="z.B. Nike"/></div>
+              <div class="field"><label>Modell (optional)</label><input id="asModel" placeholder="z.B. Vintage Windbreaker"/></div>
+            </div>
+            <button class="btn btn-primary" style="width:100%" id="asBtn" onclick="asScan()">🔬 Echtheit prüfen</button>
           </div>
           <div class="card">
-            <div class="card-title">📋 Ergebnis</div>
-            <div style="text-align:center;padding:18px 0">
-              <div style="font-size:2.4rem;font-weight:900;color:var(--g)">92%</div>
-              <div class="badge b-green" style="margin-top:6px">Wahrscheinlich echt</div>
-            </div>
-            <div style="font-size:.82rem;line-height:1.8;color:rgba(255,255,255,.8)">
-              ✅ Schriftart des Logos korrekt<br>
-              ✅ Etikett-Stil passt zur Epoche<br>
-              ✅ Nähte sauber & gleichmäßig<br>
-              ⚠️ Style-Code nicht lesbar — bitte schärferes Foto
+            <div class="card-title">📋 Ergebnis <span class="badge b-purple" style="margin-left:auto">Claude Vision</span></div>
+            <div id="asLoading" style="display:none;text-align:center;padding:30px 0"><div class="muted" style="font-size:.82rem">⏳ Claude prüft Echtheits-Merkmale…</div></div>
+            <div id="asError" style="display:none;background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.3);border-radius:9px;padding:11px;font-size:.78rem;color:var(--r);margin-bottom:12px"></div>
+            <div id="asEmpty" class="muted" style="text-align:center;padding:30px 0;font-size:.82rem">Noch kein Ergebnis. Lade ein Foto hoch und klicke „Echtheit prüfen".</div>
+            <div id="asResult" style="display:none">
+              <div style="text-align:center;padding:14px 0 18px">
+                <div id="asScore" style="font-size:2.4rem;font-weight:900">–</div>
+                <div id="asVerdict" class="badge b-grey" style="margin-top:6px">–</div>
+              </div>
+              <div style="font-size:.74rem;font-weight:800;color:var(--muted);letter-spacing:.08em;margin-bottom:8px">FINDINGS</div>
+              <ul id="asFindings" style="list-style:none;font-size:.82rem;line-height:1.7;color:rgba(255,255,255,.85);padding:0"></ul>
+              <div style="font-size:.74rem;font-weight:800;color:var(--muted);letter-spacing:.08em;margin:14px 0 6px">EMPFEHLUNG</div>
+              <div id="asAdvice" style="font-size:.8rem;line-height:1.55;color:rgba(255,255,255,.8)"></div>
             </div>
           </div>
         </div>
@@ -1777,6 +1822,199 @@ function lwCopyAll(){
   const all = (t?t+'\n\n':'') + (d?d+'\n\n':'') + h;
   navigator.clipboard?.writeText(all);
   alert('📋 In Zwischenablage kopiert!');
+}
+
+// ══ AUTH SCANNER (Claude Vision Echtheits-Check) ══
+let asImageData = null;
+function asFilePicked(e){ const f=e.target.files&&e.target.files[0]; if(f) asLoadFile(f); }
+function asDropFile(e){
+  e.preventDefault();
+  document.getElementById('asDrop').style.borderColor='var(--border)';
+  const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0]; if(f) asLoadFile(f);
+}
+function asLoadFile(f){
+  if(!f.type.startsWith('image/')){ alert('Bitte ein Bild auswählen.'); return; }
+  if(f.size > 10*1024*1024){ alert('Maximal 10 MB.'); return; }
+  const r=new FileReader();
+  r.onload=ev=>{
+    const dataUrl=ev.target.result;
+    const m=dataUrl.match(/^data:(image\/[\w+]+);base64,(.+)$/);
+    if(!m){ alert('Bildformat nicht lesbar.'); return; }
+    asImageData={mediaType:m[1],base64:m[2]};
+    document.getElementById('asPreviewImg').src=dataUrl;
+    document.getElementById('asPreview').style.display='block';
+    document.getElementById('asDrop').style.display='none';
+  };
+  r.readAsDataURL(f);
+}
+function asReset(){
+  asImageData=null;
+  document.getElementById('asFile').value='';
+  document.getElementById('asPreview').style.display='none';
+  document.getElementById('asDrop').style.display='block';
+}
+function asShowError(msg){
+  const e=document.getElementById('asError'); e.textContent='⚠️ '+msg; e.style.display='block';
+}
+
+async function asScan(){
+  document.getElementById('asError').style.display='none';
+  if(!asImageData){ asShowError('Bitte erst ein Foto hochladen.'); return; }
+  const brand = document.getElementById('asBrand').value.trim();
+  const model = document.getElementById('asModel').value.trim();
+  const btn = document.getElementById('asBtn');
+  btn.disabled=true; btn.textContent='⏳ Prüfe…';
+  document.getElementById('asEmpty').style.display='none';
+  document.getElementById('asResult').style.display='none';
+  document.getElementById('asLoading').style.display='block';
+
+  const prompt = `Du bist ein erfahrener Legit-Checker für Vintage- und Markenkleidung auf Vinted. Prüfe das hochgeladene Foto eines Etiketts/Tags/Logos und beurteile die Echtheits-Wahrscheinlichkeit.\n\n${brand?'Vom Verkäufer angegeben: Marke = '+brand:''}${model?', Modell = '+model:''}\n\nAchte typischerweise auf:\n- Schriftart & Druck-Qualität des Logos\n- Tag-Stil & Material (passt zur Epoche der Marke?)\n- Style-Code / Größenangabe lesbar & plausibel?\n- Nähte am Etikett (sauber, gleichmäßig, gerade Linien)\n- Farbgebung & Sättigung\n- Auffällige Tippfehler, falsche Ländercodes, fehlende Pflichtangaben\n\nWICHTIG: Du kannst Echtheit nicht zu 100% bestätigen — formuliere als Wahrscheinlichkeit.\n\nGib AUSSCHLIESSLICH JSON zurück, exakt in diesem Format:\n{\n  "score": 0-100 als Zahl (Echtheits-Wahrscheinlichkeit),\n  "verdict": "Wahrscheinlich echt" | "Unklar – mehr Fotos nötig" | "Wahrscheinlich Fake",\n  "findings": ["✅/⚠️/❌ kurzer Punkt 1", "✅/⚠️/❌ Punkt 2", ...] (3-6 Punkte),\n  "advice": "1-2 Sätze konkrete Empfehlung an den Verkäufer (z.B. weitere Fotos, was als nächstes prüfen)"\n}`;
+
+  try{
+    const r = await fetch(API_BASE+'/api/claude', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-5',
+        max_tokens:1024,
+        messages:[{
+          role:'user',
+          content:[
+            { type:'image', source:{ type:'base64', media_type:asImageData.mediaType, data:asImageData.base64 }},
+            { type:'text', text: prompt }
+          ]
+        }]
+      })
+    });
+    const d = await r.json();
+    if(d.error) throw new Error(d.error.message||JSON.stringify(d.error));
+    const text = (d.content&&d.content[0]&&d.content[0].text)||'';
+    const m = text.match(/\{[\s\S]*\}/);
+    if(!m) throw new Error('Konnte KI-Antwort nicht parsen.');
+    const out = JSON.parse(m[0]);
+
+    const score = Math.round(out.score||0);
+    const scoreEl = document.getElementById('asScore');
+    const verdictEl = document.getElementById('asVerdict');
+    scoreEl.textContent = score + '%';
+    scoreEl.style.color = score>=75 ? 'var(--g)' : (score>=45 ? 'var(--o)' : 'var(--r)');
+    verdictEl.textContent = out.verdict || '—';
+    verdictEl.className = 'badge ' + (score>=75 ? 'b-green' : (score>=45 ? 'b-orange' : 'b-red'));
+
+    const ul = document.getElementById('asFindings');
+    ul.innerHTML = (out.findings||[]).map(f=>'<li>'+String(f).replace(/</g,'&lt;')+'</li>').join('');
+    document.getElementById('asAdvice').textContent = out.advice || '';
+
+    document.getElementById('asResult').style.display='block';
+  } catch(err){
+    asShowError(err.message||'Unbekannter Fehler.');
+    document.getElementById('asEmpty').style.display='block';
+  } finally {
+    btn.disabled=false; btn.textContent='🔬 Echtheit prüfen';
+    document.getElementById('asLoading').style.display='none';
+  }
+}
+
+// ══ PRICE RADAR (Vinted Listing Screenshot → Lohnt sich der Kauf?) ══
+let prImageData = null;
+function prFilePicked(e){ const f=e.target.files&&e.target.files[0]; if(f) prLoadFile(f); }
+function prDropFile(e){
+  e.preventDefault();
+  document.getElementById('prDrop').style.borderColor='var(--border)';
+  const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0]; if(f) prLoadFile(f);
+}
+function prLoadFile(f){
+  if(!f.type.startsWith('image/')){ alert('Bitte ein Bild auswählen.'); return; }
+  if(f.size > 10*1024*1024){ alert('Maximal 10 MB.'); return; }
+  const r=new FileReader();
+  r.onload=ev=>{
+    const dataUrl=ev.target.result;
+    const m=dataUrl.match(/^data:(image\/[\w+]+);base64,(.+)$/);
+    if(!m){ alert('Bildformat nicht lesbar.'); return; }
+    prImageData={mediaType:m[1],base64:m[2]};
+    document.getElementById('prPreviewImg').src=dataUrl;
+    document.getElementById('prPreview').style.display='block';
+    document.getElementById('prDrop').style.display='none';
+  };
+  r.readAsDataURL(f);
+}
+function prReset(){
+  prImageData=null;
+  document.getElementById('prFile').value='';
+  document.getElementById('prPreview').style.display='none';
+  document.getElementById('prDrop').style.display='block';
+}
+function prShowError(msg){
+  const e=document.getElementById('prError'); e.textContent='⚠️ '+msg; e.style.display='block';
+}
+
+async function prAnalyze(){
+  document.getElementById('prError').style.display='none';
+  if(!prImageData){ prShowError('Bitte erst einen Screenshot hochladen.'); return; }
+  const overridePrice = parseFloat(document.getElementById('prPrice').value)||null;
+  const shipping = parseFloat(document.getElementById('prShip').value)||4.85;
+  const btn = document.getElementById('prBtn');
+  btn.disabled=true; btn.textContent='⏳ Analysiere…';
+  document.getElementById('prEmpty').style.display='none';
+  document.getElementById('prResult').style.display='none';
+  document.getElementById('prLoading').style.display='block';
+
+  const prompt = `Du bist ein erfahrener Vinted-Reseller-Berater. Auf dem Screenshot ist ein Vinted-Listing zu sehen.\n\nDeine Aufgabe: BEURTEILE EHRLICH, ob sich der Kauf zum Weiterverkauf lohnt.\n\n${overridePrice?'Vom Nutzer angegebener Kaufpreis: '+overridePrice+' € (überschreibt den im Bild)':'Lies den im Bild gezeigten Verkaufspreis ab.'}\nAngenommene Versandkosten beim Wiederverkauf: ${shipping} €. Vinted-Gebühren: ~5% vom Verkaufspreis.\n\nGehe so vor:\n1. Erkenne aus dem Screenshot: Marke, Artikel-Typ, Größe, Zustand, Listing-Preis\n2. Schätze realistischen Wiederverkaufspreis auf Vinted (Range min-max) basierend auf üblichem Markt für dieses Produkt\n3. Berechne Netto-Profit = Wiederverkauf − Kaufpreis − Versand − Vinted-Gebühr (5%)\n4. Verdict: "VALID" wenn klarer Profit (≥10€ Marge ODER ≥40% Marge), sonst "NOT VALID"\n5. Bei zu wenig Info → "NOT VALID" mit Hinweis warum\n\nGib AUSSCHLIESSLICH JSON zurück, exakt in diesem Format:\n{\n  "verdict": "VALID" | "NOT VALID",\n  "confidence": 0-100 als Zahl,\n  "item": "kurzer Klartext: Marke + Artikel + Größe + Zustand",\n  "buyPrice": Zahl in Euro (was im Listing steht oder vom Nutzer übergeben),\n  "estimatedResale": { "min": Zahl, "max": Zahl },\n  "estimatedProfit": Zahl in Euro (Mittelwert nach Abzug Gebühren+Versand),\n  "pros": ["✅ kurzer Punkt", "✅ ..."] (2-4 Punkte),\n  "cons": ["⚠️ oder ❌ Punkt", ...] (1-4 Punkte),\n  "advice": "2-3 Sätze konkrete Empfehlung auf Deutsch (kaufen ja/nein, eventuell Preis verhandeln, etc.)"\n}`;
+
+  try{
+    const r = await fetch(API_BASE+'/api/claude', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-5',
+        max_tokens:1500,
+        messages:[{
+          role:'user',
+          content:[
+            { type:'image', source:{ type:'base64', media_type:prImageData.mediaType, data:prImageData.base64 }},
+            { type:'text', text: prompt }
+          ]
+        }]
+      })
+    });
+    const d = await r.json();
+    if(d.error) throw new Error(d.error.message||JSON.stringify(d.error));
+    const text = (d.content&&d.content[0]&&d.content[0].text)||'';
+    const m = text.match(/\{[\s\S]*\}/);
+    if(!m) throw new Error('Konnte KI-Antwort nicht parsen.');
+    const out = JSON.parse(m[0]);
+
+    // Verdict gross & farbig
+    const isValid = (out.verdict||'').toUpperCase() === 'VALID';
+    const box = document.getElementById('prVerdictBox');
+    const vd = document.getElementById('prVerdict');
+    vd.textContent = isValid ? 'VALID ✓' : 'NOT VALID ✕';
+    vd.style.color = isValid ? 'var(--g)' : 'var(--r)';
+    box.style.background = isValid ? 'rgba(0,229,160,.08)' : 'rgba(255,77,109,.08)';
+    box.style.borderColor = isValid ? 'rgba(0,229,160,.4)' : 'rgba(255,77,109,.4)';
+    document.getElementById('prConfidence').textContent = 'Konfidenz: '+(out.confidence||'–')+'%';
+
+    document.getElementById('prItem').textContent = out.item || '—';
+    const bp = (out.buyPrice!=null)?Number(out.buyPrice).toFixed(2)+' €':'–';
+    const r1 = out.estimatedResale && out.estimatedResale.min!=null ? Number(out.estimatedResale.min).toFixed(0)+'–'+Number(out.estimatedResale.max).toFixed(0)+' €' : '–';
+    const pr = (out.estimatedProfit!=null)?Number(out.estimatedProfit).toFixed(2)+' €':'–';
+    document.getElementById('prBuy').textContent = bp;
+    document.getElementById('prResale').textContent = r1;
+    document.getElementById('prProfit').textContent = pr;
+    document.getElementById('prProfit').style.color = (Number(out.estimatedProfit)||0) > 0 ? 'var(--g)' : 'var(--r)';
+
+    document.getElementById('prPros').innerHTML = (out.pros||[]).map(p=>'<li>'+String(p).replace(/</g,'&lt;')+'</li>').join('');
+    document.getElementById('prCons').innerHTML = (out.cons||[]).map(p=>'<li>'+String(p).replace(/</g,'&lt;')+'</li>').join('');
+    document.getElementById('prAdvice').textContent = out.advice || '';
+
+    document.getElementById('prResult').style.display='block';
+  } catch(err){
+    prShowError(err.message||'Unbekannter Fehler.');
+    document.getElementById('prEmpty').style.display='block';
+  } finally {
+    btn.disabled=false; btn.textContent='🎯 Lohnt sich das?';
+    document.getElementById('prLoading').style.display='none';
+  }
 }
 
 // ── Init ──
