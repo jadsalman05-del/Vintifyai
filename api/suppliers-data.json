@@ -6,7 +6,8 @@
       "role": "Supplier",
       "cat": "Jeans",
       "disc": "@eavintage",
-      "verified": true
+      "verified": true,
+      "web": "vintifyai.com"
     },
     {
       "id": "s2",
@@ -17,5 +18,5 @@
       "verified": true
     }
   ],
-  "ts": 1780494437829
+  "ts": 1780494494630
 }
