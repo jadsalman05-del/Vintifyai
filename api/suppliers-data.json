@@ -7,7 +7,7 @@
       "cat": "Jeans",
       "disc": "@eavintage",
       "verified": true,
-      "web": "vintifyai.com"
+      "web": ""
     },
     {
       "id": "s2",
@@ -18,5 +18,5 @@
       "verified": true
     }
   ],
-  "ts": 1780494494630
+  "ts": 1780494511009
 }
