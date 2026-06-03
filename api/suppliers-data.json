@@ -15,23 +15,7 @@
       "cat": "Japan Style Jeans",
       "disc": "@vintagecheapselling",
       "verified": true
-    },
-    {
-      "id": "s3",
-      "name": "VintageHouse GmbH",
-      "role": "Supplier",
-      "cat": "90s Sportswear, Tracksuits",
-      "disc": "@vintagehouse",
-      "verified": false
-    },
-    {
-      "id": "s4",
-      "name": "SneakerStash",
-      "role": "Reseller",
-      "cat": "Deadstock Sneakers",
-      "disc": "@sneakerstash",
-      "verified": true
     }
   ],
-  "ts": 1779650869368
+  "ts": 1780494437829
 }
