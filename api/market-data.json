@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-06-08",
+  "updatedAt": "2026-06-15",
   "hot": [
     {
       "brand": "Sergio Tacchini",
       "title": "Vintage Tennis Tracksuit",
-      "tip": "90er Sets in Pastelltönen verkaufen schnell",
+      "tip": "90er Sets, Weiß/Blau, M-L Größen",
       "id": "h1"
     },
     {
-      "brand": "Nike",
-      "title": "Vintage Swoosh Shorts",
-      "tip": "Y2K-Schnitte, kurz, unter 20€ kaufen",
+      "brand": "Verschiedene Nationalteams",
+      "title": "EM 2024 Fußball-Trikots",
+      "tip": "Deutschland, Spanien, Italien, M/L gesucht",
       "id": "h2"
     },
     {
-      "brand": "Napapijri",
-      "title": "90s Nylon Jacke",
-      "tip": "Rot/Gelb Colorblocking höchst gefragt",
+      "brand": "Carhartt WIP",
+      "title": "Cargo Shorts & Baggy Pants",
+      "tip": "Khaki/Beige, Y2K Revival trend",
       "id": "h3"
     },
     {
-      "brand": "Bundesliga Retro",
-      "title": "Vintage Fußball Trikots",
-      "tip": "Dortmund/Bayern 90er, Sammlerwert steigt",
+      "brand": "Lacoste",
+      "title": "Vintage Polos 80er/90er",
+      "tip": "Pastelfarben, XS-M, schnell weg",
       "id": "h4"
     },
     {
       "brand": "Stüssy",
-      "title": "Vintage Baggy Jeans",
-      "tip": "2000er Waschungen, XS-M sofort weg",
+      "title": "Vintage Bucket Hat & T-Shirts",
+      "tip": "Printed Logos, Archive Pieces",
       "id": "h5"
     }
   ],
   "next": [
     {
-      "brand": "Polo Sport",
-      "title": "Windjacke 90er",
-      "tip": "Sommer-Übergänge: Juli-August Boom erwartet",
+      "brand": "Napapijri",
+      "title": "Vintage Nylon Jacken",
+      "tip": "90er Windbreaker, Juli-August Nachfrage",
       "id": "n1"
     },
     {
-      "brand": "Timberland",
-      "title": "Vintage Hiking Vest",
-      "tip": "Gorpcore Peak im Juli-August kommend",
+      "brand": "Ralph Lauren",
+      "title": "Oversized Rugby Shirts",
+      "tip": "Rot/Weiß gestreift, Prep Trend steigt",
       "id": "n2"
     },
     {
-      "brand": "Ralph Lauren",
-      "title": "Preppy Chino Shorts",
-      "tip": "Old Money Trend wächst kontinuierlich weiter",
+      "brand": "Columbia Vintage",
+      "title": "Fleece & Outdoor Jacken",
+      "tip": "Herbst-Preparation, Gorpcore boom",
       "id": "n3"
     },
     {
-      "brand": "Adidas Originals",
-      "title": "Vintage Adidas Track Pants",
-      "tip": "Frühcollege-Saison September Rückkehr-Trend",
+      "brand": "Umbro",
+      "title": "Fußball Vintage Trainingsanzüge",
+      "tip": "90er Clubs, WM 2026 Hype kommt",
       "id": "n4"
     },
     {
-      "brand": "Kappa",
-      "title": "90s Trainingsjacke",
-      "tip": "Retro-Sport-Renaissance Herbst 2026 sicher",
+      "brand": "Timberland",
+      "title": "Klassische Boots & Hiker",
+      "tip": "Beige/Wheat, Workwear-Hybrid relevant",
       "id": "n5"
     }
   ]
