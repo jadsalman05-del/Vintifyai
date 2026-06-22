@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-06-15",
+  "updatedAt": "2026-06-22",
   "hot": [
     {
-      "brand": "Sergio Tacchini",
-      "title": "Vintage Tennis Tracksuit",
-      "tip": "90er Sets, Weiß/Blau, M-L Größen",
+      "brand": "Vintage Nike",
+      "title": "90er Nylon Windbreaker",
+      "tip": "Oversized Cut, Neon-Details, sofort weg",
       "id": "h1"
     },
     {
-      "brand": "Verschiedene Nationalteams",
-      "title": "EM 2024 Fußball-Trikots",
-      "tip": "Deutschland, Spanien, Italien, M/L gesucht",
+      "brand": "Sergio Tacchini",
+      "title": "Retro Tennis Tracksuit",
+      "tip": "Zweiteiler Set, Pastell-Farben, mega gefragt",
       "id": "h2"
     },
     {
       "brand": "Carhartt WIP",
-      "title": "Cargo Shorts & Baggy Pants",
-      "tip": "Khaki/Beige, Y2K Revival trend",
+      "title": "Workwear Jacke braun/khaki",
+      "tip": "Worn-Look, Utility-Vibes aktuell",
       "id": "h3"
     },
     {
-      "brand": "Lacoste",
-      "title": "Vintage Polos 80er/90er",
-      "tip": "Pastelfarben, XS-M, schnell weg",
+      "brand": "Vintage Adidas",
+      "title": "90er Trainingshose Nylon",
+      "tip": "Shell-Material, seitliche Streifen, TikTok-Trend",
       "id": "h4"
     },
     {
-      "brand": "Stüssy",
-      "title": "Vintage Bucket Hat & T-Shirts",
-      "tip": "Printed Logos, Archive Pieces",
+      "brand": "Kappa",
+      "title": "2000er Trainingsanzug",
+      "tip": "Kontrast-Piping, Y2K Revival hoch",
       "id": "h5"
     }
   ],
   "next": [
     {
       "brand": "Napapijri",
-      "title": "Vintage Nylon Jacken",
-      "tip": "90er Windbreaker, Juli-August Nachfrage",
+      "title": "Vintage Parka leicht",
+      "tip": "Juli-August-Trend, jetzt günstig kaufen",
       "id": "n1"
     },
     {
-      "brand": "Ralph Lauren",
-      "title": "Oversized Rugby Shirts",
-      "tip": "Rot/Weiß gestreift, Prep Trend steigt",
+      "brand": "Lacoste Vintage",
+      "title": "Oversized Poloshirt",
+      "tip": "Quiet Luxury Peak, Sommer-Nachfrage steigt",
       "id": "n2"
     },
     {
-      "brand": "Columbia Vintage",
-      "title": "Fleece & Outdoor Jacken",
-      "tip": "Herbst-Preparation, Gorpcore boom",
+      "brand": "Timberland",
+      "title": "Heritage Bootcut Jeans",
+      "tip": "Gorpcore-Phase startet, Herbst-Vorbereitung",
       "id": "n3"
     },
     {
-      "brand": "Umbro",
-      "title": "Fußball Vintage Trainingsanzüge",
-      "tip": "90er Clubs, WM 2026 Hype kommt",
+      "brand": "Stüssy Vintage",
+      "title": "90s Logo Shirt bunt",
+      "tip": "Y2K Zyklus erreicht Peak in 3 Wochen",
       "id": "n4"
     },
     {
-      "brand": "Timberland",
-      "title": "Klassische Boots & Hiker",
-      "tip": "Beige/Wheat, Workwear-Hybrid relevant",
+      "brand": "Ralph Lauren Polo",
+      "title": "Vintage Chino Shorts",
+      "tip": "Old Money Aesthetic Boom Juli erwartet",
       "id": "n5"
     }
   ]
