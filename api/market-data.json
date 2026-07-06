@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-06-29",
+  "updatedAt": "2026-07-06",
   "hot": [
     {
-      "brand": "Vintage Nationalteams",
-      "title": "EM 2024 Retro-Trikots",
-      "tip": "Deutschland, Spanien, Italien – schnell weg",
+      "brand": "Sergio Tacchini",
+      "title": "Vintage Tennis Tracksuit",
+      "tip": "90er Colorblocking, Trainingsjacke + Hose",
       "id": "h1"
     },
     {
-      "brand": "Carhartt WIP",
-      "title": "Cargo Pants & Jackets",
-      "tip": "Workwear-Hype anhaltend, täglich Verkäufe",
+      "brand": "Nike Vintage",
+      "title": "Oversized Nylon Windbreaker",
+      "tip": "Y2K Sommerstil, leuchtende Farben bevorzugt",
       "id": "h2"
     },
     {
-      "brand": "New Balance",
-      "title": "90er/2000er Sneaker",
-      "tip": "574, 550, 990 – Retro-Boom ungebremst",
+      "brand": "Bundesliga Retro",
+      "title": "90er Champion League Trikot",
+      "tip": "BVB, Bayern, Schalke – Nostalgie boomt",
       "id": "h3"
     },
     {
-      "brand": "Napapijri",
-      "title": "Vintage Jacken & Westen",
-      "tip": "90er Items, Gorpcore-Trend, hohe Margen",
+      "brand": "Carhartt WIP",
+      "title": "Vintage Workwear Shorts",
+      "tip": "Beige/Khaki, Cargo-Stil für Gorpcore Trend",
       "id": "h4"
     },
     {
-      "brand": "Lacoste Vintage",
-      "title": "Polos & Track Jackets",
-      "tip": "Preppy-Aesthetic aktuell viral auf TikTok",
+      "brand": "Lacoste",
+      "title": "Klassisches Polohemd 80er/90er",
+      "tip": "Old Money Aesthetic dominiert gerade",
       "id": "h5"
     }
   ],
   "next": [
     {
-      "brand": "Fila & Ellesse",
-      "title": "90er Trainingsanzüge",
-      "tip": "Y2K-Resurgence, Juli-August Peak erwartet",
+      "brand": "Napapijri",
+      "title": "Vintage Puffer Vest",
+      "tip": "Günstig kaufen, für Herbst lagern",
       "id": "n1"
     },
     {
-      "brand": "Timberland Vintage",
-      "title": "Boots & Hiking Gear",
-      "tip": "Outdoor-Trend wächst, Sommer kaufen jetzt",
+      "brand": "Timberland",
+      "title": "Heritage Hiking Boots",
+      "tip": "Outdoor-Trend steigt Aug/Sept exponentiell",
       "id": "n2"
     },
     {
-      "brand": "Stone Island",
-      "title": "Ghost Pieces & Jacken",
-      "tip": "Herbst-Nachfrage steigt ab August stark",
+      "brand": "Stüssy",
+      "title": "Vintage Logo Longsleeve",
+      "tip": "Skate-Nostalgie, Backtoschool-Boom voraus",
       "id": "n3"
     },
     {
       "brand": "Ralph Lauren Polo Sport",
-      "title": "Vintage Tech Jackets",
-      "tip": "Old Money Aesthetic boomt, Preis steigt",
+      "title": "90er Colorblock Jacket",
+      "tip": "Prep-Welle kommt nach Sommerferien",
       "id": "n4"
     },
     {
-      "brand": "Sergio Tacchini",
-      "title": "Vintage Tracksuits",
-      "tip": "Retro-Tennis-Hype kommt Juli-August Wimbledon",
+      "brand": "New Balance 574 Vintage",
+      "title": "Retro Dad Sneaker",
+      "tip": "Herbst-Silhouette, Größen 36-40 bevorzugt",
       "id": "n5"
     }
   ]
