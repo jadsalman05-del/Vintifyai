@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-07-06",
+  "updatedAt": "2026-07-13",
   "hot": [
     {
       "brand": "Sergio Tacchini",
       "title": "Vintage Tennis Tracksuit",
-      "tip": "90er Colorblocking, Trainingsjacke + Hose",
+      "tip": "90er Colorblocking, M-L Größen gehen weg",
       "id": "h1"
     },
     {
-      "brand": "Nike Vintage",
-      "title": "Oversized Nylon Windbreaker",
-      "tip": "Y2K Sommerstil, leuchtende Farben bevorzugt",
+      "brand": "Napapijri",
+      "title": "Nylon Puffer Jacket",
+      "tip": "Sommergepäck-Aesthetic, neuwertig Premium",
       "id": "h2"
     },
     {
-      "brand": "Bundesliga Retro",
-      "title": "90er Champion League Trikot",
-      "tip": "BVB, Bayern, Schalke – Nostalgie boomt",
+      "brand": "Vintage Fußball-Trikots",
+      "title": "EM 2024 Retro & Nationalmannschaften",
+      "tip": "Deutschland, Italien, Spanien selten gelistet",
       "id": "h3"
     },
     {
       "brand": "Carhartt WIP",
-      "title": "Vintage Workwear Shorts",
-      "tip": "Beige/Khaki, Cargo-Stil für Gorpcore Trend",
+      "title": "Canvas Cargo Pants",
+      "tip": "Khaki/Braun, überlange aktuell, quick flip",
       "id": "h4"
     },
     {
-      "brand": "Lacoste",
-      "title": "Klassisches Polohemd 80er/90er",
-      "tip": "Old Money Aesthetic dominiert gerade",
+      "brand": "Stüssy",
+      "title": "Vintage Polos & Shirts",
+      "tip": "Logo-Print 90er, Grail-Status bei Sammlern",
       "id": "h5"
     }
   ],
   "next": [
     {
-      "brand": "Napapijri",
-      "title": "Vintage Puffer Vest",
-      "tip": "Günstig kaufen, für Herbst lagern",
+      "brand": "Kappa",
+      "title": "Sportswear Sets (Hose + Oberteil)",
+      "tip": "Y2K Sportcore Peak August, bulk billig",
       "id": "n1"
     },
     {
       "brand": "Timberland",
-      "title": "Heritage Hiking Boots",
-      "tip": "Outdoor-Trend steigt Aug/Sept exponentiell",
+      "title": "Vintage Hiking Boots (gebraucht)",
+      "tip": "Gorpcore explodiert Herbst, jetzt unter Radar",
       "id": "n2"
     },
     {
-      "brand": "Stüssy",
-      "title": "Vintage Logo Longsleeve",
-      "tip": "Skate-Nostalgie, Backtoschool-Boom voraus",
+      "brand": "Ralph Lauren Polo Sport",
+      "title": "Technical Jackets & Vests",
+      "tip": "90er Archive, Old Money Sept-Trend",
       "id": "n3"
     },
     {
-      "brand": "Ralph Lauren Polo Sport",
-      "title": "90er Colorblock Jacket",
-      "tip": "Prep-Welle kommt nach Sommerferien",
+      "brand": "Le Coq Sportif",
+      "title": "Vintage Windbreaker",
+      "tip": "französischer Retro-Peak August, lagern günstig",
       "id": "n4"
     },
     {
-      "brand": "New Balance 574 Vintage",
-      "title": "Retro Dad Sneaker",
-      "tip": "Herbst-Silhouette, Größen 36-40 bevorzugt",
+      "brand": "Columbia Vintage",
+      "title": "Fleece & Shell Jackets",
+      "tip": "Herbst-Schichten jetzt kaufen, Preis-Anstieg sicher",
       "id": "n5"
     }
   ]
