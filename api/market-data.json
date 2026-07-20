@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-07-13",
+  "updatedAt": "2026-07-20",
   "hot": [
     {
       "brand": "Sergio Tacchini",
-      "title": "Vintage Tennis Tracksuit",
-      "tip": "90er Colorblocking, M-L Größen gehen weg",
+      "title": "Vintage Tennis Track Jackets",
+      "tip": "90er Nylon, knallige Farben, sofort weg",
       "id": "h1"
     },
     {
-      "brand": "Napapijri",
-      "title": "Nylon Puffer Jacket",
-      "tip": "Sommergepäck-Aesthetic, neuwertig Premium",
+      "brand": "Verschiedene Nationalteams",
+      "title": "EM 2024 Retro-Trikots (Sammleredition)",
+      "tip": "Deutschland, Spanien, Italien – Nostalgie-Boom",
       "id": "h2"
     },
     {
-      "brand": "Vintage Fußball-Trikots",
-      "title": "EM 2024 Retro & Nationalmannschaften",
-      "tip": "Deutschland, Italien, Spanien selten gelistet",
+      "brand": "Carhartt WIP",
+      "title": "Workwear Cargo Pants & Jackets",
+      "tip": "Workwear-Trend anhaltend, schnelle Käufe",
       "id": "h3"
     },
     {
-      "brand": "Carhartt WIP",
-      "title": "Canvas Cargo Pants",
-      "tip": "Khaki/Braun, überlange aktuell, quick flip",
+      "brand": "New Balance",
+      "title": "Vintage 990er & 574 Modelle",
+      "tip": "Dad-Sneaker Demand konstant hoch",
       "id": "h4"
     },
     {
-      "brand": "Stüssy",
-      "title": "Vintage Polos & Shirts",
-      "tip": "Logo-Print 90er, Grail-Status bei Sammlern",
+      "brand": "Ralph Lauren",
+      "title": "Vintage Polo Sport Windbreaker",
+      "tip": "90er Nostalgia Peak, Archive-Teile",
       "id": "h5"
     }
   ],
   "next": [
     {
-      "brand": "Kappa",
-      "title": "Sportswear Sets (Hose + Oberteil)",
-      "tip": "Y2K Sportcore Peak August, bulk billig",
+      "brand": "Stüssy",
+      "title": "Vintage Graphic T-Shirts & Hoodies",
+      "tip": "Y2K Revival steigt bis August stark",
       "id": "n1"
     },
     {
-      "brand": "Timberland",
-      "title": "Vintage Hiking Boots (gebraucht)",
-      "tip": "Gorpcore explodiert Herbst, jetzt unter Radar",
+      "brand": "Napapijri",
+      "title": "Puffer Jackets & Gilets (Herbst-Vorbereitung)",
+      "tip": "Preise jetzt günstig, August Anstieg",
       "id": "n2"
     },
     {
-      "brand": "Ralph Lauren Polo Sport",
-      "title": "Technical Jackets & Vests",
-      "tip": "90er Archive, Old Money Sept-Trend",
+      "brand": "Fila",
+      "title": "90er Tennis & Court Wear",
+      "tip": "Vintage-Sportswear kommt zurück",
       "id": "n3"
     },
     {
-      "brand": "Le Coq Sportif",
-      "title": "Vintage Windbreaker",
-      "tip": "französischer Retro-Peak August, lagern günstig",
+      "brand": "Dickies",
+      "title": "Carpenter Pants & Jackets",
+      "tip": "Workwear-Welle folgt auf Carhartt",
       "id": "n4"
     },
     {
       "brand": "Columbia Vintage",
-      "title": "Fleece & Shell Jackets",
-      "tip": "Herbst-Schichten jetzt kaufen, Preis-Anstieg sicher",
+      "title": "Fleece Jackets & Outdoor Wear",
+      "tip": "Gorpcore bleibt, spätsommer Saison",
       "id": "n5"
     }
   ]
