@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-07-20",
+  "updatedAt": "2026-07-27",
   "hot": [
     {
-      "brand": "Sergio Tacchini",
-      "title": "Vintage Tennis Track Jackets",
-      "tip": "90er Nylon, knallige Farben, sofort weg",
+      "brand": "Vintage Nike",
+      "title": "90er Nylon Track Jackets",
+      "tip": "Oversized Silhouetten, knallige Farben bevorzugt",
       "id": "h1"
     },
     {
-      "brand": "Verschiedene Nationalteams",
-      "title": "EM 2024 Retro-Trikots (Sammleredition)",
-      "tip": "Deutschland, Spanien, Italien – Nostalgie-Boom",
+      "brand": "Sergio Tacchini",
+      "title": "Retro Tennis Polos & Tracksuits",
+      "tip": "Pastel-Töne, Vintage Label-Details beliebt",
       "id": "h2"
     },
     {
-      "brand": "Carhartt WIP",
-      "title": "Workwear Cargo Pants & Jackets",
-      "tip": "Workwear-Trend anhaltend, schnelle Käufe",
+      "brand": "Verschiedene Nationalteams",
+      "title": "EM 2024 Retro-Trikots (Nachfrage jetzt)",
+      "tip": "80er/90er Designs, besonders italienisch/spanisch",
       "id": "h3"
     },
     {
-      "brand": "New Balance",
-      "title": "Vintage 990er & 574 Modelle",
-      "tip": "Dad-Sneaker Demand konstant hoch",
+      "brand": "Carhartt WIP",
+      "title": "Vintage Work Jackets & Vests",
+      "tip": "Gewaschene Look, Workwear-Trend anhaltend",
       "id": "h4"
     },
     {
       "brand": "Ralph Lauren",
-      "title": "Vintage Polo Sport Windbreaker",
-      "tip": "90er Nostalgia Peak, Archive-Teile",
+      "title": "Vintage Polo Shirts & Polo Sport",
+      "tip": "Multicolor-Logo, 90er Schnitte, Old Money Trend",
       "id": "h5"
     }
   ],
   "next": [
     {
-      "brand": "Stüssy",
-      "title": "Vintage Graphic T-Shirts & Hoodies",
-      "tip": "Y2K Revival steigt bis August stark",
+      "brand": "Timberland",
+      "title": "Vintage Hiking & Outdoor Boots",
+      "tip": "August/September: Outdoor-Saison startet relevant",
       "id": "n1"
     },
     {
       "brand": "Napapijri",
-      "title": "Puffer Jackets & Gilets (Herbst-Vorbereitung)",
-      "tip": "Preise jetzt günstig, August Anstieg",
+      "title": "Vintage Puffer Jackets & Parkas",
+      "tip": "Herbst 2026: Leichte Layers werden gefragt",
       "id": "n2"
     },
     {
       "brand": "Fila",
-      "title": "90er Tennis & Court Wear",
-      "tip": "Vintage-Sportswear kommt zurück",
+      "title": "90s Court Sneakers & Sportswear",
+      "tip": "Chunky Sneaker-Trend: spätsommer-Hype kommend",
       "id": "n3"
     },
     {
-      "brand": "Dickies",
-      "title": "Carpenter Pants & Jackets",
-      "tip": "Workwear-Welle folgt auf Carhartt",
+      "brand": "Stüssy",
+      "title": "Vintage Graphic Tees & Caps",
+      "tip": "Skate-Aesthetic: August-Kampagnen vorbereitend",
       "id": "n4"
     },
     {
-      "brand": "Columbia Vintage",
-      "title": "Fleece Jackets & Outdoor Wear",
-      "tip": "Gorpcore bleibt, spätsommer Saison",
+      "brand": "Barbour",
+      "title": "Vintage Waxed Jackets & Vests",
+      "tip": "Prep-Trend steigt: Herbst-Layering wird relevant",
       "id": "n5"
     }
   ]
