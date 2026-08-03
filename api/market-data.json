@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-07-27",
+  "updatedAt": "2026-08-03",
   "hot": [
     {
-      "brand": "Vintage Nike",
-      "title": "90er Nylon Track Jackets",
-      "tip": "Oversized Silhouetten, knallige Farben bevorzugt",
+      "brand": "Vintage Adidas",
+      "title": "90er Trainingsanzüge",
+      "tip": "Nylon-Material, Kontrast-Farben bevorzugt",
       "id": "h1"
     },
     {
       "brand": "Sergio Tacchini",
-      "title": "Retro Tennis Polos & Tracksuits",
-      "tip": "Pastel-Töne, Vintage Label-Details beliebt",
+      "title": "Tennis Vintage Polos",
+      "tip": "Schmale Schnitte, 80er/90er Jahre",
       "id": "h2"
     },
     {
-      "brand": "Verschiedene Nationalteams",
-      "title": "EM 2024 Retro-Trikots (Nachfrage jetzt)",
-      "tip": "80er/90er Designs, besonders italienisch/spanisch",
+      "brand": "Carhartt WIP",
+      "title": "Work Jackets & Westen",
+      "tip": "Heavy Duty Look, aktueller TikTok-Hype",
       "id": "h3"
     },
     {
-      "brand": "Carhartt WIP",
-      "title": "Vintage Work Jackets & Vests",
-      "tip": "Gewaschene Look, Workwear-Trend anhaltend",
+      "brand": "Nationalteam Trikots",
+      "title": "EM 2024 Retro & Vintage",
+      "tip": "90er-Versionen, Spieler-Namen beliebter",
       "id": "h4"
     },
     {
-      "brand": "Ralph Lauren",
-      "title": "Vintage Polo Shirts & Polo Sport",
-      "tip": "Multicolor-Logo, 90er Schnitte, Old Money Trend",
+      "brand": "New Balance",
+      "title": "2002R & Vintage Dad Sneaker",
+      "tip": "Beige, Grey, muted tones verkaufen schnell",
       "id": "h5"
     }
   ],
   "next": [
     {
-      "brand": "Timberland",
-      "title": "Vintage Hiking & Outdoor Boots",
-      "tip": "August/September: Outdoor-Saison startet relevant",
+      "brand": "Napapijri",
+      "title": "Herbst-Jacken & Parkas",
+      "tip": "August-Käufe für September/Oktober planen",
       "id": "n1"
     },
     {
-      "brand": "Napapijri",
-      "title": "Vintage Puffer Jackets & Parkas",
-      "tip": "Herbst 2026: Leichte Layers werden gefragt",
+      "brand": "Polo Sport",
+      "title": "90er Vintage Kapuzenpullover",
+      "tip": "Preppy Trend wächst, Retro begehrt",
       "id": "n2"
     },
     {
-      "brand": "Fila",
-      "title": "90s Court Sneakers & Sportswear",
-      "tip": "Chunky Sneaker-Trend: spätsommer-Hype kommend",
+      "brand": "Kappa",
+      "title": "Tracksuit & Jogger Sets",
+      "tip": "Y2K Revival nimmt zu, unisex gefragt",
       "id": "n3"
     },
     {
-      "brand": "Stüssy",
-      "title": "Vintage Graphic Tees & Caps",
-      "tip": "Skate-Aesthetic: August-Kampagnen vorbereitend",
+      "brand": "Timberland Vintage",
+      "title": "Boots & Hiking Gear",
+      "tip": "Gorpcore für Herbst, Outdoor-Hype anhaltend",
       "id": "n4"
     },
     {
-      "brand": "Barbour",
-      "title": "Vintage Waxed Jackets & Vests",
-      "tip": "Prep-Trend steigt: Herbst-Layering wird relevant",
+      "brand": "Ralph Lauren",
+      "title": "Vintage Sweater & Cardigans",
+      "tip": "Old Money Aesthetic, September startet Saison",
       "id": "n5"
     }
   ]
