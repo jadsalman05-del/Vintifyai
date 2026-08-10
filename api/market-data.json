@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-08-03",
+  "updatedAt": "2026-08-10",
   "hot": [
     {
-      "brand": "Vintage Adidas",
-      "title": "90er Trainingsanzüge",
-      "tip": "Nylon-Material, Kontrast-Farben bevorzugt",
+      "brand": "Sergio Tacchini",
+      "title": "Vintage Tennis Tracksuit",
+      "tip": "90er Set, Pastelfarben, sofort weg",
       "id": "h1"
     },
     {
-      "brand": "Sergio Tacchini",
-      "title": "Tennis Vintage Polos",
-      "tip": "Schmale Schnitte, 80er/90er Jahre",
+      "brand": "Nike",
+      "title": "Vintage Dunk Low Retro",
+      "tip": "OG Colorways, unter 80€ kaufen",
       "id": "h2"
     },
     {
-      "brand": "Carhartt WIP",
-      "title": "Work Jackets & Westen",
-      "tip": "Heavy Duty Look, aktueller TikTok-Hype",
+      "brand": "Lacoste",
+      "title": "Vintage Polos in Creme/Sage",
+      "tip": "Quiet Luxury Trend, täglich gesucht",
       "id": "h3"
     },
     {
-      "brand": "Nationalteam Trikots",
-      "title": "EM 2024 Retro & Vintage",
-      "tip": "90er-Versionen, Spieler-Namen beliebter",
+      "brand": "Adidas Originals",
+      "title": "90s Windbreaker Jacken",
+      "tip": "Shell-Material, Oversized, Hot Seller",
       "id": "h4"
     },
     {
-      "brand": "New Balance",
-      "title": "2002R & Vintage Dad Sneaker",
-      "tip": "Beige, Grey, muted tones verkaufen schnell",
+      "brand": "Ralph Lauren",
+      "title": "Vintage Polo Sport Logo Pieces",
+      "tip": "RL Subline, Preppy Boom aktuell",
       "id": "h5"
     }
   ],
   "next": [
     {
-      "brand": "Napapijri",
-      "title": "Herbst-Jacken & Parkas",
-      "tip": "August-Käufe für September/Oktober planen",
+      "brand": "Stüssy",
+      "title": "Vintage Caps & Bucket Hats",
+      "tip": "September Streetwear Season startet",
       "id": "n1"
     },
     {
-      "brand": "Polo Sport",
-      "title": "90er Vintage Kapuzenpullover",
-      "tip": "Preppy Trend wächst, Retro begehrt",
+      "brand": "Barbour",
+      "title": "Klassische Wax Jackets",
+      "tip": "Herbst/Winter 26 beginnt, Nachfrage steigt",
       "id": "n2"
     },
     {
-      "brand": "Kappa",
-      "title": "Tracksuit & Jogger Sets",
-      "tip": "Y2K Revival nimmt zu, unisex gefragt",
+      "brand": "New Balance 1906D",
+      "title": "Chunky Sneaker Vintage",
+      "tip": "Gorpcore-Peak kommt, günstig jetzt kaufen",
       "id": "n3"
     },
     {
-      "brand": "Timberland Vintage",
-      "title": "Boots & Hiking Gear",
-      "tip": "Gorpcore für Herbst, Outdoor-Hype anhaltend",
+      "brand": "Napapijri",
+      "title": "90s Nylon Jacken & Gilets",
+      "tip": "Festival-Season 2026, Herbst geplant",
       "id": "n4"
     },
     {
-      "brand": "Ralph Lauren",
-      "title": "Vintage Sweater & Cardigans",
-      "tip": "Old Money Aesthetic, September startet Saison",
+      "brand": "Kappa",
+      "title": "Retro Sportswear Sets",
+      "tip": "Y2K-Retro-Welle schwillt an, zeitiger kaufen",
       "id": "n5"
     }
   ]
