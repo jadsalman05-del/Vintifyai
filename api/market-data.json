@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-08-10",
+  "updatedAt": "2026-08-17",
   "hot": [
     {
-      "brand": "Sergio Tacchini",
-      "title": "Vintage Tennis Tracksuit",
-      "tip": "90er Set, Pastelfarben, sofort weg",
+      "brand": "Vintage Nationalteam-Trikots",
+      "title": "Deutschland/Österreich EM-Retro Jerseys",
+      "tip": "2020er Jahre Kits, besonders limitierte Varianten",
       "id": "h1"
     },
     {
-      "brand": "Nike",
-      "title": "Vintage Dunk Low Retro",
-      "tip": "OG Colorways, unter 80€ kaufen",
+      "brand": "Carhartt WIP",
+      "title": "Workwear Jacken & Overshirts",
+      "tip": "Braun/Khaki Töne, aktueller TikTok-Gorpcore Trend",
       "id": "h2"
     },
     {
-      "brand": "Lacoste",
-      "title": "Vintage Polos in Creme/Sage",
-      "tip": "Quiet Luxury Trend, täglich gesucht",
+      "brand": "New Balance",
+      "title": "90er/2000er Running Sneaker",
+      "tip": "550, 574 in Grau/Weiß, Dad-Shoe Revival",
       "id": "h3"
     },
     {
-      "brand": "Adidas Originals",
-      "title": "90s Windbreaker Jacken",
-      "tip": "Shell-Material, Oversized, Hot Seller",
+      "brand": "Sergio Tacchini & Ellesse",
+      "title": "Vintage Tennis Tracksuits",
+      "tip": "Knallfarben, Y2K Aesthetic sehr gefragt aktuell",
       "id": "h4"
     },
     {
-      "brand": "Ralph Lauren",
-      "title": "Vintage Polo Sport Logo Pieces",
-      "tip": "RL Subline, Preppy Boom aktuell",
+      "brand": "Levi's Vintage",
+      "title": "90s High-Waist Mom Jeans",
+      "tip": "Größe 26-30, ausverkauft in 12-24 Stunden",
       "id": "h5"
     }
   ],
   "next": [
     {
-      "brand": "Stüssy",
-      "title": "Vintage Caps & Bucket Hats",
-      "tip": "September Streetwear Season startet",
+      "brand": "Stone Island",
+      "title": "Vintage Nylon Ghost Jacken",
+      "tip": "Preis fällt jetzt, Herbst zieht Nachfrage stark",
       "id": "n1"
     },
     {
-      "brand": "Barbour",
-      "title": "Klassische Wax Jackets",
-      "tip": "Herbst/Winter 26 beginnt, Nachfrage steigt",
+      "brand": "Napapijri",
+      "title": "90er Puffer Jackets in Neon",
+      "tip": "September-Oktober Peak, jetzt günstig kaufen",
       "id": "n2"
     },
     {
-      "brand": "New Balance 1906D",
-      "title": "Chunky Sneaker Vintage",
-      "tip": "Gorpcore-Peak kommt, günstig jetzt kaufen",
+      "brand": "Ralph Lauren Polo Sport",
+      "title": "Vintage Windbreaker & Tracksuits",
+      "tip": "Old-Money-Trend wächst, Herbst relevanter",
       "id": "n3"
     },
     {
-      "brand": "Napapijri",
-      "title": "90s Nylon Jacken & Gilets",
-      "tip": "Festival-Season 2026, Herbst geplant",
+      "brand": "FILA & Diadora",
+      "title": "Retro Court Sneaker 90s",
+      "tip": "Tennis-Nostalgie steigt, Fashion-Zyklus aktiv",
       "id": "n4"
     },
     {
-      "brand": "Kappa",
-      "title": "Retro Sportswear Sets",
-      "tip": "Y2K-Retro-Welle schwillt an, zeitiger kaufen",
+      "brand": "Timberland Vintage",
+      "title": "Hiking Boots & Outdoor Jackets",
+      "tip": "Herbsttrends, September-Oktober sehr nachgefragt",
       "id": "n5"
     }
   ]
