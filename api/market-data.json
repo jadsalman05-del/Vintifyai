@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-08-17",
+  "updatedAt": "2026-08-24",
   "hot": [
     {
-      "brand": "Vintage Nationalteam-Trikots",
-      "title": "Deutschland/Österreich EM-Retro Jerseys",
-      "tip": "2020er Jahre Kits, besonders limitierte Varianten",
+      "brand": "Sergio Tacchini",
+      "title": "Vintage Tennis Tracksuit",
+      "tip": "80er Nylon, Farbenvielfalt, schnelle Verkäufe",
       "id": "h1"
     },
     {
-      "brand": "Carhartt WIP",
-      "title": "Workwear Jacken & Overshirts",
-      "tip": "Braun/Khaki Töne, aktueller TikTok-Gorpcore Trend",
+      "brand": "Adidas Originals",
+      "title": "Retro Fußball-Trikot Deutschland",
+      "tip": "WM-Vorbereitungs-Hype, Collector-Appeal",
       "id": "h2"
     },
     {
-      "brand": "New Balance",
-      "title": "90er/2000er Running Sneaker",
-      "tip": "550, 574 in Grau/Weiß, Dad-Shoe Revival",
+      "brand": "Carhartt WIP",
+      "title": "Detroit Jacket in Dunkelbraun",
+      "tip": "Workwear-Trend, Herbst-Vorbereitungen starten",
       "id": "h3"
     },
     {
-      "brand": "Sergio Tacchini & Ellesse",
-      "title": "Vintage Tennis Tracksuits",
-      "tip": "Knallfarben, Y2K Aesthetic sehr gefragt aktuell",
+      "brand": "Stüssy",
+      "title": "Vintage Logo Hoodie",
+      "tip": "Y2K Revival-Peak, limitierte Stückzahlen",
       "id": "h4"
     },
     {
-      "brand": "Levi's Vintage",
-      "title": "90s High-Waist Mom Jeans",
-      "tip": "Größe 26-30, ausverkauft in 12-24 Stunden",
+      "brand": "Lacoste",
+      "title": "Polo-Shirt aus 90ern",
+      "tip": "Old Money Aesthetic booming, Premium-Segment",
       "id": "h5"
     }
   ],
   "next": [
     {
-      "brand": "Stone Island",
-      "title": "Vintage Nylon Ghost Jacken",
-      "tip": "Preis fällt jetzt, Herbst zieht Nachfrage stark",
+      "brand": "Napapijri",
+      "title": "Vintage Puffer Jacket",
+      "tip": "Herbst-Klassiker, Preise steigen bald",
       "id": "n1"
     },
     {
-      "brand": "Napapijri",
-      "title": "90er Puffer Jackets in Neon",
-      "tip": "September-Oktober Peak, jetzt günstig kaufen",
+      "brand": "Umbro",
+      "title": "90er Fußball-Jersey",
+      "tip": "Nostalgie-Welle kommt, Selten in Vinted",
       "id": "n2"
     },
     {
-      "brand": "Ralph Lauren Polo Sport",
-      "title": "Vintage Windbreaker & Tracksuits",
-      "tip": "Old-Money-Trend wächst, Herbst relevanter",
+      "brand": "New Balance",
+      "title": "1990er Sneaker-Original",
+      "tip": "Dad-Shoe-Trend verstärkt sich September",
       "id": "n3"
     },
     {
-      "brand": "FILA & Diadora",
-      "title": "Retro Court Sneaker 90s",
-      "tip": "Tennis-Nostalgie steigt, Fashion-Zyklus aktiv",
+      "brand": "Stone Island",
+      "title": "Vintage Fleece-Pullover",
+      "tip": "Herbstlayer-Must-Have, Nachfrage steigt",
       "id": "n4"
     },
     {
-      "brand": "Timberland Vintage",
-      "title": "Hiking Boots & Outdoor Jackets",
-      "tip": "Herbsttrends, September-Oktober sehr nachgefragt",
+      "brand": "Columbia Vintage",
+      "title": "Fleece-Gilet in Outdoor-Style",
+      "tip": "Gorpcore-Trend, September-Saison-Starter",
       "id": "n5"
     }
   ]
