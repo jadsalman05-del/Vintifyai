@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-08-24",
+  "updatedAt": "2026-08-31",
   "hot": [
     {
       "brand": "Sergio Tacchini",
       "title": "Vintage Tennis Tracksuit",
-      "tip": "80er Nylon, Farbenvielfalt, schnelle Verkäufe",
+      "tip": "90er Sets mit Kontrasten – Gorpcore Peak",
       "id": "h1"
     },
     {
-      "brand": "Adidas Originals",
-      "title": "Retro Fußball-Trikot Deutschland",
-      "tip": "WM-Vorbereitungs-Hype, Collector-Appeal",
+      "brand": "Vintage Nationalteam",
+      "title": "Fußball-Trikots EM-Saison",
+      "tip": "Deutschland, Niederlande – Nostalgie-Boom anhaltend",
       "id": "h2"
     },
     {
       "brand": "Carhartt WIP",
-      "title": "Detroit Jacket in Dunkelbraun",
-      "tip": "Workwear-Trend, Herbst-Vorbereitungen starten",
+      "title": "Detroit Jacket Braun/Beige",
+      "tip": "Workwear-Trend – Herbst-Prep startet früh",
       "id": "h3"
     },
     {
-      "brand": "Stüssy",
-      "title": "Vintage Logo Hoodie",
-      "tip": "Y2K Revival-Peak, limitierte Stückzahlen",
+      "brand": "Lacoste Vintage",
+      "title": "Poloshirt in Pastell",
+      "tip": "Old Money Aesthetic – TikTok-Dauerbrenner",
       "id": "h4"
     },
     {
-      "brand": "Lacoste",
-      "title": "Polo-Shirt aus 90ern",
-      "tip": "Old Money Aesthetic booming, Premium-Segment",
+      "brand": "New Balance",
+      "title": "574 oder 990v3 Retro",
+      "tip": "Dad-Sneaker Peak – Sommer noch kaufbar",
       "id": "h5"
     }
   ],
   "next": [
     {
       "brand": "Napapijri",
-      "title": "Vintage Puffer Jacket",
-      "tip": "Herbst-Klassiker, Preise steigen bald",
+      "title": "Puffer Jacket Vintage",
+      "tip": "Herbst-Saison Vorbereitung – Preise noch niedrig",
       "id": "n1"
     },
     {
-      "brand": "Umbro",
-      "title": "90er Fußball-Jersey",
-      "tip": "Nostalgie-Welle kommt, Selten in Vinted",
+      "brand": "Ralph Lauren",
+      "title": "Rugby Shirt Gestreift",
+      "tip": "Prep-Bewegung verstärkt sich – Langarmzeit startet",
       "id": "n2"
     },
     {
-      "brand": "New Balance",
-      "title": "1990er Sneaker-Original",
-      "tip": "Dad-Shoe-Trend verstärkt sich September",
+      "brand": "Umbro",
+      "title": "Vintage Fußball Tracksuit",
+      "tip": "Europäische Liga-Nostalgie – Herbst-Saison Kick",
       "id": "n3"
     },
     {
-      "brand": "Stone Island",
-      "title": "Vintage Fleece-Pullover",
-      "tip": "Herbstlayer-Must-Have, Nachfrage steigt",
+      "brand": "Timberland",
+      "title": "Hiking Boot Vintage",
+      "tip": "September: Wandersaison & Outdoor-Trend startet",
       "id": "n4"
     },
     {
-      "brand": "Columbia Vintage",
-      "title": "Fleece-Gilet in Outdoor-Style",
-      "tip": "Gorpcore-Trend, September-Saison-Starter",
+      "brand": "Stüssy",
+      "title": "Longsleeve oder Button-Up",
+      "tip": "Skate-Aesthetic zurück – Herbst-Welle incoming",
       "id": "n5"
     }
   ]
