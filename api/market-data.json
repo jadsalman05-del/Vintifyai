@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-08-31",
+  "updatedAt": "2026-09-07",
   "hot": [
     {
       "brand": "Sergio Tacchini",
-      "title": "Vintage Tennis Tracksuit",
-      "tip": "90er Sets mit Kontrasten – Gorpcore Peak",
+      "title": "Vintage Trainingsanzug 90er",
+      "tip": "Pastel-Farben, M-L Größe, sofort weg",
       "id": "h1"
     },
     {
-      "brand": "Vintage Nationalteam",
-      "title": "Fußball-Trikots EM-Saison",
-      "tip": "Deutschland, Niederlande – Nostalgie-Boom anhaltend",
+      "brand": "Carhartt WIP",
+      "title": "Canvas Jacke Herbst-Klassiker",
+      "tip": "Braun/Grün, leichte Nutzung bevorzugt",
       "id": "h2"
     },
     {
-      "brand": "Carhartt WIP",
-      "title": "Detroit Jacket Braun/Beige",
-      "tip": "Workwear-Trend – Herbst-Prep startet früh",
+      "brand": "Nationalteam-Trikots",
+      "title": "EM 2024 Retro Jerseys gemischt",
+      "tip": "Deutschland, Italien, Vintage-Schnitt gefragt",
       "id": "h3"
     },
     {
-      "brand": "Lacoste Vintage",
-      "title": "Poloshirt in Pastell",
-      "tip": "Old Money Aesthetic – TikTok-Dauerbrenner",
+      "brand": "New Balance",
+      "title": "2002R Vintage Colorways",
+      "tip": "Grau/Beige Töne, DS oder sehr clean",
       "id": "h4"
     },
     {
-      "brand": "New Balance",
-      "title": "574 oder 990v3 Retro",
-      "tip": "Dad-Sneaker Peak – Sommer noch kaufbar",
+      "brand": "Napapijri",
+      "title": "Puffer Jacke 90er/2000er",
+      "tip": "Dunkelblau, rot – Pre-Winter Rush",
       "id": "h5"
     }
   ],
   "next": [
     {
-      "brand": "Napapijri",
-      "title": "Puffer Jacket Vintage",
-      "tip": "Herbst-Saison Vorbereitung – Preise noch niedrig",
+      "brand": "Columbia Vintage",
+      "title": "Fleece Half-Zip Pullover",
+      "tip": "Oktober-Nachfrage steigt massiv",
       "id": "n1"
     },
     {
-      "brand": "Ralph Lauren",
-      "title": "Rugby Shirt Gestreift",
-      "tip": "Prep-Bewegung verstärkt sich – Langarmzeit startet",
+      "brand": "Stüssy",
+      "title": "Vintage T-Shirts grafikreich",
+      "tip": "Y2K-Cycle, Designer-Collab-Prints",
       "id": "n2"
     },
     {
-      "brand": "Umbro",
-      "title": "Vintage Fußball Tracksuit",
-      "tip": "Europäische Liga-Nostalgie – Herbst-Saison Kick",
+      "brand": "Timberland",
+      "title": "Classic Boots – alle Farben",
+      "tip": "Herbst/Winter 2026 wird riesig",
       "id": "n3"
     },
     {
-      "brand": "Timberland",
-      "title": "Hiking Boot Vintage",
-      "tip": "September: Wandersaison & Outdoor-Trend startet",
+      "brand": "Ralph Lauren Polo Sport",
+      "title": "Windbreaker 90er Vintage",
+      "tip": "Old-Money-Trend intensiviert sich",
       "id": "n4"
     },
     {
-      "brand": "Stüssy",
-      "title": "Longsleeve oder Button-Up",
-      "tip": "Skate-Aesthetic zurück – Herbst-Welle incoming",
+      "brand": "Diadora",
+      "title": "Vintage Sneaker & Trainingsware",
+      "tip": "Retro-Sport-Wave startet in 3 Wochen",
       "id": "n5"
     }
   ]
