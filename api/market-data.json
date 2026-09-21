@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-09-14",
+  "updatedAt": "2026-09-21",
   "hot": [
     {
       "brand": "Sergio Tacchini",
-      "title": "Vintage Tennis Track Jacket",
-      "tip": "90er Nylon, knallige Farben, sofort weg",
+      "title": "Vintage Trainingsanzug 90er",
+      "tip": "Retro-Tennis-Aesthetic jetzt extrem viral",
       "id": "h1"
     },
     {
-      "brand": "Adidas Originals",
-      "title": "Retro Fußball-Trikots (Nationalteams)",
-      "tip": "WM 2026 Hype, Retro > aktuell",
+      "brand": "Carhartt WIP",
+      "title": "Workwear Jacke Herbst",
+      "tip": "Gorpcore dominiert TikTok September 2026",
       "id": "h2"
     },
     {
-      "brand": "Carhartt WIP",
-      "title": "Detroit Jacket (Canvas)",
-      "tip": "Workwear Peak, Handwerker-Aesthetic viral",
+      "brand": "Napapijri",
+      "title": "Nylon-Jacke in Rot/Blau",
+      "tip": "Y2K-Sportswear Boom hält an, schnell weg",
       "id": "h3"
     },
     {
-      "brand": "Lacoste",
-      "title": "Vintage Polos (80er/90er)",
-      "tip": "Old Money Prep, Premium-Segment beliebt",
+      "brand": "Bundesliga Retro",
+      "title": "Vintage Fußball-Trikots 2000er",
+      "tip": "Nostalgie-WM-Effekt, Sammler kaufen aktiv",
       "id": "h4"
     },
     {
-      "brand": "Napapijri",
-      "title": "Vintage Pufferjacke",
-      "tip": "Herbst startet, Vintage günstiger als Neu",
+      "brand": "New Balance",
+      "title": "990er/2002er Sneaker",
+      "tip": "Dad-Shoe Trend stabilisiert sich, Premiumpreis",
       "id": "h5"
     }
   ],
   "next": [
     {
-      "brand": "Stone Island",
-      "title": "Vintage Nylon Jacke (2000er)",
-      "tip": "Oktober-Peak, jetzt noch unterschätzt",
+      "brand": "Barbour",
+      "title": "Waxed Jacke klassisch",
+      "tip": "Old Money aesthetic für Herbst/Winter kommend",
       "id": "n1"
     },
     {
-      "brand": "Columbia",
-      "title": "Fleece Pullover (Retro Technical)",
-      "tip": "Herbst-Trend, Outdoor-Vintage steigt",
+      "brand": "Polo Sport",
+      "title": "90er Windbreaker-Jacke",
+      "tip": "Nostalgischer Ralph-Lauren-Hype wächst noch",
       "id": "n2"
     },
     {
-      "brand": "Le Coq Sportif",
-      "title": "Vintage Tracksuits",
-      "tip": "Y2K-Cycling Aesthetic, nächster Monat übergehyped",
+      "brand": "Timberland",
+      "title": "Vintage Boots/Heritage Styles",
+      "tip": "Oktober-November: Boots-Season wird kaufstark",
       "id": "n3"
     },
     {
-      "brand": "Timberland",
-      "title": "Vintage Boots + Heritage Jackets",
-      "tip": "Oktober: Gorpcore + Workwear-Saison",
+      "brand": "Stone Island",
+      "title": "Vintage Nylon Ghost Piece",
+      "tip": "Techwear-Winter-Trend startet bald, Preise steigen",
       "id": "n4"
     },
     {
-      "brand": "Kappa",
-      "title": "Vintage Windbreaker/Shell",
-      "tip": "90er-Nostalgie wächst, noch günstig jetzt",
+      "brand": "Stüssy",
+      "title": "Fleece-Hoodie/Crewneck",
+      "tip": "Skate-Prep-Mix wächst, Cozy-Trend ab Oktober",
       "id": "n5"
     }
   ]
