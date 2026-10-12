@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-10-05",
+  "updatedAt": "2026-10-12",
   "hot": [
     {
       "brand": "Sergio Tacchini",
-      "title": "Vintage Trainingsanzug 80er",
-      "tip": "Neon-Farben, ungetragen = Sofortverkauf",
+      "title": "Vintage Trainingsanzug 90er",
+      "tip": "Pastel-Farben, XS-M Größen bevorzugt",
       "id": "h1"
     },
     {
-      "brand": "Carhartt WIP",
-      "title": "Detroit Jacket in Khaki",
-      "tip": "Workwear-Trend, Oktober perfekt",
+      "brand": "Verschiedene Nationalteams",
+      "title": "Fußball-Retro Trikots (90er/2000er)",
+      "tip": "Deutschland, Italien, Frankreich auslisten",
       "id": "h2"
     },
     {
-      "brand": "Napapijri",
-      "title": "90er Puffer Jacket",
-      "tip": "Retro-Hype + Herbst = Hot",
+      "brand": "Carhartt WIP",
+      "title": "Workwear Jacken & Overshirts",
+      "tip": "Braun, Khaki Töne aktuell viral",
       "id": "h3"
     },
     {
-      "brand": "Umbro",
-      "title": "Fußball-Trikots (Nationalteams)",
-      "tip": "WM-Qual-Hype, limitierte Auflagen",
+      "brand": "New Balance",
+      "title": "Vintage 574 & 990er Sneaker",
+      "tip": "Grau-Beige-Cream Colorways verkaufen schnell",
       "id": "h4"
     },
     {
-      "brand": "New Balance",
-      "title": "550er/990er Vintage",
-      "tip": "Dad-Sneaker-Peak, schnell weg",
+      "brand": "Ralph Lauren Polo Sport",
+      "title": "90er Windbreaker & Tech Jacken",
+      "tip": "Oversized Schnitte, Logo-Heavy bevorzugt",
       "id": "h5"
     }
   ],
   "next": [
     {
-      "brand": "Barbour",
-      "title": "Waxed Jackets (klassisch)",
-      "tip": "November-Saison startet, Preise steigen",
+      "brand": "Napapijri",
+      "title": "Vintage Puffer Jacken",
+      "tip": "November/Dezember Nachfrage steigt massiv",
       "id": "n1"
     },
     {
-      "brand": "Timberland",
-      "title": "Heritage Boots (Vintage 90s)",
-      "tip": "Gorpcore-Welle, Winterpreise später",
+      "brand": "Stone Island",
+      "title": "Vintage Sweatshirts & Hoodies",
+      "tip": "Mit Patch, auch beschädigte Patches",
       "id": "n2"
     },
     {
-      "brand": "Stüssy",
-      "title": "Oversized Hoodies & Crewnecks",
-      "tip": "Y2K-Revival, November-Peak voraus",
+      "brand": "Barbour",
+      "title": "Klassische Wax Jacken",
+      "tip": "Herbst/Winter Klassiker für Prep-Trend",
       "id": "n3"
     },
     {
-      "brand": "Ralph Lauren",
-      "title": "Polo-Pullover (Multi-Color)",
-      "tip": "Old-Money-Aesthetic steigt, Buy-Now",
+      "brand": "Umbro & Fila",
+      "title": "90er Retro Sportjacken",
+      "tip": "Y2K Revival Peak Februar 2027",
       "id": "n4"
     },
     {
-      "brand": "Fila",
-      "title": "90er Windbreaker",
-      "tip": "Tennis-Retro wird November heiß",
+      "brand": "Timberland Vintage",
+      "title": "Boots & Hiking Stiefel",
+      "tip": "Gorpcore Trend wächst bis Winter",
       "id": "n5"
     }
   ]
