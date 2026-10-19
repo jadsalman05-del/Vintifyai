@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-10-12",
+  "updatedAt": "2026-10-19",
   "hot": [
     {
-      "brand": "Sergio Tacchini",
-      "title": "Vintage Trainingsanzug 90er",
-      "tip": "Pastel-Farben, XS-M Größen bevorzugt",
+      "brand": "Vintage Nationalteam-Trikots",
+      "title": "Fußball-Retro Jerseys (90er/2000er)",
+      "tip": "Deutschland, Italien, Frankreich WM-Klassiker",
       "id": "h1"
     },
     {
-      "brand": "Verschiedene Nationalteams",
-      "title": "Fußball-Retro Trikots (90er/2000er)",
-      "tip": "Deutschland, Italien, Frankreich auslisten",
+      "brand": "Carhartt WIP",
+      "title": "Detroit Jacke & Arbeitsjacken",
+      "tip": "Workwear-Trend Peak, schnell weg",
       "id": "h2"
     },
     {
-      "brand": "Carhartt WIP",
-      "title": "Workwear Jacken & Overshirts",
-      "tip": "Braun, Khaki Töne aktuell viral",
+      "brand": "Napapijri",
+      "title": "Vintage Puffer Jacken",
+      "tip": "Oktober-Wetter, Gorpcore boomt derzeit",
       "id": "h3"
     },
     {
       "brand": "New Balance",
-      "title": "Vintage 574 & 990er Sneaker",
-      "tip": "Grau-Beige-Cream Colorways verkaufen schnell",
+      "title": "90er Dad-Sneaker (574, 990)",
+      "tip": "Vintage-Modelle, Retro-Revival aktuell",
       "id": "h4"
     },
     {
-      "brand": "Ralph Lauren Polo Sport",
-      "title": "90er Windbreaker & Tech Jacken",
-      "tip": "Oversized Schnitte, Logo-Heavy bevorzugt",
+      "brand": "Ralph Lauren",
+      "title": "Polo-Hemden & Pullover",
+      "tip": "Old Money Aesthetic viral, Herbst-Ready",
       "id": "h5"
     }
   ],
   "next": [
     {
-      "brand": "Napapijri",
-      "title": "Vintage Puffer Jacken",
-      "tip": "November/Dezember Nachfrage steigt massiv",
+      "brand": "Stone Island",
+      "title": "Vintage Jacken & Overshirts",
+      "tip": "November Nachfrage vorhersehbar steigen",
       "id": "n1"
     },
     {
-      "brand": "Stone Island",
-      "title": "Vintage Sweatshirts & Hoodies",
-      "tip": "Mit Patch, auch beschädigte Patches",
+      "brand": "Barbour",
+      "title": "Wachsjacken & Quilted Jackets",
+      "tip": "Herbst-Klassiker, Preis fällt jetzt",
       "id": "n2"
     },
     {
-      "brand": "Barbour",
-      "title": "Klassische Wax Jacken",
-      "tip": "Herbst/Winter Klassiker für Prep-Trend",
+      "brand": "Levi's Vintage",
+      "title": "501er & Denim-Jacken (80er/90er)",
+      "tip": "Denim-Cycle dreht sich wieder",
       "id": "n3"
     },
     {
-      "brand": "Umbro & Fila",
-      "title": "90er Retro Sportjacken",
-      "tip": "Y2K Revival Peak Februar 2027",
+      "brand": "Lacoste Vintage",
+      "title": "Poloshirts & Tracksuits",
+      "tip": "Retro-Tennis-Prep kommt zurück",
       "id": "n4"
     },
     {
-      "brand": "Timberland Vintage",
-      "title": "Boots & Hiking Stiefel",
-      "tip": "Gorpcore Trend wächst bis Winter",
+      "brand": "Timberland",
+      "title": "Boots & Heritage Stiefel",
+      "tip": "Winter-Saison startet, Preise jetzt günstig",
       "id": "n5"
     }
   ]
