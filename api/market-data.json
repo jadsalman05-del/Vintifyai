@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-10-19",
+  "updatedAt": "2026-10-26",
   "hot": [
     {
-      "brand": "Vintage Nationalteam-Trikots",
-      "title": "Fußball-Retro Jerseys (90er/2000er)",
-      "tip": "Deutschland, Italien, Frankreich WM-Klassiker",
+      "brand": "Vintage Nike",
+      "title": "90er Windbreaker in Neon",
+      "tip": "Y2K-Revival auf TikTok viral",
       "id": "h1"
     },
     {
-      "brand": "Carhartt WIP",
-      "title": "Detroit Jacke & Arbeitsjacken",
-      "tip": "Workwear-Trend Peak, schnell weg",
+      "brand": "Sergio Tacchini",
+      "title": "Retro Tennis Trainingsanzug",
+      "tip": "Tenniscore-Trend + Herbst-Layering",
       "id": "h2"
     },
     {
-      "brand": "Napapijri",
-      "title": "Vintage Puffer Jacken",
-      "tip": "Oktober-Wetter, Gorpcore boomt derzeit",
+      "brand": "Carhartt WIP",
+      "title": "Canvas Workwear Jacke",
+      "tip": "Gorpcore dominiert Oktober-Suchen",
       "id": "h3"
     },
     {
-      "brand": "New Balance",
-      "title": "90er Dad-Sneaker (574, 990)",
-      "tip": "Vintage-Modelle, Retro-Revival aktuell",
+      "brand": "Nationalteam-Trikots",
+      "title": "90er/2000er Fußball Jersey",
+      "tip": "Nostalgie-Boom vor WM-Qualifikation",
       "id": "h4"
     },
     {
-      "brand": "Ralph Lauren",
-      "title": "Polo-Hemden & Pullover",
-      "tip": "Old Money Aesthetic viral, Herbst-Ready",
+      "brand": "Napapijri",
+      "title": "Vintage Puffer Jacket",
+      "tip": "First Layer für Winter-Vorbereitung",
       "id": "h5"
     }
   ],
   "next": [
     {
       "brand": "Stone Island",
-      "title": "Vintage Jacken & Overshirts",
-      "tip": "November Nachfrage vorhersehbar steigen",
+      "title": "Heritage Pullover Grau",
+      "tip": "Premium Workwear wird Dezember teuer",
       "id": "n1"
     },
     {
-      "brand": "Barbour",
-      "title": "Wachsjacken & Quilted Jackets",
-      "tip": "Herbst-Klassiker, Preis fällt jetzt",
+      "brand": "Polo Sport",
+      "title": "90er Fleece Hoodie",
+      "tip": "Old Money Aesthetic steigt in Herbst",
       "id": "n2"
     },
     {
-      "brand": "Levi's Vintage",
-      "title": "501er & Denim-Jacken (80er/90er)",
-      "tip": "Denim-Cycle dreht sich wieder",
+      "brand": "Kappa",
+      "title": "Vintage Track Jacket",
+      "tip": "Sportswear-Boom + Halloween-Party-Layering",
       "id": "n3"
     },
     {
-      "brand": "Lacoste Vintage",
-      "title": "Poloshirts & Tracksuits",
-      "tip": "Retro-Tennis-Prep kommt zurück",
+      "brand": "Timberland Vintage",
+      "title": "6-Inch Stiefel Braun",
+      "tip": "Schuh-Saison startet November massiv",
       "id": "n4"
     },
     {
-      "brand": "Timberland",
-      "title": "Boots & Heritage Stiefel",
-      "tip": "Winter-Saison startet, Preise jetzt günstig",
+      "brand": "Fred Perry",
+      "title": "Twin Tipped Polo Shirt",
+      "tip": "Smart-Casual für Herbst-Events steigt",
       "id": "n5"
     }
   ]
