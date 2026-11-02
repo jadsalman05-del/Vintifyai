@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-10-26",
+  "updatedAt": "2026-11-02",
   "hot": [
     {
-      "brand": "Vintage Nike",
-      "title": "90er Windbreaker in Neon",
-      "tip": "Y2K-Revival auf TikTok viral",
+      "brand": "Sergio Tacchini",
+      "title": "90er Trainingsanzug",
+      "tip": "Retro-Farben, XS-M, schnell weg",
       "id": "h1"
     },
     {
-      "brand": "Sergio Tacchini",
-      "title": "Retro Tennis Trainingsanzug",
-      "tip": "Tenniscore-Trend + Herbst-Layering",
+      "brand": "Napapijri",
+      "title": "Winterjacke Nylon",
+      "tip": "Logo-Details, 90s Vibes, hochpreisig",
       "id": "h2"
     },
     {
-      "brand": "Carhartt WIP",
-      "title": "Canvas Workwear Jacke",
-      "tip": "Gorpcore dominiert Oktober-Suchen",
+      "brand": "Vintage Nationalteam",
+      "title": "Fußball-Trikot 2006-2010",
+      "tip": "Deutschland/Österreich, WM-Nostalgie boomt",
       "id": "h3"
     },
     {
-      "brand": "Nationalteam-Trikots",
-      "title": "90er/2000er Fußball Jersey",
-      "tip": "Nostalgie-Boom vor WM-Qualifikation",
+      "brand": "Stone Island",
+      "title": "Compass Jacke",
+      "tip": "Grau/Schwarz, Ghostpiece-Details gefragt",
       "id": "h4"
     },
     {
-      "brand": "Napapijri",
-      "title": "Vintage Puffer Jacket",
-      "tip": "First Layer für Winter-Vorbereitung",
+      "brand": "Carhartt WIP",
+      "title": "Canvas Jacket",
+      "tip": "Workwear-Trend, braun/grün, ständig ausverkauft",
       "id": "h5"
     }
   ],
   "next": [
     {
-      "brand": "Stone Island",
-      "title": "Heritage Pullover Grau",
-      "tip": "Premium Workwear wird Dezember teuer",
+      "brand": "Barbour",
+      "title": "Waxed Jacke",
+      "tip": "Weihnacht-Saison, Klassiker, Preise steigen",
       "id": "n1"
     },
     {
-      "brand": "Polo Sport",
-      "title": "90er Fleece Hoodie",
-      "tip": "Old Money Aesthetic steigt in Herbst",
+      "brand": "Timberland",
+      "title": "Vintage Boots",
+      "tip": "Wetter wird kalt, Nachfrage im Dezember explodiert",
       "id": "n2"
     },
     {
-      "brand": "Kappa",
-      "title": "Vintage Track Jacket",
-      "tip": "Sportswear-Boom + Halloween-Party-Layering",
+      "brand": "Ralph Lauren",
+      "title": "Poloshirt Multi-Color",
+      "tip": "Preppy Revival auf TikTok wächst noch",
       "id": "n3"
     },
     {
-      "brand": "Timberland Vintage",
-      "title": "6-Inch Stiefel Braun",
-      "tip": "Schuh-Saison startet November massiv",
+      "brand": "New Balance",
+      "title": "90er Sneaker 574/990",
+      "tip": "Dad-Shoe-Wave hält an, Winter-Farben stark",
       "id": "n4"
     },
     {
-      "brand": "Fred Perry",
-      "title": "Twin Tipped Polo Shirt",
-      "tip": "Smart-Casual für Herbst-Events steigt",
+      "brand": "Fila",
+      "title": "Track Jacket",
+      "tip": "Y2K Comeback, vor Silvester gekauft",
       "id": "n5"
     }
   ]
