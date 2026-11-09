@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-11-02",
+  "updatedAt": "2026-11-09",
   "hot": [
     {
-      "brand": "Sergio Tacchini",
-      "title": "90er Trainingsanzug",
-      "tip": "Retro-Farben, XS-M, schnell weg",
+      "brand": "Vintage Nike",
+      "title": "90er Windbreaker in Neon-Colorways",
+      "tip": "Y2K-Trend peak: knallige Farben, Größe M-L",
       "id": "h1"
     },
     {
-      "brand": "Napapijri",
-      "title": "Winterjacke Nylon",
-      "tip": "Logo-Details, 90s Vibes, hochpreisig",
+      "brand": "Sergio Tacchini",
+      "title": "Retro Tennisanzug (Jacke+Hose)",
+      "tip": "Old Money Aesthetic: gesucht wie nie zuvor",
       "id": "h2"
     },
     {
-      "brand": "Vintage Nationalteam",
-      "title": "Fußball-Trikot 2006-2010",
-      "tip": "Deutschland/Österreich, WM-Nostalgie boomt",
+      "brand": "Adidas Originals",
+      "title": "Vintage Trainingsanzug aus 80ern",
+      "tip": "Gorpcore boom: Vintage Sportswear überall",
       "id": "h3"
     },
     {
-      "brand": "Stone Island",
-      "title": "Compass Jacke",
-      "tip": "Grau/Schwarz, Ghostpiece-Details gefragt",
+      "brand": "Bundesliga Retro",
+      "title": "Vintage Fußballtrikots 90er/2000er",
+      "tip": "DFB-Nostalgie: Bayern/BVB Classics fliegen weg",
       "id": "h4"
     },
     {
       "brand": "Carhartt WIP",
-      "title": "Canvas Jacket",
-      "tip": "Workwear-Trend, braun/grün, ständig ausverkauft",
+      "title": "Vintage Detroit Jacke in Braun",
+      "tip": "Workwear Hype: knapp bevor es kalt wird",
       "id": "h5"
     }
   ],
   "next": [
     {
-      "brand": "Barbour",
-      "title": "Waxed Jacke",
-      "tip": "Weihnacht-Saison, Klassiker, Preise steigen",
+      "brand": "Lacoste Vintage",
+      "title": "Polohemd in Pastelltönen",
+      "tip": "Prep Revival: Q4 2026 wird es GROSS",
       "id": "n1"
     },
     {
-      "brand": "Timberland",
-      "title": "Vintage Boots",
-      "tip": "Wetter wird kalt, Nachfrage im Dezember explodiert",
+      "brand": "Napapijri",
+      "title": "Vintage Puffer Jacke in Navy",
+      "tip": "Wintersaison beginnt: Daunenjacken werden König",
       "id": "n2"
     },
     {
-      "brand": "Ralph Lauren",
-      "title": "Poloshirt Multi-Color",
-      "tip": "Preppy Revival auf TikTok wächst noch",
+      "brand": "Stone Island",
+      "title": "Vintage Sweatshirt mit Patch",
+      "tip": "Premium Basics: immer sicher, Preis steigt noch",
       "id": "n3"
     },
     {
-      "brand": "New Balance",
-      "title": "90er Sneaker 574/990",
-      "tip": "Dad-Shoe-Wave hält an, Winter-Farben stark",
+      "brand": "Le Coq Sportif",
+      "title": "90er Trainingsjacke mit Kragen",
+      "tip": "Französischer Sportswear-Trend: noch unterschätzt",
       "id": "n4"
     },
     {
-      "brand": "Fila",
-      "title": "Track Jacket",
-      "tip": "Y2K Comeback, vor Silvester gekauft",
+      "brand": "New Balance",
+      "title": "90er Dad Sneaker Original Box",
+      "tip": "Nostalgia Peak in Dezember: Weihnachts-Shopping",
       "id": "n5"
     }
   ]
