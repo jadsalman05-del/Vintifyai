@@ -1,66 +1,66 @@
 {
-  "updatedAt": "2026-11-09",
+  "updatedAt": "2026-11-16",
   "hot": [
     {
-      "brand": "Vintage Nike",
-      "title": "90er Windbreaker in Neon-Colorways",
-      "tip": "Y2K-Trend peak: knallige Farben, Größe M-L",
+      "brand": "Sergio Tacchini",
+      "title": "90er Tennis Track Jacket",
+      "tip": "Rot-Weiß Colorblocks, S-M Größen",
       "id": "h1"
     },
     {
-      "brand": "Sergio Tacchini",
-      "title": "Retro Tennisanzug (Jacke+Hose)",
-      "tip": "Old Money Aesthetic: gesucht wie nie zuvor",
+      "brand": "Carhartt WIP",
+      "title": "Detroit Jacket Vintage",
+      "tip": "Braun/Tan, Workwear Peak November",
       "id": "h2"
     },
     {
-      "brand": "Adidas Originals",
-      "title": "Vintage Trainingsanzug aus 80ern",
-      "tip": "Gorpcore boom: Vintage Sportswear überall",
+      "brand": "Napapijri",
+      "title": "Puffer Jacket 90s",
+      "tip": "Nylon glänzend, Winter-Vorbereitung",
       "id": "h3"
     },
     {
-      "brand": "Bundesliga Retro",
-      "title": "Vintage Fußballtrikots 90er/2000er",
-      "tip": "DFB-Nostalgie: Bayern/BVB Classics fliegen weg",
+      "brand": "Umbro",
+      "title": "Fußball Retro Trikot",
+      "tip": "Bundesliga 90er, Sammler-Hype",
       "id": "h4"
     },
     {
-      "brand": "Carhartt WIP",
-      "title": "Vintage Detroit Jacke in Braun",
-      "tip": "Workwear Hype: knapp bevor es kalt wird",
+      "brand": "Stüssy",
+      "title": "Fleece Half-Zip Vintage",
+      "tip": "Cream/Beige, TikTok-Soft-Girl-Core",
       "id": "h5"
     }
   ],
   "next": [
     {
-      "brand": "Lacoste Vintage",
-      "title": "Polohemd in Pastelltönen",
-      "tip": "Prep Revival: Q4 2026 wird es GROSS",
+      "brand": "Le Coq Sportif",
+      "title": "80er Tennis Polohemd",
+      "tip": "Preppy Revival, Dezember steigt",
       "id": "n1"
     },
     {
-      "brand": "Napapijri",
-      "title": "Vintage Puffer Jacke in Navy",
-      "tip": "Wintersaison beginnt: Daunenjacken werden König",
+      "brand": "Columbia Vintage",
+      "title": "Fleece Outdoorjacke",
+      "tip": "Nylon Mix, Dezember-Ski-Season-Vorbereitung",
       "id": "n2"
     },
     {
-      "brand": "Stone Island",
-      "title": "Vintage Sweatshirt mit Patch",
-      "tip": "Premium Basics: immer sicher, Preis steigt noch",
+      "brand": "Fila",
+      "title": "90s Logo Windbreaker",
+      "tip": "Y2K-Wave wächst, Größen XS-S",
       "id": "n3"
     },
     {
-      "brand": "Le Coq Sportif",
-      "title": "90er Trainingsjacke mit Kragen",
-      "tip": "Französischer Sportswear-Trend: noch unterschätzt",
+      "brand": "Paul & Shark",
+      "title": "Wool-Blend Cardigan",
+      "tip": "Old-Money-Trend, Weihnachtsfeier-Demand",
       "id": "n4"
     },
     {
       "brand": "New Balance",
-      "title": "90er Dad Sneaker Original Box",
-      "tip": "Nostalgia Peak in Dezember: Weihnachts-Shopping",
+      "title": "90s Vintage Sneaker",
+      "tip": "574/990er, Holiday-Shopping-Saison",
       "id": "n5"
     }
   ]
